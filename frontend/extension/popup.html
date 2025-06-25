@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mementum.ai - Quick Notes</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <div class="popup-header">
+            <div class="logo">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="logo-icon">
+                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <h1 class="popup-title">Mementum.ai</h1>
+            </div>
+            <button id="settingsBtn" class="settings-btn" title="Settings">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="popup-content">
+            <form id="noteForm" class="note-form">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" class="input-icon">
+                            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <textarea 
+                            id="noteInput" 
+                            placeholder="Capture your thoughts..."
+                            rows="4"
+                            maxlength="1000"
+                        ></textarea>
+                    </div>
+                    <div class="input-footer">
+                        <span id="charCount" class="char-count">0/1000</span>
+                        <button type="submit" id="saveBtn" class="save-btn" disabled>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" class="save-icon">
+                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span class="save-text">Save Note</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="loadingState" class="loading-state hidden">
+                <div class="loading-spinner">
+                    <svg class="spinner" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/>
+                        <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" class="opacity-75"/>
+                    </svg>
+                </div>
+                <p class="loading-text">AI is structuring your note...</p>
+            </div>
+
+            <div id="successState" class="success-state hidden">
+                <div class="success-icon">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <p class="success-text">Note saved successfully!</p>
+                <button id="viewNoteBtn" class="view-note-btn">View Note</button>
+            </div>
+
+            <div id="errorState" class="error-state hidden">
+                <div class="error-icon">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <p class="error-text">Failed to save note</p>
+                <button id="retryBtn" class="retry-btn">Try Again</button>
+            </div>
+        </div>
+
+        <div class="popup-footer">
+            <button id="openAppBtn" class="open-app-btn">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="15,3 21,3 21,9" stroke="currentColor" stroke-width="2"/>
+                    <line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Open Mementum.ai
+            </button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+# FastAPI и веб-фреймворк
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# База данных
+sqlalchemy[asyncio]==2.0.23
+asyncpg==0.29.0
+alembic==1.12.1
+
+# Аутентификация
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+
+# AI и машинное обучение
+openai==1.3.7
+aiohttp==3.9.1
+
+# Google API
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
+google-api-python-client==2.108.0
+
+# Веб-скрапинг
+beautifulsoup4==4.12.2
+lxml==4.9.3
+requests==2.31.0
+
+# Обработка данных
+pydantic==2.5.0
+python-dateutil==2.8.2
+
+# Утилиты
+python-dotenv==1.0.0
+redis==5.0.1
+celery==5.3.4
+
+# Дополнительные библиотеки для анализа
+nltk==3.8.1
+textblob==0.17.1
+spacy==3.7.2
+
+# Для работы с изображениями и файлами
+Pillow==10.1.0
+aiofiles==23.2.1
+
+# Для логирования и мониторинга
+loguru==0.7.2
+prometheus-client==0.19.0
+
+# Для тестирования
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2

@@ -1,0 +1,5 @@
+.env 
+venv
+docker-compose.dev.yml
+mementum-463310-2acd18d49ee8.json
+credentials.json

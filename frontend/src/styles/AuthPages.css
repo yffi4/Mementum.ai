@@ -1,0 +1,341 @@
+/* Authentication Pages Styles */
+.auth-bg,
+.note-create-bg {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+      circle at 25% 25%,
+      rgba(161, 138, 255, 0.12) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(111, 234, 255, 0.12) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, #0b0c2a 0%, #1b1740 50%, #0b0c2a 100%);
+  overflow: hidden;
+  animation: authBackgroundShift 15s ease-in-out infinite;
+}
+
+@keyframes authBackgroundShift {
+  0%,
+  100% {
+    background-position: 0% 0%, 100% 100%;
+  }
+  50% {
+    background-position: 100% 100%, 0% 0%;
+  }
+}
+
+.auth-card,
+.note-create-card {
+  background: rgba(24, 27, 58, 0.95);
+  border: 1.5px solid rgba(161, 138, 255, 0.4);
+  border-radius: 1.25rem;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 0 40px 0 rgba(161, 138, 255, 0.2),
+    0 0 80px 0 rgba(111, 234, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(161, 138, 255, 0.1);
+  backdrop-filter: blur(15px);
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1.01, 0.32, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card::before,
+.note-create-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(161, 138, 255, 0.6),
+    transparent
+  );
+  animation: shimmerTop 3s ease-in-out infinite;
+}
+
+@keyframes shimmerTop {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-title,
+.note-create-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(90deg, #a18aff 0%, #6feaff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+}
+
+.auth-form,
+.note-create-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-input,
+.note-input {
+  width: 100%;
+  background: rgba(17, 21, 44, 0.95);
+  border: 1.5px solid rgba(111, 234, 255, 0.35);
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+  font-size: 1rem;
+  color: #b8f2ff;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  height: 56px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.auth-input:focus,
+.note-input:focus {
+  border-color: #a18aff;
+  box-shadow: 0 0 0 2px #a18aff44, 0 0 20px rgba(161, 138, 255, 0.2),
+    inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.auth-input:hover,
+.note-input:hover {
+  border-color: rgba(111, 234, 255, 0.5);
+  box-shadow: 0 0 15px rgba(111, 234, 255, 0.1),
+    inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.auth-btn,
+.note-create-btn {
+  width: 100%;
+  max-width: 280px;
+  margin: 0.5rem auto 0;
+  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%);
+  color: #181b3a;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  height: 56px;
+  box-shadow: 0 4px 20px rgba(161, 138, 255, 0.3),
+    0 2px 10px rgba(111, 234, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-btn::before,
+.note-create-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.auth-btn:hover::before,
+.note-create-btn:hover::before {
+  left: 100%;
+}
+
+.auth-btn:hover,
+.note-create-btn:hover {
+  background: linear-gradient(135deg, #6feaff 0%, #a18aff 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(161, 138, 255, 0.4),
+    0 4px 15px rgba(111, 234, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.auth-btn:active,
+.note-create-btn:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.auth-link {
+  margin-top: 1.2rem;
+  color: #b8f2ff;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.auth-link a {
+  color: #a18aff;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.auth-link a:hover {
+  color: #6feaff;
+}
+
+/* Улучшенное позиционирование иконок в полях ввода */
+.auth-input-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.auth-input:focus + .auth-input-icon,
+.note-input:focus + .auth-input-icon {
+  transform: translateY(-50%) scale(1.1);
+  filter: drop-shadow(0 0 12px currentColor);
+}
+
+.auth-input:hover + .auth-input-icon,
+.note-input:hover + .auth-input-icon {
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Utility classes for auth forms */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.right-3 {
+  right: 1rem;
+}
+
+.top-1\/2 {
+  top: 50%;
+}
+
+.-translate-y-1\/2 {
+  transform: translateY(-50%);
+}
+
+.pr-10 {
+  padding-right: 3rem;
+}
+
+.text-cyan-300 {
+  color: #6feaff;
+}
+
+.text-purple-300 {
+  color: #a18aff;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.7s cubic-bezier(0.23, 1.01, 0.32, 1) both;
+}
+
+.shimmer-gradient {
+  background: linear-gradient(90deg, #a18aff 0%, #6feaff 100%);
+  transition: all 0.3s ease;
+}
+
+.shimmer-gradient:hover {
+  background: linear-gradient(90deg, #6feaff 0%, #a18aff 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Loading spinner */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}

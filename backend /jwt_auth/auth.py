@@ -66,21 +66,27 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 async def get_current_user(request: Request, db: AsyncSession = Depends(get_async_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
     token = request.cookies.get("access_token")
     if not token:
-        raise HTTPException(status_code=401, detail="No token found in cookies")
+        raise credentials_exception
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
+        email: str = payload.get("sub")
         if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise credentials_exception
     except InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise credentials_exception
 
     user = await get_user(db, email=email)
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    if user is None:
+        raise credentials_exception
     return user
 
 async def get_current_active_user(

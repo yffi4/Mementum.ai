@@ -9,6 +9,9 @@ load_dotenv()
 class Settings(BaseSettings):
     DEBUG: bool = Field(default=False)
     SECRET_KEY: str = Field(default=os.getenv("SECRET_KEY"))
+    GOOGLE_CLIENT_ID: str = Field(default=os.getenv("GOOGLE_CLIENT_ID"))
+    GOOGLE_CLIENT_SECRET: str = Field(default=os.getenv("GOOGLE_CLIENT_SECRET"))
+    GOOGLE_REDIRECT_URI: str = Field(default=os.getenv("GOOGLE_REDIRECT_URI"))
     # FRONTEND_URLS : str
     # REDIS_PORT : str
     # REDIS_HOST: str

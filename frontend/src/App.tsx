@@ -5,6 +5,8 @@ import RegisterPage from "./pages/RegisterPage";
 import NotesListPage from "./pages/NotesListPage";
 import NoteCreatePage from "./pages/NoteCreatePage";
 import NotePage from "./pages/NotePage";
+import CalendarPage from "./pages/CalendarPage";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
       <Route path="/notes" element={<NotesListPage />} />
       <Route path="/notes/create" element={<NoteCreatePage />} />
       <Route path="/notes/:id" element={<NotePage />} />
+      <Route path="/calendar" element={<CalendarPage />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }

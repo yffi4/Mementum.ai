@@ -2,12 +2,13 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/NoteCreatePage.css";
 import NeonBackground from "../components/NeonBackground";
+import Navbar from "../components/Navbar";
 import { FiEdit3 } from "react-icons/fi";
 
 // Типы
@@ -52,9 +53,25 @@ export default function NoteCreatePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Получаем пользователя
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/auth/status", {
+          withCredentials: true,
+        });
+        setUser(response.data.user);
+      } catch (error) {
+        console.error("Ошибка получения пользователя:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const createNoteMutation = useMutation({
     mutationFn: createNoteWithAI,
@@ -88,7 +105,8 @@ export default function NoteCreatePage() {
   return (
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
-      <div className="note-create-card relative z-10 animate-fadeInUp">
+      <Navbar user={user} />
+      <div className="note-create-card relative z-10 animate-fadeInUp pt-20">
         <div className="note-create-header">
           <h2 className="note-create-title">
             {isLoading ? "AI is processing..." : "Create Note"}

@@ -198,7 +198,7 @@ const CalendarPage: React.FC = () => {
 
           <button
             onClick={() => setShowEventModal(false)}
-            className="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-colors"
+            className="w-full mt-6 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
           >
             Close
           </button>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import "../styles/NotePage.css";
 import NeonBackground from "../components/NeonBackground";
+import Navbar from "../components/Navbar";
+import NoteRenderer from "../components/NoteRenderer";
 import {
   FiEdit3,
   FiTrash2,
@@ -127,67 +129,218 @@ const getImportanceLevel = (importance: number) => {
 };
 
 const formatContent = (content: string) => {
-  // Разбиваем контент на параграфы и структурируем
-  const paragraphs = content.split("\n\n").filter((p) => p.trim());
+  // Разбиваем контент на блоки более умно
+  const lines = content.split("\n");
+  const blocks = [];
+  let currentBlock = "";
+  let currentType = "paragraph";
 
-  return paragraphs.map((paragraph, index) => {
-    const trimmed = paragraph.trim();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
 
-    // Заголовки (начинаются с #)
-    if (trimmed.startsWith("#")) {
+    // Пустая строка - завершаем текущий блок
+    if (!trimmed) {
+      if (currentBlock.trim()) {
+        blocks.push({
+          type: currentType,
+          content: currentBlock.trim(),
+          index: blocks.length,
+        });
+        currentBlock = "";
+        currentType = "paragraph";
+      }
+      continue;
+    }
+
+    // Заголовки с ** или ###
+    if (trimmed.match(/^\*\*[^*]+\*\*:?\*\*?$/)) {
+      if (currentBlock.trim()) {
+        blocks.push({
+          type: currentType,
+          content: currentBlock.trim(),
+          index: blocks.length,
+        });
+      }
+      const text = trimmed.replace(/^\*\*([^*]+)\*\*:?\*\*?$/, "$1");
+      blocks.push({
+        type: "section-header",
+        content: text,
+        index: blocks.length,
+      });
+      currentBlock = "";
+      currentType = "paragraph";
+      continue;
+    }
+
+    // Заголовки с #
+    if (trimmed.match(/^#+\s/)) {
+      if (currentBlock.trim()) {
+        blocks.push({
+          type: currentType,
+          content: currentBlock.trim(),
+          index: blocks.length,
+        });
+      }
       const level = trimmed.match(/^#+/)?.[0].length || 1;
       const text = trimmed.replace(/^#+\s*/, "");
-      return {
+      blocks.push({
         type: "heading",
-        level: Math.min(level, 3),
         content: text,
-        key: `h-${index}`,
-      };
+        level: Math.min(level, 3),
+        index: blocks.length,
+      });
+      currentBlock = "";
+      currentType = "paragraph";
+      continue;
+    }
+
+    // Разделители ---
+    if (trimmed === "---") {
+      if (currentBlock.trim()) {
+        blocks.push({
+          type: currentType,
+          content: currentBlock.trim(),
+          index: blocks.length,
+        });
+      }
+      blocks.push({ type: "divider", content: "", index: blocks.length });
+      currentBlock = "";
+      currentType = "paragraph";
+      continue;
     }
 
     // Списки
     if (trimmed.match(/^[-*•]\s/)) {
-      const items = trimmed
-        .split("\n")
-        .map((line) => line.replace(/^[-*•]\s*/, "").trim())
-        .filter(Boolean);
-      return {
-        type: "list",
-        items,
-        key: `list-${index}`,
-      };
+      if (currentType !== "list") {
+        if (currentBlock.trim()) {
+          blocks.push({
+            type: currentType,
+            content: currentBlock.trim(),
+            index: blocks.length,
+          });
+        }
+        currentBlock = "";
+        currentType = "list";
+      }
+      currentBlock += (currentBlock ? "\n" : "") + line;
+      continue;
     }
 
     // Нумерованные списки
     if (trimmed.match(/^\d+\.\s/)) {
-      const items = trimmed
-        .split("\n")
-        .map((line) => line.replace(/^\d+\.\s*/, "").trim())
-        .filter(Boolean);
-      return {
-        type: "numbered-list",
-        items,
-        key: `num-list-${index}`,
-      };
+      if (currentType !== "numbered-list") {
+        if (currentBlock.trim()) {
+          blocks.push({
+            type: currentType,
+            content: currentBlock.trim(),
+            index: blocks.length,
+          });
+        }
+        currentBlock = "";
+        currentType = "numbered-list";
+      }
+      currentBlock += (currentBlock ? "\n" : "") + line;
+      continue;
     }
 
     // Цитаты
     if (trimmed.startsWith(">")) {
-      const text = trimmed.replace(/^>\s*/, "");
-      return {
-        type: "quote",
-        content: text,
-        key: `quote-${index}`,
-      };
+      if (currentType !== "quote") {
+        if (currentBlock.trim()) {
+          blocks.push({
+            type: currentType,
+            content: currentBlock.trim(),
+            index: blocks.length,
+          });
+        }
+        currentBlock = "";
+        currentType = "quote";
+      }
+      currentBlock += (currentBlock ? "\n" : "") + line;
+      continue;
     }
 
-    // Обычный параграф
-    return {
-      type: "paragraph",
-      content: trimmed,
-      key: `p-${index}`,
-    };
-  });
+    // Обычный текст
+    if (currentType !== "paragraph") {
+      if (currentBlock.trim()) {
+        blocks.push({
+          type: currentType,
+          content: currentBlock.trim(),
+          index: blocks.length,
+        });
+      }
+      currentBlock = "";
+      currentType = "paragraph";
+    }
+    currentBlock += (currentBlock ? "\n" : "") + line;
+  }
+
+  // Добавляем последний блок
+  if (currentBlock.trim()) {
+    blocks.push({
+      type: currentType,
+      content: currentBlock.trim(),
+      index: blocks.length,
+    });
+  }
+
+  return blocks;
+};
+
+const renderTextWithLinks = (text: string) => {
+  // Обработка ссылок в квадратных скобках
+  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const urlPattern = /(https?:\/\/[^\s)]+)/g;
+
+  let processedText = text;
+  const elements = [];
+  let lastIndex = 0;
+
+  // Сначала обрабатываем markdown ссылки
+  let match;
+  while ((match = linkPattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      elements.push(text.slice(lastIndex, match.index));
+    }
+    elements.push(
+      <a
+        key={match.index}
+        href={match[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="content-link"
+      >
+        {match[1]}
+      </a>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    const remainingText = text.slice(lastIndex);
+    // Обрабатываем обычные URL в оставшемся тексте
+    const parts = remainingText.split(urlPattern);
+    for (let i = 0; i < parts.length; i++) {
+      if (urlPattern.test(parts[i])) {
+        elements.push(
+          <a
+            key={`url-${i}`}
+            href={parts[i]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="content-link"
+          >
+            {parts[i]}
+          </a>
+        );
+      } else if (parts[i]) {
+        elements.push(parts[i]);
+      }
+    }
+  }
+
+  return elements.length > 0 ? elements : text;
 };
 
 // Компонент ошибки
@@ -234,6 +387,20 @@ export default function NotePage() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Get user data from localStorage
+  const [user, setUser] = useState<any>(null);
+
+  React.useEffect(() => {
+    const userData = localStorage.getItem("user_data");
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+      }
+    }
+  }, []);
 
   // Запрос заметки
   const {
@@ -303,7 +470,8 @@ export default function NotePage() {
     return (
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
-        <div className="note-error relative z-10">
+        <Navbar user={user} />
+        <div className="note-error relative z-10 pt-20">
           <h3 className="error-title">Invalid note ID</h3>
           <Link to="/notes" className="auth-btn">
             Back to Notes
@@ -317,7 +485,10 @@ export default function NotePage() {
     return (
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
-        <LoadingState />
+        <Navbar user={user} />
+        <div className="pt-20">
+          <LoadingState />
+        </div>
       </div>
     );
   }
@@ -326,7 +497,10 @@ export default function NotePage() {
     return (
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
-        <ErrorState error={error as Error} onRetry={() => refetch()} />
+        <Navbar user={user} />
+        <div className="pt-20">
+          <ErrorState error={error as Error} onRetry={() => refetch()} />
+        </div>
       </div>
     );
   }
@@ -334,7 +508,8 @@ export default function NotePage() {
   return (
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
-      <div className="note-view-container relative z-10 animate-fadeInUp">
+      <Navbar user={user} />
+      <div className="note-view-container relative z-10 animate-fadeInUp pt-20">
         {/* Заголовок страницы */}
         <div className="note-header">
           <div className="note-header-left">
@@ -514,58 +689,7 @@ export default function NotePage() {
                   <span className="font-semibold">Содержание</span>
                 </div>
                 <div className="note-view-content">
-                  {formatContent(note.content).map((block) => {
-                    switch (block.type) {
-                      case "heading":
-                        const HeadingTag = `h${
-                          block.level + 2
-                        }` as keyof JSX.IntrinsicElements;
-                        return (
-                          <HeadingTag
-                            key={block.key}
-                            className={`content-heading level-${block.level}`}
-                          >
-                            {block.content}
-                          </HeadingTag>
-                        );
-
-                      case "list":
-                        return (
-                          <ul key={block.key} className="content-list">
-                            {block.items.map((item, idx) => (
-                              <li key={idx} className="content-list-item">
-                                {item}
-                              </li>
-                            ))}
-                          </ul>
-                        );
-
-                      case "numbered-list":
-                        return (
-                          <ol key={block.key} className="content-numbered-list">
-                            {block.items.map((item, idx) => (
-                              <li key={idx} className="content-list-item">
-                                {item}
-                              </li>
-                            ))}
-                          </ol>
-                        );
-
-                      case "quote":
-                        return (
-                          <blockquote key={block.key} className="content-quote">
-                            {block.content}
-                          </blockquote>
-                        );
-
-                      default:
-                        return (
-                          <p key={block.key} className="content-paragraph">
-                            {block.content}
-                          </p>
-                        );
-                    }
-                  })}
+                  <NoteRenderer content={note.content} />
                 </div>
               </div>
             </>

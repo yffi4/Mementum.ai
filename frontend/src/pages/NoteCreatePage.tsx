@@ -10,6 +10,7 @@ import "../styles/NoteCreatePage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
 import { FiEdit3 } from "react-icons/fi";
+import NoteRenderer from "../components/NoteRenderer";
 
 // Типы
 interface CreateNoteData {
@@ -172,9 +173,7 @@ export default function NoteCreatePage() {
             <div className="note-preview-card">
               <h4 className="preview-title">Preview</h4>
               <div className="preview-content">
-                {content.split("\n").map((line, index) => (
-                  <p key={index}>{line || "\u00A0"}</p>
-                ))}
+                <NoteRenderer content={content} />
               </div>
             </div>
           )}

@@ -41,7 +41,6 @@ const Profile: React.FC = () => {
 
       const authData = await authResponse.json();
       setUser(authData.user);
-
       // Получаем статистику заметок
       const notesResponse = await fetch("http://localhost:8000/notes/count", {
         credentials: "include",
@@ -126,7 +125,7 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Navbar user={user} />
 
-      <div className="pt-24 pb-12 px-6">
+      <div className="pt-20 pb-12 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <motion.div
@@ -306,4 +305,3 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
- 

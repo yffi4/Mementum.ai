@@ -328,6 +328,7 @@ class AIAgent:
         response = await self.openai_client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
             temperature=0.3
         )
         
@@ -346,6 +347,7 @@ class AIAgent:
         response = await self.openai_client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
             temperature=0.4
         )
         
@@ -360,6 +362,7 @@ class AIAgent:
         response = await self.openai_client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
             temperature=0.1
         )
         
@@ -375,6 +378,7 @@ class AIAgent:
         response = await self.openai_client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
             temperature=0.1
         )
         
@@ -420,6 +424,7 @@ class AIAgent:
         response = await self.openai_client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
+            max_tokens=2000,
             temperature=0.3
         )
         

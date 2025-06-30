@@ -5,6 +5,7 @@ module.exports = {
       colors: {
         "neon-cyan": "#6FEAFF",
         "neon-blue": "#3B82F6",
+        "neon-green": "#00FF88",
         "neon-purple": "#A18AFF",
         "neon-pink": "#F472B6",
         "deep-bg": "#0B0C2A",
@@ -13,6 +14,8 @@ module.exports = {
       },
       boxShadow: {
         "neon-cyan": "0 0 8px 2px #6FEAFF, 0 0 32px 4px #6FEAFF44",
+        "neon-blue": "0 0 8px 2px #3B82F6, 0 0 32px 4px #3B82F644",
+        "neon-green": "0 0 8px 2px #00FF88, 0 0 32px 4px #00FF8844",
         "neon-purple": "0 0 8px 2px #A18AFF, 0 0 32px 4px #A18AFF44",
         "neon-pink": "0 0 8px 2px #F472B6, 0 0 32px 4px #F472B644",
       },

@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, List, Any
 from datetime import datetime
+import json
 
 # Note схемы
 class NoteBase(BaseModel):
@@ -17,6 +18,26 @@ class NoteResponse(NoteBase):
     id: int
     user_id: int
     created_at: datetime
+    updated_at: Optional[datetime] = None
+    category: Optional[str] = None
+    importance: Optional[int] = None
+    tags: Optional[List[str]] = None
+    summary: Optional[str] = None
+
+    @field_validator('tags', mode='before')
+    @classmethod
+    def parse_tags(cls, v):
+        if v is None:
+            return []
+        if isinstance(v, str):
+            try:
+                parsed = json.loads(v)
+                return parsed if isinstance(parsed, list) else []
+            except (json.JSONDecodeError, TypeError):
+                return []
+        if isinstance(v, list):
+            return v
+        return []
 
     class Config:
         from_attributes = True

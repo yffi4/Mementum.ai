@@ -4,13 +4,16 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db, get_async_db
-from jwt_auth.auth import create_access_token, get_current_active_user
+from jwt_auth.auth import create_access_token, get_current_active_user, oauth2_scheme
 from models import User
 from .google_oauth import google_oauth_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
+
+# Защищенные эндпоинты с авторизацией
+protected_router = APIRouter(prefix="/auth", tags=["authentication"], dependencies=[Depends(oauth2_scheme)])
 
 
 @router.get("/google")
@@ -119,7 +122,7 @@ def logout(response: Response):
     return {"message": "Logged out successfully"}
 
 
-@router.delete("/google/disconnect")
+@protected_router.delete("/google/disconnect")
 async def disconnect_google(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_active_user)

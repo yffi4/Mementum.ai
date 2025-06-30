@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 8px 2px #00ff88, 0 0 32px 4px #00ff8844;
+}
+
+.glow-green-sm {
+  box-shadow: 0 0 4px 1px #00ff88, 0 0 16px 2px #00ff8844;
+}
+
+.glow-blue {
+  box-shadow: 0 0 8px 2px #3b82f6, 0 0 32px 4px #3b82f644;
+}
+
+.glow-blue-sm {
+  box-shadow: 0 0 4px 1px #3b82f6, 0 0 16px 2px #3b82f644;
+}

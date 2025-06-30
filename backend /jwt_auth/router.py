@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from database import get_async_db
 from .auth import *
-from .shemas import UserCreate, Token, User, UserInDB
-from models import User as UserModel
+from .shemas import UserCreate, Token, TokenRefresh, User, UserInDB
+from models import User as UserModel, RefreshToken
 from datetime import timedelta
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+# oauth2_scheme импортируется из auth.py
 
-@router.post("/token")
+@router.post("/token", response_model=Token)
 async def login_for_access_token(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -25,11 +25,16 @@ async def login_for_access_token(
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    # Создаем access и refresh токены
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
+    
+    refresh_token = await create_refresh_token(user.id, db)
 
+    # Устанавливаем cookies для веб-приложения
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -37,7 +42,22 @@ async def login_for_access_token(
         samesite="lax",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
-    return {"message: ok"}
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,  # 7 дней в секундах
+    )
+    
+    # Возвращаем токены для Swagger UI
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    }
 
 @router.post("/register", response_model=UserInDB)
 async def register_user(user: UserCreate, db: AsyncSession = Depends(get_async_db)):
@@ -51,35 +71,92 @@ async def register_user(user: UserCreate, db: AsyncSession = Depends(get_async_d
     new_user = await create_user(db, user)
     return new_user
 
-async def get_current_user(request: Request, db: AsyncSession = Depends(get_async_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="No token found in cookies")
+# Функции get_current_user и get_current_active_user импортируются из auth.py
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-    except InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    user = await get_user(db, email=email)
+@router.post("/refresh", response_model=Token)
+async def refresh_access_token(
+    response: Response,
+    request: Request,
+    db: AsyncSession = Depends(get_async_db)
+):
+    # Получаем refresh токен из cookie или из тела запроса
+    refresh_token = request.cookies.get("refresh_token")
+    
+    if not refresh_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Верифицируем refresh токен
+    user = await verify_refresh_token(refresh_token, db)
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
-
-
-async def get_current_active_user(
-    current_user: UserModel = Depends(get_current_user)
-) -> UserModel:
-    if current_user.is_active:
-        return current_user
-    raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail='Inactive user'
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Создаем новый access токен
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
     )
+    
+    # Создаем новый refresh токен
+    new_refresh_token = await create_refresh_token(user.id, db)
+    
+    # Обновляем cookies
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+    
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        samesite="lax",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+    )
+    
+    return {
+        "access_token": access_token,
+        "refresh_token": new_refresh_token,
+        "token_type": "bearer",
+        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    }
 
-@router.get("/users/me", response_model=User)
+
+@router.post("/logout")
+async def logout(
+    response: Response,
+    request: Request,
+    db: AsyncSession = Depends(get_async_db)
+):
+    # Получаем refresh токен из cookie
+    refresh_token = request.cookies.get("refresh_token")
+    
+    if refresh_token:
+        # Деактивируем refresh токен в базе данных
+        await db.execute(
+            update(RefreshToken)
+            .where(RefreshToken.token == refresh_token)
+            .values(is_active=False)
+        )
+        await db.commit()
+    
+    # Удаляем cookies
+    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
+    
+    return {"message": "Successfully logged out"}
+
+
+@router.get("/users/me", response_model=User, dependencies=[Depends(oauth2_scheme)])
 async def read_users_me(current_user: UserModel = Depends(get_current_active_user)):
     return current_user

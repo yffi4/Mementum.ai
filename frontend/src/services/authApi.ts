@@ -46,9 +46,77 @@ export interface CreateEventData {
 }
 
 class AuthApiService {
+  private isRefreshing = false;
+  private refreshPromise: Promise<boolean> | null = null;
+
   private getAuthHeaders() {
     // Токен теперь в cookie, не нужны заголовки Authorization
     return {};
+  }
+
+  // Автоматическое обновление токена
+  private async refreshToken(): Promise<boolean> {
+    if (this.isRefreshing && this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = this._performRefresh();
+
+    try {
+      const result = await this.refreshPromise;
+      return result;
+    } finally {
+      this.isRefreshing = false;
+      this.refreshPromise = null;
+    }
+  }
+
+  private async _performRefresh(): Promise<boolean> {
+    try {
+      const response = await fetch(`${API_BASE}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      return false;
+    }
+  }
+
+  // Обертка для fetch с автоматическим обновлением токена
+  private async fetchWithAuth(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    const response = await fetch(url, {
+      ...options,
+      credentials: "include",
+      headers: {
+        ...this.getAuthHeaders(),
+        ...options.headers,
+      },
+    });
+
+    // Если получили 401, попробуем обновить токен
+    if (response.status === 401) {
+      const refreshed = await this.refreshToken();
+      if (refreshed) {
+        // Повторяем запрос с новым токеном
+        return fetch(url, {
+          ...options,
+          credentials: "include",
+          headers: {
+            ...this.getAuthHeaders(),
+            ...options.headers,
+          },
+        });
+      }
+    }
+
+    return response;
   }
 
   // Google OAuth
@@ -58,10 +126,7 @@ class AuthApiService {
   }
 
   async getAuthStatus(): Promise<AuthStatus> {
-    const response = await fetch(`${API_BASE}/auth/status`, {
-      headers: this.getAuthHeaders(),
-      credentials: "include",
-    });
+    const response = await this.fetchWithAuth(`${API_BASE}/auth/status`);
 
     if (!response.ok) {
       throw new Error("Failed to get auth status");
@@ -71,19 +136,18 @@ class AuthApiService {
   }
 
   async logout(): Promise<void> {
-    await fetch(`${API_BASE}/auth/logout`, {
+    await this.fetchWithAuth(`${API_BASE}/auth/logout`, {
       method: "POST",
-      headers: this.getAuthHeaders(),
-      credentials: "include",
     });
   }
 
   async disconnectGoogle(): Promise<void> {
-    const response = await fetch(`${API_BASE}/auth/google/disconnect`, {
-      method: "DELETE",
-      headers: this.getAuthHeaders(),
-      credentials: "include",
-    });
+    const response = await this.fetchWithAuth(
+      `${API_BASE}/auth/google/disconnect`,
+      {
+        method: "DELETE",
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to disconnect Google account");
@@ -92,10 +156,9 @@ class AuthApiService {
 
   // Calendar API (now under /notes)
   async getCalendars() {
-    const response = await fetch(`${API_BASE}/notes/calendar/calendars`, {
-      headers: this.getAuthHeaders(),
-      credentials: "include",
-    });
+    const response = await this.fetchWithAuth(
+      `${API_BASE}/notes/calendar/calendars`
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch calendars");
@@ -122,10 +185,7 @@ class AuthApiService {
       searchParams.append("max_results", params.max_results.toString());
 
     const url = `${API_BASE}/notes/calendar/events?${searchParams.toString()}`;
-    const response = await fetch(url, {
-      headers: this.getAuthHeaders(),
-      credentials: "include",
-    });
+    const response = await this.fetchWithAuth(url);
 
     if (!response.ok) {
       throw new Error("Failed to fetch calendar events");
@@ -138,15 +198,13 @@ class AuthApiService {
     eventData: CreateEventData,
     calendarId: string = "primary"
   ): Promise<CalendarEvent> {
-    const response = await fetch(
+    const response = await this.fetchWithAuth(
       `${API_BASE}/notes/calendar/events?calendar_id=${calendarId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...this.getAuthHeaders(),
         },
-        credentials: "include",
         body: JSON.stringify(eventData),
       }
     );
@@ -159,10 +217,9 @@ class AuthApiService {
   }
 
   async getUserInfo() {
-    const response = await fetch(`${API_BASE}/notes/calendar/user-info`, {
-      headers: this.getAuthHeaders(),
-      credentials: "include",
-    });
+    const response = await this.fetchWithAuth(
+      `${API_BASE}/notes/calendar/user-info`
+    );
 
     if (!response.ok) {
       throw new Error("Failed to fetch user info");
@@ -175,12 +232,8 @@ class AuthApiService {
   async getNoteCalendarEvents(
     noteId: number
   ): Promise<{ note_id: number; events: NoteCalendarEvent[] }> {
-    const response = await fetch(
-      `${API_BASE}/notes/${noteId}/calendar-events`,
-      {
-        headers: this.getAuthHeaders(),
-        credentials: "include",
-      }
+    const response = await this.fetchWithAuth(
+      `${API_BASE}/notes/${noteId}/calendar-events`
     );
 
     if (!response.ok) {
@@ -193,12 +246,10 @@ class AuthApiService {
   async analyzeNoteForCalendar(
     noteId: number
   ): Promise<{ message: string; events_count: number }> {
-    const response = await fetch(
+    const response = await this.fetchWithAuth(
       `${API_BASE}/notes/${noteId}/analyze-calendar`,
       {
         method: "POST",
-        headers: this.getAuthHeaders(),
-        credentials: "include",
       }
     );
 

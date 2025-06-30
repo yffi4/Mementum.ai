@@ -168,15 +168,194 @@
     font-size: 0.9rem;
   }
   
+  /* Сетка метаданных */
+  .note-metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(111, 234, 255, 0.05);
+    border: 1px solid rgba(111, 234, 255, 0.15);
+    border-radius: 0.75rem;
+  }
+
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .metadata-label {
+    color: #6feaff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+  }
+
+  .metadata-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid;
+    width: fit-content;
+  }
+
+  .importance-display {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .importance-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag-pill {
+    background: rgba(161, 138, 255, 0.2);
+    color: #a18aff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(161, 138, 255, 0.3);
+  }
+
+  /* Секция резюме */
+  .note-summary-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(161, 138, 255, 0.05);
+    border: 1px solid rgba(161, 138, 255, 0.15);
+    border-radius: 0.75rem;
+  }
+
+  .summary-header {
+    color: #a18aff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .summary-content {
+    color: #d1d5db;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* Секция контента */
+  .note-content-section {
+    margin-bottom: 2rem;
+  }
+
+  .content-header {
+    color: #6feaff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(111, 234, 255, 0.2);
+  }
+
   .note-view-content {
     color: #d1d5db;
     font-size: 1.1rem;
     line-height: 1.7;
-    margin-bottom: 2rem;
   }
-  
-  .note-view-content p {
-    margin: 0 0 1rem 0;
+
+  /* Стили для структурированного контента */
+  .content-heading {
+    margin: 1.5rem 0 1rem 0;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .content-heading.level-1 {
+    font-size: 1.5rem;
+    color: #a18aff;
+    border-bottom: 2px solid rgba(161, 138, 255, 0.3);
+    padding-bottom: 0.5rem;
+  }
+
+  .content-heading.level-2 {
+    font-size: 1.3rem;
+    color: #6feaff;
+  }
+
+  .content-heading.level-3 {
+    font-size: 1.1rem;
+    color: #9ca3af;
+  }
+
+  .content-paragraph {
+    margin: 0 0 1.25rem 0;
+    text-align: justify;
+  }
+
+  .content-list,
+  .content-numbered-list {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .content-list {
+    list-style-type: none;
+  }
+
+  .content-numbered-list {
+    list-style-type: decimal;
+  }
+
+  .content-list-item {
+    margin: 0.5rem 0;
+    position: relative;
+  }
+
+  .content-list .content-list-item::before {
+    content: "•";
+    color: #6feaff;
+    font-size: 1.2rem;
+    position: absolute;
+    left: -1.25rem;
+    top: 0;
+  }
+
+  .content-quote {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #a18aff;
+    background: rgba(161, 138, 255, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+    color: #b8b8b8;
+  }
+
+  .content-quote::before {
+    content: "“";
+    font-size: 2rem;
+    color: #a18aff;
+    opacity: 0.7;
+    position: absolute;
+    margin-left: -0.5rem;
+    margin-top: -0.5rem;
   }
   
   .note-metadata {
@@ -439,6 +618,56 @@
     .cancel-btn {
       font-size: 0.8rem;
       padding: 0.4rem 0.8rem;
+    }
+
+    /* Мобильные стили для новых компонентов */
+    .note-metadata-grid {
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .importance-display {
+      gap: 0.5rem;
+    }
+
+    .importance-stars {
+      flex-wrap: wrap;
+    }
+
+    .tags-container {
+      gap: 0.25rem;
+    }
+
+    .tag-pill {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+    }
+
+    .note-summary-section,
+    .note-content-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .note-summary-section {
+      padding: 1rem;
+    }
+
+    .content-heading.level-1 {
+      font-size: 1.3rem;
+    }
+
+    .content-heading.level-2 {
+      font-size: 1.1rem;
+    }
+
+    .content-quote {
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+    }
+
+    .content-list,
+    .content-numbered-list {
+      padding-left: 1rem;
     }
   }
   

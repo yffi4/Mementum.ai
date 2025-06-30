@@ -5,9 +5,11 @@ from sqlalchemy import select, func
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import json
+import openai
 from database import get_async_db, get_db
-from jwt_auth.auth import get_current_active_user
+from jwt_auth.auth import get_current_active_user, oauth2_scheme
 from models import User, NoteCalendarEvent, Note
+from config import settings
 
 from . import crud
 from .schemas import (
@@ -21,6 +23,7 @@ from .schemas import (
 
 # Импорты для календаря
 from ai_agent.calendar_agent import calendar_agent
+from ai_agent.note_analyzer import NoteAnalyzer
 from auth.google_oauth import google_oauth_service
 from google_calendar.schemas import (
     CalendarEventCreator,
@@ -28,6 +31,10 @@ from google_calendar.schemas import (
     UserInfoResponse,
     CalendarEventResponse
 )
+
+# Инициализация AI анализатора
+openai_client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+note_analyzer = NoteAnalyzer(openai_client)
 
 router = APIRouter()
 
@@ -40,9 +47,33 @@ async def create_note(
     sync_db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Создать новую заметку с автоматическим анализом на события календаря"""
+    """Создать новую заметку с автоматическим AI анализом и анализом на события календаря"""
     # Создать заметку
     db_note = await crud.create_note(db, note, current_user.id)
+    
+    # AI анализ заметки
+    try:
+        import json
+        print(f"Запускаем AI анализ для новой заметки {db_note.id}")
+        
+        category = await note_analyzer.categorize_note(db_note.content)
+        importance = await note_analyzer.assess_importance(db_note.content)
+        tags = await note_analyzer.suggest_tags(db_note.content)
+        summary = await note_analyzer.generate_summary(db_note.content)
+        
+        # Обновляем заметку с результатами AI анализа
+        db_note.category = category
+        db_note.importance = importance
+        db_note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
+        db_note.summary = summary
+        
+        await db.commit()
+        
+        print(f"AI анализ завершен: категория={category}, важность={importance}")
+        
+    except Exception as e:
+        print(f"Ошибка AI анализа новой заметки: {e}")
+        # Не прерываем создание заметки из-за ошибки AI анализа
     
     # Анализировать заметку на предмет событий календаря
     try:
@@ -133,13 +164,37 @@ async def update_note(
     sync_db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Обновить заметку с повторным анализом на события календаря"""
+    """Обновить заметку с повторным AI анализом и анализом на события календаря"""
     updated_note = await crud.update_note(db, note_id, current_user.id, note_update)
     if not updated_note:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Заметка не найдена"
         )
+    
+    # AI анализ обновленной заметки
+    try:
+        import json
+        print(f"Запускаем AI анализ для обновленной заметки {note_id}")
+        
+        category = await note_analyzer.categorize_note(updated_note.content)
+        importance = await note_analyzer.assess_importance(updated_note.content)
+        tags = await note_analyzer.suggest_tags(updated_note.content)
+        summary = await note_analyzer.generate_summary(updated_note.content)
+        
+        # Обновляем заметку с результатами AI анализа
+        updated_note.category = category
+        updated_note.importance = importance
+        updated_note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
+        updated_note.summary = summary
+        
+        await db.commit()
+        
+        print(f"AI анализ обновленной заметки завершен: категория={category}, важность={importance}")
+        
+    except Exception as e:
+        print(f"Ошибка AI анализа обновленной заметки: {e}")
+        # Не прерываем обновление заметки из-за ошибки AI анализа
     
     # Удалить старые события календаря и создать новые
     try:
@@ -519,14 +574,83 @@ def analyze_note_for_calendar(
     }
 
 
+@router.post("/{note_id}/analyze")
+async def analyze_single_note(
+    note_id: int,
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Анализировать отдельную заметку с помощью AI agent"""
+    try:
+        import json
+        
+        # Получаем заметку
+        result = await db.execute(
+            select(Note).filter(Note.id == note_id, Note.user_id == current_user.id)
+        )
+        note = result.scalar_one_or_none()
+        
+        if not note:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заметка не найдена"
+            )
+        
+        print(f"Запускаем AI анализ для заметки {note_id}: {note.title[:50]}...")
+        
+        # Используем AI agent для анализа
+        category = await note_analyzer.categorize_note(note.content)
+        importance = await note_analyzer.assess_importance(note.content)
+        tags = await note_analyzer.suggest_tags(note.content)
+        summary = await note_analyzer.generate_summary(note.content)
+        
+        # Дополнительный анализ
+        topics = await note_analyzer.detect_topics(note.content)
+        keywords = await note_analyzer.extract_keywords(note.content)
+        
+        print(f"AI анализ завершен: категория={category}, важность={importance}")
+        
+        # Обновляем заметку
+        note.category = category
+        note.importance = importance
+        note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
+        note.summary = summary
+        
+        await db.commit()
+        
+        return {
+            "success": True,
+            "note_id": note_id,
+            "analysis": {
+                "category": category,
+                "importance": importance,
+                "tags": tags,
+                "summary": summary,
+                "topics": topics,
+                "keywords": keywords
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"ERROR in analyze_single_note: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Ошибка AI анализа заметки: {str(e)}"
+        )
+
+
 @router.post("/analyze-all")
 async def analyze_all_notes(
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Анализировать все заметки пользователя и обновить категории"""
+    """Анализировать все заметки пользователя с помощью AI agent"""
     try:
-        from ai_agent.agent import AIAgent
         import json
         
         # Получаем все заметки пользователя
@@ -535,22 +659,26 @@ async def analyze_all_notes(
         )
         notes = result.scalars().all()
         
-        agent = AIAgent(db, current_user)
         analyzed_notes = []
+        
+        print(f"Начинаем AI анализ {len(notes)} заметок...")
         
         for note in notes:
             try:
-                # Анализируем заметку
-                category = await agent.note_analyzer.categorize_note(note.content)
-                importance = await agent.note_analyzer.assess_importance(note.content)
-                keywords = await agent.note_analyzer.extract_keywords(note.content)
-                summary = await agent.note_analyzer.generate_summary(note.content)
-                tags = await agent.note_analyzer.suggest_tags(note.content)
+                print(f"Анализируем заметку {note.id}: {note.title[:50]}...")
+                
+                # Используем AI agent для анализа
+                category = await note_analyzer.categorize_note(note.content)
+                importance = await note_analyzer.assess_importance(note.content)
+                tags = await note_analyzer.suggest_tags(note.content)
+                summary = await note_analyzer.generate_summary(note.content)
+                
+                print(f"AI анализ заметки {note.id}: категория={category}, важность={importance}")
                 
                 # Обновляем заметку
                 note.category = category
                 note.importance = importance
-                note.tags = json.dumps(tags) if tags else None
+                note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
                 note.summary = summary
                 
                 analyzed_notes.append({
@@ -559,14 +687,38 @@ async def analyze_all_notes(
                     "category": category,
                     "importance": importance,
                     "tags": tags,
-                    "keywords": keywords
+                    "summary": summary
                 })
                 
             except Exception as e:
-                print(f"Ошибка анализа заметки {note.id}: {str(e)}")
-                continue
+                print(f"Ошибка AI анализа заметки {note.id}: {str(e)}")
+                # Fallback на простой анализ
+                try:
+                    category = "Общее"
+                    importance = 3
+                    tags = []
+                    summary = note.content[:200] + "..." if len(note.content) > 200 else note.content
+                    
+                    note.category = category
+                    note.importance = importance
+                    note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
+                    note.summary = summary
+                    
+                    analyzed_notes.append({
+                        "id": note.id,
+                        "title": note.title,
+                        "category": category,
+                        "importance": importance,
+                        "tags": tags,
+                        "summary": summary
+                    })
+                except Exception as fallback_error:
+                    print(f"Ошибка fallback анализа заметки {note.id}: {str(fallback_error)}")
+                    continue
         
         await db.commit()
+        
+        print(f"AI анализ завершен. Обработано {len(analyzed_notes)} заметок")
         
         return {
             "success": True,
@@ -575,10 +727,13 @@ async def analyze_all_notes(
         }
         
     except Exception as e:
+        print(f"ERROR in analyze_all_notes: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка анализа заметок: {str(e)}"
+            detail=f"Ошибка AI анализа заметок: {str(e)}"
         )
 
 
@@ -589,23 +744,47 @@ async def get_note_categories(
 ):
     """Получить все категории заметок пользователя"""
     try:
+        print(f"Получаем категории для пользователя {current_user.id}")
+        
+        # Получаем все заметки пользователя
         result = await db.execute(
-            select(Note.category, func.count(Note.id).label('count'))
+            select(Note)
             .filter(Note.user_id == current_user.id)
-            .filter(Note.category.isnot(None))
-            .group_by(Note.category)
-            .order_by(func.count(Note.id).desc())
         )
-        categories = result.all()
+        notes = result.scalars().all()
+        
+        print(f"Найдено {len(notes)} заметок")
+        
+        # Подсчитываем категории
+        category_counts = {}
+        for note in notes:
+            category = note.category
+            if category and category.strip():
+                category_counts[category] = category_counts.get(category, 0) + 1
+            else:
+                # Считаем заметки без категории как "Общее"
+                category_counts["Общее"] = category_counts.get("Общее", 0) + 1
+        
+        print(f"Категории: {category_counts}")
+        
+        # Сортируем по количеству
+        sorted_categories = sorted(
+            category_counts.items(), 
+            key=lambda x: x[1], 
+            reverse=True
+        )
         
         return {
             "categories": [
-                {"name": cat.category, "count": cat.count} 
-                for cat in categories
+                {"name": name, "count": count} 
+                for name, count in sorted_categories
             ]
         }
         
     except Exception as e:
+        print(f"ERROR in get_note_categories: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ошибка получения категорий: {str(e)}"
@@ -620,12 +799,22 @@ async def get_notes_by_category(
 ):
     """Получить заметки по категории"""
     try:
-        result = await db.execute(
-            select(Note)
-            .filter(Note.user_id == current_user.id)
-            .filter(Note.category == category)
-            .order_by(Note.importance.desc(), Note.created_at.desc())
-        )
+        if category == "Общее":
+            # Для категории "Общее" ищем заметки с пустой или null категорией
+            result = await db.execute(
+                select(Note)
+                .filter(Note.user_id == current_user.id)
+                .filter((Note.category.is_(None)) | (Note.category == '') | (Note.category == 'Общее'))
+                .order_by(Note.created_at.desc())
+            )
+        else:
+            result = await db.execute(
+                select(Note)
+                .filter(Note.user_id == current_user.id)
+                .filter(Note.category == category)
+                .order_by(Note.created_at.desc())
+            )
+        
         notes = result.scalars().all()
         
         return {
@@ -635,16 +824,21 @@ async def get_notes_by_category(
                     "id": note.id,
                     "title": note.title,
                     "content": note.content[:200] + "..." if len(note.content) > 200 else note.content,
-                    "importance": note.importance,
+                    "category": note.category or "Общее",
+                    "importance": note.importance or 1,
                     "tags": json.loads(note.tags) if note.tags else [],
-                    "summary": note.summary,
-                    "created_at": note.created_at
+                    "summary": note.summary or (note.content[:200] + "..." if len(note.content) > 200 else note.content),
+                    "created_at": note.created_at,
+                    "updated_at": getattr(note, 'updated_at', note.created_at)
                 }
                 for note in notes
             ]
         }
         
     except Exception as e:
+        print(f"ERROR in get_notes_by_category: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ошибка получения заметок: {str(e)}"

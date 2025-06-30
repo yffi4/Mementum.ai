@@ -76,19 +76,47 @@ const analyzeAllNotes = async () => {
 function NoteCard({ note }: { note: Note }) {
   const getCategoryColor = (category: string) => {
     const colors = {
-      Работа: "text-blue-400 bg-blue-500/20",
-      Личное: "text-green-400 bg-green-500/20",
-      Идеи: "text-purple-400 bg-purple-500/20",
-      Учеба: "text-yellow-400 bg-yellow-500/20",
-      Проекты: "text-red-400 bg-red-500/20",
+      Обучение: "text-blue-400 bg-blue-500/20 border-blue-500/30",
+      Проект: "text-green-400 bg-green-500/20 border-green-500/30",
+      Идея: "text-purple-400 bg-purple-500/20 border-purple-500/30",
+      Работа: "text-orange-400 bg-orange-500/20 border-orange-500/30",
+      Исследование: "text-cyan-400 bg-cyan-500/20 border-cyan-500/30",
+      Финансы: "text-yellow-400 bg-yellow-500/20 border-yellow-500/30",
+      Здоровье: "text-red-400 bg-red-500/20 border-red-500/30",
+      Путешествия: "text-indigo-400 bg-indigo-500/20 border-indigo-500/30",
+      Покупки: "text-pink-400 bg-pink-500/20 border-pink-500/30",
+      Личное: "text-emerald-400 bg-emerald-500/20 border-emerald-500/30",
+      Техника: "text-slate-400 bg-slate-500/20 border-slate-500/30",
+      Ссылки: "text-teal-400 bg-teal-500/20 border-teal-500/30",
+      Общее: "text-gray-400 bg-gray-500/20 border-gray-500/30",
     };
     return (
-      colors[category as keyof typeof colors] || "text-gray-400 bg-gray-500/20"
+      colors[category as keyof typeof colors] ||
+      "text-gray-400 bg-gray-500/20 border-gray-500/30"
     );
   };
 
-  const getImportanceStars = (importance: number) => {
-    return "★".repeat(importance) + "☆".repeat(5 - importance);
+  const getImportanceLevel = (importance: number) => {
+    if (importance >= 8)
+      return { text: "Критическая", color: "text-red-400", icon: "🔥" };
+    if (importance >= 6)
+      return { text: "Высокая", color: "text-orange-400", icon: "⚡" };
+    if (importance >= 4)
+      return { text: "Средняя", color: "text-yellow-400", icon: "📝" };
+    return { text: "Низкая", color: "text-green-400", icon: "📋" };
+  };
+
+  const parseTags = (tags: any) => {
+    try {
+      if (typeof tags === "string") {
+        return JSON.parse(tags);
+      } else if (Array.isArray(tags)) {
+        return tags;
+      }
+    } catch (e) {
+      return [];
+    }
+    return [];
   };
 
   return (
@@ -99,77 +127,114 @@ function NoteCard({ note }: { note: Note }) {
     >
       <div className="note-card-content">
         <div className="note-card-header">
-          <div className="flex items-center justify-between">
-            <h3 className="note-card-title">{note.title}</h3>
+          <div className="flex items-start justify-between mb-3">
+            <h3 className="note-card-title flex-1 mr-2">{note.title}</h3>
             {note.importance && (
-              <span className="text-yellow-400 text-sm">
-                {getImportanceStars(note.importance)}
-              </span>
+              <div className="importance-indicator">
+                <span
+                  className={`importance-badge ${
+                    getImportanceLevel(note.importance).color
+                  }`}
+                >
+                  <span className="mr-1">
+                    {getImportanceLevel(note.importance).icon}
+                  </span>
+                  {note.importance}/10
+                </span>
+              </div>
             )}
           </div>
-          <div className="flex items-center justify-between mt-2">
+
+          <div className="card-metadata">
             {note.category && (
               <span
-                className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(
-                  note.category
-                )}`}
+                className={`category-badge ${getCategoryColor(note.category)}`}
               >
                 <FiTag className="inline mr-1" size={10} />
                 {note.category}
               </span>
             )}
             <span className="note-card-date">
-              {new Date(note.updatedAt).toLocaleDateString()}
+              {new Date(note.updatedAt).toLocaleDateString("ru-RU")}
             </span>
           </div>
         </div>
-        <p className="note-card-preview">
-          {note.summary ||
-            (note.content.length > 120
-              ? `${note.content.substring(0, 120)}...`
-              : note.content)}
-        </p>
-        <div className="note-card-footer">
-          <div className="note-card-tags">
-            {Array.isArray(note.tags) &&
-              note.tags.slice(0, 3).map((tag, index) => (
-                <span key={index} className="note-tag">
-                  #{tag}
-                </span>
-              ))}
-            {Array.isArray(note.tags) && note.tags.length > 3 && (
-              <span className="note-tag-more">+{note.tags.length - 3}</span>
-            )}
-          </div>
-          {note.connections && (
-            <div className="note-connections">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="3"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle
-                  cx="6"
-                  cy="6"
-                  r="2"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle
-                  cx="18"
-                  cy="6"
-                  r="2"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path d="M9 9l6 6" stroke="currentColor" strokeWidth="2" />
-              </svg>
-              {note.connections}
+
+        {/* Краткое резюме или превью контента */}
+        <div className="note-card-preview">
+          {note.summary ? (
+            <div>
+              <div className="preview-label">Резюме:</div>
+              <p>
+                {note.summary.length > 100
+                  ? `${note.summary.substring(0, 100)}...`
+                  : note.summary}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <div className="preview-label">Содержание:</div>
+              <p>
+                {note.content.length > 120
+                  ? `${note.content.substring(0, 120)}...`
+                  : note.content}
+              </p>
             </div>
           )}
+        </div>
+
+        <div className="note-card-footer">
+          <div className="note-card-tags">
+            {(() => {
+              const tags = parseTags(note.tags);
+              return (
+                tags.length > 0 && (
+                  <>
+                    {tags.slice(0, 3).map((tag, index) => (
+                      <span key={index} className="note-tag">
+                        #{tag}
+                      </span>
+                    ))}
+                    {tags.length > 3 && (
+                      <span className="note-tag-more">+{tags.length - 3}</span>
+                    )}
+                  </>
+                )
+              );
+            })()}
+          </div>
+
+          <div className="card-stats">
+            {note.connections && (
+              <div className="note-connections" title="Связи">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <circle
+                    cx="6"
+                    cy="6"
+                    r="2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <circle
+                    cx="18"
+                    cy="6"
+                    r="2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path d="M9 9l6 6" stroke="currentColor" strokeWidth="2" />
+                </svg>
+                {note.connections}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Link>

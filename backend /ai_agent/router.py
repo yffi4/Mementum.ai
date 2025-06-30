@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Dict, Any, List
 from database import get_async_db
-from jwt_auth.auth import get_current_active_user
+from jwt_auth.auth import get_current_active_user, oauth2_scheme
 from models import User
 
 from .agent import AIAgent

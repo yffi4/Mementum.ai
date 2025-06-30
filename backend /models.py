@@ -18,7 +18,7 @@ class User(Base):
     hashed_password = Column(String(255), nullable=True)  # Nullable для Google OAuth
     is_pro = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+
     # Google OAuth fields
     google_id = Column(String(255), unique=True, nullable=True)
     google_email = Column(String(255), nullable=True)
@@ -42,6 +42,7 @@ class Note(Base):
     tags = Column(Text, nullable=True)  # JSON массив тегов
     summary = Column(Text, nullable=True)  # Краткое резюме (AI генерация)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates='notes')
     connections_as_a = relationship("NoteConnection", back_populates='note_a', foreign_keys='NoteConnection.note_a_id', cascade='all, delete-orphan')
@@ -93,6 +94,21 @@ class GoogleToken(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates='google_tokens')
+
+
+class RefreshToken(Base):
+    """Хранение refresh токенов для длительной авторизации"""
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(ForeignKey("users.id"), nullable=False)
+    token = Column(String(255), nullable=False, unique=True, index=True)
+    expires_at = Column(DateTime, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_used_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
 
 
 class NoteCalendarEvent(Base):

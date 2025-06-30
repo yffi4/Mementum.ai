@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from database import get_async_db
-from jwt_auth.router import get_current_user
+from jwt_auth.auth import get_current_active_user, oauth2_scheme
 from models import User
 from .service import google_calendar_service
 from .schemas import *
@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("/auth-url", response_model=GoogleAuthURL)
 async def get_google_auth_url(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     """Получает URL для авторизации Google OAuth"""
     try:
@@ -60,7 +60,7 @@ async def google_callback(
 
 @router.get("/user-info", response_model=GoogleCalendarUser)
 async def get_google_user_info(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Получает информацию о подключенном Google аккаунте"""
@@ -80,7 +80,7 @@ async def get_google_user_info(
 
 @router.get("/calendars", response_model=CalendarListResponse)
 async def get_calendars(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Получает список календарей пользователя"""
@@ -99,7 +99,7 @@ async def get_events(
     time_min: Optional[str] = Query(None, description="Начальное время в ISO формате"),
     time_max: Optional[str] = Query(None, description="Конечное время в ISO формате"),
     max_results: int = Query(250, description="Максимальное количество событий"),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Получает события календаря"""
@@ -122,7 +122,7 @@ async def get_events(
 @router.post("/events", response_model=CalendarEvent)
 async def create_event(
     event_data: CreateEventRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Создает новое событие в календаре"""
@@ -141,7 +141,7 @@ async def create_event(
 
 @router.delete("/disconnect")
 async def disconnect_google_calendar(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Отключает пользователя от Google Calendar"""
@@ -157,7 +157,7 @@ async def disconnect_google_calendar(
 
 @router.get("/status")
 async def get_connection_status(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_async_db)
 ):
     """Проверяет статус подключения к Google Calendar"""

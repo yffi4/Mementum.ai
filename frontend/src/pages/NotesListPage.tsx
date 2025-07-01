@@ -155,7 +155,10 @@ function NoteCard({ note }: { note: Note }) {
               </span>
             )}
             <span className="note-card-date">
-              {new Date(note.updatedAt).toLocaleDateString("ru-RU")}
+              {(note.updatedAt || note.createdAt) &&
+                new Date(note.updatedAt || note.createdAt).toLocaleDateString(
+                  "ru-RU"
+                )}
             </span>
           </div>
         </div>
@@ -190,7 +193,7 @@ function NoteCard({ note }: { note: Note }) {
               return (
                 tags.length > 0 && (
                   <>
-                    {tags.slice(0, 3).map((tag, index) => (
+                    {tags.slice(0, 3).map((tag: string, index: number) => (
                       <span key={index} className="note-tag">
                         #{tag}
                       </span>
@@ -331,11 +334,7 @@ export default function NotesListPage() {
     gcTime: 10 * 60 * 1000,
   });
 
-  const {
-    data: categories,
-    isLoading: categoriesLoading,
-    refetch: refetchCategories,
-  } = useQuery({
+  const { data: categories, refetch: refetchCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategories,
     staleTime: 5 * 60 * 1000,
@@ -357,9 +356,9 @@ export default function NotesListPage() {
   return (
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
-      <Navbar user={user} />
+      <Navbar user={user || undefined} />
 
-      <div className="notes-container relative z-10 animate-fadeInUp pt-20">
+      <div className="notes-container relative z-10 animate-fadeInUp pt-32">
         <div className="notes-header">
           <h2 className="notes-title">
             {selectedCategory ? `Категория: ${selectedCategory}` : "Your Notes"}
@@ -372,8 +371,8 @@ export default function NotesListPage() {
               disabled={isAnalyzing}
               className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all duration-300 flex items-center gap-2"
             >
-              <FiFilter size={16} />
-              {isAnalyzing ? "Анализируем..." : "Анализ AI"}
+              <FiFilter size={50} />
+              {isAnalyzing ? "Analayzing..." : "Analyze AI"}
             </motion.button>
             <Link
               to="/notes/create"

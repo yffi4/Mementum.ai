@@ -116,3 +116,6 @@ class CalendarEventResponse(BaseModel):
     attendees: Optional[List[CalendarEventAttendee]] = None
     colorId: Optional[str] = None
     creator: Optional[CalendarEventCreator] = None
+    html_link: Optional[str] = None
+    created: Optional[str] = None
+    updated: Optional[str] = None

@@ -28,19 +28,25 @@ export interface CalendarEvent {
   id: string;
   summary: string;
   description: string;
-  start_time: string;
-  end_time: string;
+  start: DateTimeObj;
+  end: DateTimeObj;
   location: string;
   html_link: string;
   created: string;
   updated: string;
 }
 
+export interface DateTimeObj {
+  dateTime?: string;
+  date?: string;
+  timeZone?: string;
+}
+
 export interface CreateEventData {
   summary: string;
   description?: string;
-  start_time: string;
-  end_time: string;
+  start: DateTimeObj;
+  end: DateTimeObj;
   location?: string;
   attendees?: string[];
 }
@@ -198,6 +204,19 @@ class AuthApiService {
     eventData: CreateEventData,
     calendarId: string = "primary"
   ): Promise<CalendarEvent> {
+    // Backend expects nested start/end objects
+    const payload: any = {
+      summary: eventData.summary,
+      description: eventData.description,
+      start: eventData.start,
+      end: eventData.end,
+      location: eventData.location,
+    };
+
+    if (eventData.attendees && eventData.attendees.length > 0) {
+      payload.attendees = eventData.attendees.map((email) => ({ email }));
+    }
+
     const response = await this.fetchWithAuth(
       `${API_BASE}/notes/calendar/events?calendar_id=${calendarId}`,
       {
@@ -205,7 +224,7 @@ class AuthApiService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(eventData),
+        body: JSON.stringify(payload),
       }
     );
 

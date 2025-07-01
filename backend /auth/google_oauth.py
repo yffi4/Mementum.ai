@@ -14,13 +14,18 @@ from config import settings
 
 class GoogleOAuthService:
     def __init__(self):
+        # Fallback redirect URI for local development if none provided
+        default_redirect = "http://localhost:8000/auth/google/callback"
+        redirect_uri = settings.GOOGLE_REDIRECT_URI or default_redirect
+        self.redirect_uri = redirect_uri
+
         self.client_config = {
             "web": {
                 "client_id": settings.GOOGLE_CLIENT_ID,
                 "client_secret": settings.GOOGLE_CLIENT_SECRET,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [settings.GOOGLE_REDIRECT_URI]
+                "redirect_uris": [redirect_uri]
             }
         }
         self.scopes = [
@@ -36,7 +41,7 @@ class GoogleOAuthService:
             self.client_config,
             scopes=self.scopes
         )
-        flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
+        flow.redirect_uri = self.redirect_uri
         
         authorization_url, _ = flow.authorization_url(
             access_type='offline',
@@ -52,7 +57,7 @@ class GoogleOAuthService:
             self.client_config,
             scopes=self.scopes
         )
-        flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
+        flow.redirect_uri = self.redirect_uri
         
         try:
             flow.fetch_token(code=code)

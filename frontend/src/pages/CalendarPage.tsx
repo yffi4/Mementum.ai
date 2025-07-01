@@ -8,6 +8,8 @@ import {
   type NoteCalendarEvent,
 } from "../services/authApi";
 import GoogleAuth from "../components/GoogleAuth";
+import Navbar from "../components/Navbar";
+import NeonBackground from "../components/NeonBackground";
 import { motion } from "framer-motion";
 import {
   Calendar as CalendarIcon,
@@ -41,10 +43,21 @@ const CalendarPage: React.FC = () => {
   );
   const [showEventModal, setShowEventModal] = useState(false);
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     checkConnectionAndLoadData();
+    loadUserData();
   }, []);
+
+  const loadUserData = async () => {
+    try {
+      const response = await authApi.getAuthStatus();
+      setUser(response.user);
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
+  };
 
   const checkConnectionAndLoadData = async () => {
     try {
@@ -73,8 +86,8 @@ const CalendarPage: React.FC = () => {
       const formattedEvents: ExtendedEvent[] = calendarEvents.map((event) => ({
         id: event.id,
         title: event.summary || "Untitled Event",
-        start: new Date(event.start_time),
-        end: new Date(event.end_time),
+        start: new Date(event.start.dateTime ?? event.start.date ?? ""),
+        end: new Date(event.end.dateTime ?? event.end.date ?? ""),
         location: event.location,
         description: event.description,
         html_link: event.html_link,
@@ -108,10 +121,10 @@ const CalendarPage: React.FC = () => {
     try {
       const eventData = {
         summary: title,
-        start_time: moment(slotInfo.start).toISOString(),
-        end_time: moment(slotInfo.end).toISOString(),
+        start: { dateTime: moment(slotInfo.start).toISOString() },
+        end: { dateTime: moment(slotInfo.end).toISOString() },
         description: "Created from calendar",
-      };
+      } as any;
 
       await authApi.createCalendarEvent(eventData);
       await loadCalendarEvents();
@@ -209,87 +222,99 @@ const CalendarPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading calendar...</div>
+      <div className="page-bg relative overflow-hidden">
+        <NeonBackground />
+        <Navbar user={user} />
+        <div className="pt-32 min-h-screen flex items-center justify-center">
+          <div className="text-white text-xl">Loading calendar...</div>
+        </div>
       </div>
     );
   }
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-dark-900 p-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-            <CalendarIcon className="w-8 h-8 text-purple-400" />
-            Calendar Integration
-          </h1>
-          <GoogleAuth onConnectionChange={checkConnectionAndLoadData} />
+      <div className="page-bg relative overflow-hidden">
+        <NeonBackground />
+        <Navbar user={user} />
+        <div className="pt-32 p-8">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+              <CalendarIcon className="w-8 h-8 text-purple-400" />
+              Calendar Integration
+            </h1>
+            <GoogleAuth onConnectionChange={checkConnectionAndLoadData} />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <CalendarIcon className="w-8 h-8 text-purple-400" />
-            Calendar
-          </h1>
-          {userInfo && (
-            <div className="flex items-center gap-3 text-gray-300">
-              <span>Welcome, {userInfo.name}</span>
-              {userInfo.picture && (
-                <img
-                  src={userInfo.picture}
-                  alt={userInfo.name}
-                  className="w-8 h-8 rounded-full border-2 border-purple-500"
-                />
-              )}
-            </div>
-          )}
-        </div>
+    <div className="page-bg relative overflow-hidden">
+      <NeonBackground />
+      <Navbar user={user} />
+      <div className="pt-32 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+              <CalendarIcon className="w-8 h-8 text-purple-400" />
+              Calendar
+            </h1>
+            {userInfo && (
+              <div className="flex items-center gap-3 text-gray-300">
+                <span>Welcome, {userInfo.name}</span>
+                {userInfo.picture && (
+                  <img
+                    src={userInfo.picture}
+                    alt={userInfo.name}
+                    className="w-8 h-8 rounded-full border-2 border-purple-500"
+                  />
+                )}
+              </div>
+            )}
+          </div>
 
-        <div className="bg-dark-800 rounded-2xl p-6 border border-purple-500/20">
-          <div className="mb-6">
-            <div className="flex items-center gap-4 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                Regular Events
+          <div className="bg-dark-800 rounded-2xl p-6 border border-purple-500/20">
+            <div className="mb-6">
+              <div className="flex items-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  Regular Events
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  Created from Notes
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                Created from Notes
-              </div>
+            </div>
+
+            <div className="h-[600px] bg-white rounded-lg">
+              <Calendar
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                onSelectEvent={handleEventClick}
+                onSelectSlot={handleCreateEvent}
+                selectable
+                style={{
+                  height: "100%",
+                  backgroundColor: "white",
+                }}
+                eventPropGetter={(event: ExtendedEvent) => ({
+                  style: {
+                    backgroundColor: event.isFromNote ? "#10b981" : "#3b82f6",
+                    borderColor: event.isFromNote ? "#059669" : "#2563eb",
+                    color: "white",
+                  },
+                })}
+              />
             </div>
           </div>
 
-          <div className="h-[600px] bg-white rounded-lg">
-            <Calendar
-              localizer={localizer}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              onSelectEvent={handleEventClick}
-              onSelectSlot={handleCreateEvent}
-              selectable
-              style={{
-                height: "100%",
-                backgroundColor: "white",
-              }}
-              eventPropGetter={(event: ExtendedEvent) => ({
-                style: {
-                  backgroundColor: event.isFromNote ? "#10b981" : "#3b82f6",
-                  borderColor: event.isFromNote ? "#059669" : "#2563eb",
-                  color: "white",
-                },
-              })}
-            />
-          </div>
+          {showEventModal && <EventModal />}
         </div>
-
-        {showEventModal && <EventModal />}
       </div>
     </div>
   );

@@ -499,6 +499,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
+  margin-top: 50px;
   width: 100%;
   max-width: 540px;
 }
@@ -585,7 +586,7 @@ body {
 
 .note-card-date {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: #b8f2ff;
   white-space: nowrap;
 }
 

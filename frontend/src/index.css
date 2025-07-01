@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+
+.padding {
+  padding-top: 50px;
+}
 /* Glow effects */
 .glow-green {
   box-shadow: 0 0 8px 2px #00ff88, 0 0 32px 4px #00ff8844;

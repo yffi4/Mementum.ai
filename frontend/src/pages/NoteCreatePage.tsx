@@ -106,8 +106,8 @@ export default function NoteCreatePage() {
   return (
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
-      <Navbar user={user} />
-      <div className="note-create-card relative z-10 animate-fadeInUp pt-20">
+      <Navbar user={user || undefined} />
+      <div className="note-create-card relative z-10 animate-fadeInUp pt-32">
         <div className="note-create-header">
           <h2 className="note-create-title">
             {isLoading ? "AI is processing..." : "Create Note"}

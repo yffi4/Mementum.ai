@@ -18,6 +18,7 @@ import {
   FiClock,
   FiUser,
 } from "react-icons/fi";
+import { authApi } from "../services/authApi";
 
 // Типы
 interface Note {
@@ -128,6 +129,7 @@ const getImportanceLevel = (importance: number) => {
   return { text: "Низкая", color: "text-green-400", bg: "bg-green-500/20" };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const formatContent = (content: string) => {
   // Разбиваем контент на блоки более умно
   const lines = content.split("\n");
@@ -288,6 +290,7 @@ const formatContent = (content: string) => {
   return blocks;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const renderTextWithLinks = (text: string) => {
   // Обработка ссылок в квадратных скобках
   const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -388,18 +391,28 @@ export default function NotePage() {
   const [editContent, setEditContent] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Get user data from localStorage
   const [user, setUser] = useState<any>(null);
 
   React.useEffect(() => {
-    const userData = localStorage.getItem("user_data");
-    if (userData) {
+    const loadUser = async () => {
       try {
-        setUser(JSON.parse(userData));
-      } catch (e) {
-        console.error("Error parsing user data:", e);
+        const status = await authApi.getAuthStatus();
+        setUser(status.user);
+        localStorage.setItem("user_data", JSON.stringify(status.user));
+      } catch (error) {
+        // Fallback to localStorage if API call fails
+        const userData = localStorage.getItem("user_data");
+        if (userData) {
+          try {
+            setUser(JSON.parse(userData));
+          } catch (e) {
+            console.error("Error parsing user data:", e);
+          }
+        }
       }
-    }
+    };
+
+    loadUser();
   }, []);
 
   // Запрос заметки
@@ -471,7 +484,7 @@ export default function NotePage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user} />
-        <div className="note-error relative z-10 pt-20">
+        <div className="note-error relative z-10 pt-40">
           <h3 className="error-title">Invalid note ID</h3>
           <Link to="/notes" className="auth-btn">
             Back to Notes
@@ -486,7 +499,7 @@ export default function NotePage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user} />
-        <div className="pt-20">
+        <div className="pt-40">
           <LoadingState />
         </div>
       </div>
@@ -498,7 +511,7 @@ export default function NotePage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user} />
-        <div className="pt-20">
+        <div className="pt-40">
           <ErrorState error={error as Error} onRetry={() => refetch()} />
         </div>
       </div>
@@ -509,7 +522,7 @@ export default function NotePage() {
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
       <Navbar user={user} />
-      <div className="note-view-container relative z-10 animate-fadeInUp pt-20">
+      <div className="note-view-container relative z-10 animate-fadeInUp pt-40">
         {/* Заголовок страницы */}
         <div className="note-header">
           <div className="note-header-left">
@@ -624,7 +637,7 @@ export default function NotePage() {
                             key={i}
                             size={12}
                             className={
-                              i < note.importance
+                              i < (note.importance ?? 0)
                                 ? "text-yellow-400 fill-current"
                                 : "text-gray-600"
                             }

@@ -123,9 +123,9 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      <Navbar user={user} />
+      <Navbar user={user || undefined} />
 
-      <div className="pt-20 pb-12 px-6">
+      <div className="pt-32 pb-12 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <motion.div

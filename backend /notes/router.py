@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Security
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
@@ -18,7 +18,7 @@ from .schemas import (
     NoteResponse, 
     NoteWithConnections,
     NoteConnectionCreate,
-    NoteConnectionResponse
+    NoteConnectionResponse,
 )
 
 # Импорты для календаря
@@ -26,7 +26,7 @@ from ai_agent.calendar_agent import calendar_agent
 from ai_agent.note_analyzer import NoteAnalyzer
 from auth.google_oauth import google_oauth_service
 from google_calendar.schemas import (
-    CalendarEventCreator,
+    CreateEventRequest,
     CalendarListResponse,
     UserInfoResponse,
     CalendarEventResponse
@@ -366,19 +366,19 @@ def get_user_info(
 ):
     """Получить информацию о пользователе Google"""
     try:
-        service = google_oauth_service.get_calendar_service(db, current_user.id)
-        # Получить информацию из Calendar API или использовать сохраненную
-        return UserInfoResponse(
-            id=current_user.google_id or "",
-            email=current_user.google_email or current_user.email,
-            name=current_user.google_name or current_user.username,
-            picture=current_user.google_picture or ""
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ошибка получения информации: {str(e)}"
-        )
+        # если сервис недоступен (нет токенов) - считаем, что не подключён
+        google_oauth_service.get_calendar_service(db, current_user.id)
+        connected = True
+    except Exception:
+        connected = False
+
+    return UserInfoResponse(
+        id=current_user.google_id or "",
+        email=current_user.google_email or current_user.email,
+        name=current_user.google_name or current_user.username,
+        picture=current_user.google_picture or "",
+        is_connected=connected,
+    )
 
 
 @router.get("/calendar/calendars", response_model=List[CalendarListResponse])
@@ -441,17 +441,25 @@ def get_calendar_events(
         events = events_result.get('items', [])
         
         return [
-            CalendarEventResponse(
-                id=event['id'],
-                summary=event.get('summary', 'Без названия'),
-                description=event.get('description', ''),
-                start_time=event['start'].get('dateTime', event['start'].get('date')),
-                end_time=event['end'].get('dateTime', event['end'].get('date')),
-                location=event.get('location', ''),
-                html_link=event.get('htmlLink', ''),
-                created=event.get('created', ''),
-                updated=event.get('updated', '')
-            )
+            {
+                "id": event["id"],
+                "summary": event.get("summary", "Без названия"),
+                "description": event.get("description", ""),
+                "start": {
+                    "dateTime": event["start"].get("dateTime"),
+                    "date": event["start"].get("date"),
+                    "timeZone": event["start"].get("timeZone"),
+                },
+                "end": {
+                    "dateTime": event["end"].get("dateTime"),
+                    "date": event["end"].get("date"),
+                    "timeZone": event["end"].get("timeZone"),
+                },
+                "location": event.get("location", ""),
+                "html_link": event.get("htmlLink", ""),
+                "created": event.get("created", ""),
+                "updated": event.get("updated", ""),
+            }
             for event in events
         ]
     except Exception as e:
@@ -463,7 +471,7 @@ def get_calendar_events(
 
 @router.post("/calendar/events", response_model=CalendarEventResponse)
 def create_calendar_event(
-    event_data: CalendarEventCreator,
+    event_data: CreateEventRequest,
     calendar_id: str = Query("primary", description="ID календаря"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
@@ -476,14 +484,8 @@ def create_calendar_event(
         event_body = {
             'summary': event_data.summary,
             'description': event_data.description,
-            'start': {
-                'dateTime': event_data.start_time.isoformat(),
-                'timeZone': 'Europe/Moscow',
-            },
-            'end': {
-                'dateTime': event_data.end_time.isoformat(),
-                'timeZone': 'Europe/Moscow',
-            },
+            'start': { **event_data.start.dict(exclude_none=True), 'timeZone': 'Europe/Moscow' },
+            'end': { **event_data.end.dict(exclude_none=True), 'timeZone': 'Europe/Moscow' },
         }
         
         if event_data.location:
@@ -498,17 +500,25 @@ def create_calendar_event(
             body=event_body
         ).execute()
         
-        return CalendarEventResponse(
-            id=event['id'],
-            summary=event.get('summary', ''),
-            description=event.get('description', ''),
-            start_time=event['start'].get('dateTime', event['start'].get('date')),
-            end_time=event['end'].get('dateTime', event['end'].get('date')),
-            location=event.get('location', ''),
-            html_link=event.get('htmlLink', ''),
-            created=event.get('created', ''),
-            updated=event.get('updated', '')
-        )
+        return {
+            "id": event["id"],
+            "summary": event.get("summary", ""),
+            "description": event.get("description", ""),
+            "start": {
+                "dateTime": event["start"].get("dateTime"),
+                "date": event["start"].get("date"),
+                "timeZone": event["start"].get("timeZone"),
+            },
+            "end": {
+                "dateTime": event["end"].get("dateTime"),
+                "date": event["end"].get("date"),
+                "timeZone": event["end"].get("timeZone"),
+            },
+            "location": event.get("location", ""),
+            "html_link": event.get("htmlLink", ""),
+            "created": event.get("created", ""),
+            "updated": event.get("updated", ""),
+        }
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -372,7 +372,7 @@ export default function NotesListPage() {
               className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all duration-300 flex items-center gap-2"
             >
               <FiFilter size={50} />
-              {isAnalyzing ? "Analayzing..." : "Analyze AI"}
+              {isAnalyzing ? "Analayzing..." : "Analyze notes"}
             </motion.button>
             <Link
               to="/notes/create"

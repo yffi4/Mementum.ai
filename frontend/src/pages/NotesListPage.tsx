@@ -361,11 +361,14 @@ export default function NotesListPage() {
 
       <div className="notes-top max-w-6xl mx-auto px-4 space-y-12">
         {Object.entries(grouped).map(([category, notes]) => (
-          <section key={category}>
-            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#a18aff] to-[#6feaff] bg-clip-text text-transparent drop-shadow">
-              {category} ({notes.length})
-            </h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <section key={category} className="category-section">
+            <div className="category-header">
+              <h2 className="category-title">
+                {category}
+                <span className="category-count">{notes.length}</span>
+              </h2>
+            </div>
+            <div className="category-notes-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {notes.map((note) => (
                 <NoteCard key={note.id} note={note} />
               ))}

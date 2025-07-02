@@ -23,6 +23,8 @@ class NoteResponse(NoteBase):
     importance: Optional[int] = None
     tags: Optional[List[str]] = None
     summary: Optional[str] = None
+    task_id: Optional[str] = None  # ID Celery задачи
+    processing: bool = False  # Флаг обработки в фоне
 
     @field_validator('tags', mode='before')
     @classmethod

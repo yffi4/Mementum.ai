@@ -32,6 +32,10 @@ from google_calendar.schemas import (
     CalendarEventResponse
 )
 
+# Импорт Celery задач
+from tasks.note_tasks import create_note_async, update_note_async
+from tasks.ai_tasks import analyze_note_async
+
 # Инициализация AI анализатора
 openai_client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 note_analyzer = NoteAnalyzer(openai_client)
@@ -45,44 +49,44 @@ async def create_note(
     note: NoteCreate,
     db: AsyncSession = Depends(get_async_db),
     sync_db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    background: bool = Query(True, description="Создать заметку в фоне")
 ):
     """Создать новую заметку с автоматическим AI анализом и анализом на события календаря"""
-    # Создать заметку
+    
+    if background:
+        # Создаем заметку в фоне через Celery
+        task = create_note_async.delay(
+            note_data=note.dict(),
+            user_id=current_user.id
+        )
+        
+        # Возвращаем временный ответ с task_id
+        return NoteResponse(
+            id=0,  # Временный ID
+            title=note.title,
+            content=note.content,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+            user_id=current_user.id,
+            task_id=task.id,  # ID задачи для отслеживания
+            processing=True
+        )
+    
+    # Синхронное создание (старый код)
     db_note = await crud.create_note(db, note, current_user.id)
     
-    # AI анализ заметки
-    try:
-        import json
-        print(f"Запускаем AI анализ для новой заметки {db_note.id}")
-        
-        category = await note_analyzer.categorize_note(db_note.content)
-        importance = await note_analyzer.assess_importance(db_note.content)
-        tags = await note_analyzer.suggest_tags(db_note.content)
-        summary = await note_analyzer.generate_summary(db_note.content)
-        
-        # Обновляем заметку с результатами AI анализа
-        db_note.category = category
-        db_note.importance = importance
-        db_note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
-        db_note.summary = summary
-        
-        await db.commit()
-        
-        print(f"AI анализ завершен: категория={category}, важность={importance}")
-        
-    except Exception as e:
-        print(f"Ошибка AI анализа новой заметки: {e}")
-        # Не прерываем создание заметки из-за ошибки AI анализа
+    # Запускаем AI анализ в фоне
+    analyze_note_async.delay(
+        note_id=db_note.id,
+        user_id=current_user.id
+    )
     
-    # Анализировать заметку на предмет событий календаря
+    # Анализ календаря в фоне
     try:
-        created_events = calendar_agent.analyze_note_for_events(sync_db, db_note, current_user.id)
-        if created_events:
-            print(f"Создано {len(created_events)} событий календаря для заметки {db_note.id}")
+        calendar_agent.analyze_note_for_events(sync_db, db_note, current_user.id)
     except Exception as e:
         print(f"Ошибка анализа календаря: {e}")
-        # Не прерываем создание заметки из-за ошибки календаря
     
     return db_note
 
@@ -156,15 +160,71 @@ async def get_note_with_connections(
     return note
 
 
+@router.get("/task/{task_id}/status")
+async def get_task_status(
+    task_id: str,
+    current_user: User = Depends(get_current_active_user)
+):
+    """Получить статус задачи Celery"""
+    from celery.result import AsyncResult
+    from celery_app import celery_app
+    
+    result = AsyncResult(task_id, app=celery_app)
+    
+    if result.ready():
+        if result.successful():
+            return {
+                "status": "SUCCESS",
+                "result": result.result,
+                "task_id": task_id
+            }
+        else:
+            return {
+                "status": "FAILURE",
+                "error": str(result.info),
+                "task_id": task_id
+            }
+    else:
+        return {
+            "status": "PENDING",
+            "task_id": task_id
+        }
+
+
 @router.put("/{note_id}", response_model=NoteResponse)
 async def update_note(
     note_id: int,
     note_update: NoteUpdate,
     db: AsyncSession = Depends(get_async_db),
     sync_db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    background: bool = Query(True, description="Обновить заметку в фоне")
 ):
     """Обновить заметку с повторным AI анализом и анализом на события календаря"""
+    
+    if background:
+        # Обновляем заметку в фоне через Celery
+        task = update_note_async.delay(
+            note_id=note_id,
+            note_data=note_update.dict(exclude_unset=True),
+            user_id=current_user.id
+        )
+        
+        # Возвращаем текущую заметку с информацией о задаче
+        current_note = await crud.get_note(db, note_id, current_user.id)
+        if not current_note:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заметка не найдена"
+            )
+        
+        return NoteResponse(
+            **current_note.__dict__,
+            task_id=task.id,
+            processing=True
+        )
+    
+    # Синхронное обновление (старый код)
     updated_note = await crud.update_note(db, note_id, current_user.id, note_update)
     if not updated_note:
         raise HTTPException(
@@ -172,36 +232,17 @@ async def update_note(
             detail="Заметка не найдена"
         )
     
-    # AI анализ обновленной заметки
-    try:
-        import json
-        print(f"Запускаем AI анализ для обновленной заметки {note_id}")
-        
-        category = await note_analyzer.categorize_note(updated_note.content)
-        importance = await note_analyzer.assess_importance(updated_note.content)
-        tags = await note_analyzer.suggest_tags(updated_note.content)
-        summary = await note_analyzer.generate_summary(updated_note.content)
-        
-        # Обновляем заметку с результатами AI анализа
-        updated_note.category = category
-        updated_note.importance = importance
-        updated_note.tags = json.dumps(tags, ensure_ascii=False) if tags else None
-        updated_note.summary = summary
-        
-        await db.commit()
-        
-        print(f"AI анализ обновленной заметки завершен: категория={category}, важность={importance}")
-        
-    except Exception as e:
-        print(f"Ошибка AI анализа обновленной заметки: {e}")
-        # Не прерываем обновление заметки из-за ошибки AI анализа
+    # Запускаем AI анализ в фоне
+    analyze_note_async.delay(
+        note_id=note_id,
+        user_id=current_user.id,
+        force=True  # Принудительный повторный анализ
+    )
     
-    # Удалить старые события календаря и создать новые
+    # Удалить старые события календаря и создать новые в фоне
     try:
         calendar_agent.delete_note_events(sync_db, note_id, current_user.id)
-        created_events = calendar_agent.analyze_note_for_events(sync_db, updated_note, current_user.id)
-        if created_events:
-            print(f"Пересоздано {len(created_events)} событий календаря для заметки {note_id}")
+        calendar_agent.analyze_note_for_events(sync_db, updated_note, current_user.id)
     except Exception as e:
         print(f"Ошибка обновления календаря: {e}")
     

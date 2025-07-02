@@ -8,6 +8,7 @@ import "../styles/NoteListPage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
 import { FiTag } from "react-icons/fi";
+import { getApiUrls } from "../config/api";
 
 // Типы для заметок
 interface Note {
@@ -37,23 +38,25 @@ interface User {
 
 // API функции
 const fetchNotes = async (): Promise<Note[]> => {
-  const response = await axios.get("http://localhost:8000/notes/", {
+  const apiUrls = getApiUrls();
+  const response = await axios.get(apiUrls.notes, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const fetchGroupedNotes = async (): Promise<Record<string, Note[]>> => {
-  const resp = await axios.get(
-    "http://localhost:8000/notes/categories/grouped",
-    { withCredentials: true }
-  );
+  const apiUrls = getApiUrls();
+  const resp = await axios.get(apiUrls.notesCategoriesGrouped, {
+    withCredentials: true,
+  });
   return resp.data.groups;
 };
 
 const analyzeAllNotes = async () => {
+  const apiUrls = getApiUrls();
   const response = await axios.post(
-    "http://localhost:8000/notes/analyze-all",
+    apiUrls.notesAnalyzeAll,
     {},
     {
       withCredentials: true,
@@ -298,7 +301,8 @@ export default function NotesListPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/auth/status", {
+        const apiUrls = getApiUrls();
+        const response = await axios.get(apiUrls.authStatus, {
           withCredentials: true,
         });
         setUser(response.data.user);

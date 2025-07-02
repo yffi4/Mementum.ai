@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { getApiUrls } from "../config/api";
 import Navbar from "../components/Navbar";
 
 interface User {
@@ -30,8 +31,10 @@ const Profile: React.FC = () => {
 
   const fetchUserData = async () => {
     try {
+      const apiUrls = getApiUrls();
+
       // Получаем данные пользователя
-      const authResponse = await fetch("http://localhost:8000/auth/status", {
+      const authResponse = await fetch(apiUrls.authStatus, {
         credentials: "include",
       });
 
@@ -42,16 +45,13 @@ const Profile: React.FC = () => {
       const authData = await authResponse.json();
       setUser(authData.user);
       // Получаем статистику заметок
-      const notesResponse = await fetch("http://localhost:8000/notes/count", {
+      const notesResponse = await fetch(apiUrls.notesCount, {
         credentials: "include",
       });
 
-      const categoriesResponse = await fetch(
-        "http://localhost:8000/notes/categories",
-        {
-          credentials: "include",
-        }
-      );
+      const categoriesResponse = await fetch(apiUrls.notesCategories, {
+        credentials: "include",
+      });
 
       if (notesResponse.ok && categoriesResponse.ok) {
         const notesData = await notesResponse.json();
@@ -78,18 +78,17 @@ const Profile: React.FC = () => {
   };
 
   const handleGoogleConnect = () => {
-    window.location.href = "http://localhost:8000/auth/google";
+    const apiUrls = getApiUrls();
+    window.location.href = apiUrls.googleAuth;
   };
 
   const handleGoogleDisconnect = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/auth/google/disconnect",
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const apiUrls = getApiUrls();
+      const response = await fetch(apiUrls.googleDisconnect, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
       if (response.ok) {
         await fetchUserData(); // Обновить данные

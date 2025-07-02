@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { getApiUrls } from "../config/api";
 import "../styles/NotePage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
@@ -42,22 +43,24 @@ interface UpdateNoteData {
 }
 
 // API функции
+const apiUrls = getApiUrls();
+
 const fetchNote = async (id: string): Promise<Note> => {
-  const response = await axios.get(`http://localhost:8000/notes/${id}/`, {
+  const response = await axios.get(`${apiUrls.notes}${id}/`, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const updateNote = async (id: string, data: UpdateNoteData): Promise<Note> => {
-  const response = await axios.put(`http://localhost:8000/notes/${id}/`, data, {
+  const response = await axios.put(`${apiUrls.notes}${id}/`, data, {
     withCredentials: true,
   });
   return response.data;
 };
 
 const deleteNote = async (id: string): Promise<void> => {
-  await axios.delete(`http://localhost:8000/notes/${id}/`, {
+  await axios.delete(`${apiUrls.notes}${id}/`, {
     withCredentials: true,
   });
 };

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getApiUrls } from "../config/api";
 import "../styles/NoteCreatePage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
@@ -35,10 +36,11 @@ interface CreateNoteResponse {
 const createNoteWithAI = async (
   data: CreateNoteData
 ): Promise<CreateNoteResponse> => {
+  const apiUrls = getApiUrls();
   const message = `${data.title ? data.title + "\n\n" : ""}${data.content}`;
 
   const response = await axios.post(
-    "http://localhost:8000/ai-agent/process",
+    apiUrls.aiAgentProcess,
     {
       message: message,
       enable_background_tasks: true,
@@ -64,7 +66,8 @@ export default function NoteCreatePage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/auth/status", {
+        const apiUrls = getApiUrls();
+        const response = await axios.get(apiUrls.authStatus, {
           withCredentials: true,
         });
         setUser(response.data.user);

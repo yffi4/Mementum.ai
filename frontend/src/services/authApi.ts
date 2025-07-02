@@ -1,4 +1,12 @@
-const API_BASE = "http://localhost:8000";
+import { getApiUrls } from "../config/api";
+
+const apiUrls = getApiUrls();
+
+if (!apiUrls.register.startsWith("http")) {
+  throw new Error(
+    "VITE_API_URL is not defined or invalid. Check your frontend .env file."
+  );
+}
 
 export interface AuthStatus {
   user: {
@@ -80,7 +88,7 @@ class AuthApiService {
 
   private async _performRefresh(): Promise<boolean> {
     try {
-      const response = await fetch(`${API_BASE}/auth/refresh`, {
+      const response = await fetch(`${apiUrls.refresh}`, {
         method: "POST",
         credentials: "include",
       });
@@ -127,12 +135,12 @@ class AuthApiService {
 
   // Google OAuth
   async getGoogleAuthUrl(): Promise<string> {
-    window.location.href = `${API_BASE}/auth/google`;
-    return `${API_BASE}/auth/google`;
+    window.location.href = `${apiUrls.google}`;
+    return `${apiUrls.google}`;
   }
 
   async getAuthStatus(): Promise<AuthStatus> {
-    const response = await this.fetchWithAuth(`${API_BASE}/auth/status`);
+    const response = await this.fetchWithAuth(`${apiUrls.status}`);
 
     if (!response.ok) {
       throw new Error("Failed to get auth status");
@@ -142,18 +150,15 @@ class AuthApiService {
   }
 
   async logout(): Promise<void> {
-    await this.fetchWithAuth(`${API_BASE}/auth/logout`, {
+    await this.fetchWithAuth(`${apiUrls.logout}`, {
       method: "POST",
     });
   }
 
   async disconnectGoogle(): Promise<void> {
-    const response = await this.fetchWithAuth(
-      `${API_BASE}/auth/google/disconnect`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await this.fetchWithAuth(`${apiUrls.disconnectGoogle}`, {
+      method: "DELETE",
+    });
 
     if (!response.ok) {
       throw new Error("Failed to disconnect Google account");
@@ -162,9 +167,7 @@ class AuthApiService {
 
   // Calendar API (now under /notes)
   async getCalendars() {
-    const response = await this.fetchWithAuth(
-      `${API_BASE}/notes/calendar/calendars`
-    );
+    const response = await this.fetchWithAuth(`${apiUrls.calendars}`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch calendars");
@@ -190,7 +193,7 @@ class AuthApiService {
     if (params.max_results)
       searchParams.append("max_results", params.max_results.toString());
 
-    const url = `${API_BASE}/notes/calendar/events?${searchParams.toString()}`;
+    const url = `${apiUrls.events}?${searchParams.toString()}`;
     const response = await this.fetchWithAuth(url);
 
     if (!response.ok) {
@@ -218,7 +221,7 @@ class AuthApiService {
     }
 
     const response = await this.fetchWithAuth(
-      `${API_BASE}/notes/calendar/events?calendar_id=${calendarId}`,
+      `${apiUrls.events}?calendar_id=${calendarId}`,
       {
         method: "POST",
         headers: {
@@ -236,9 +239,7 @@ class AuthApiService {
   }
 
   async getUserInfo() {
-    const response = await this.fetchWithAuth(
-      `${API_BASE}/notes/calendar/user-info`
-    );
+    const response = await this.fetchWithAuth(`${apiUrls.userInfo}`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch user info");
@@ -252,7 +253,7 @@ class AuthApiService {
     noteId: number
   ): Promise<{ note_id: number; events: NoteCalendarEvent[] }> {
     const response = await this.fetchWithAuth(
-      `${API_BASE}/notes/${noteId}/calendar-events`
+      `${apiUrls.noteCalendarEvents}/${noteId}`
     );
 
     if (!response.ok) {
@@ -266,7 +267,7 @@ class AuthApiService {
     noteId: number
   ): Promise<{ message: string; events_count: number }> {
     const response = await this.fetchWithAuth(
-      `${API_BASE}/notes/${noteId}/analyze-calendar`,
+      `${apiUrls.analyzeNoteForCalendar}/${noteId}`,
       {
         method: "POST",
       }

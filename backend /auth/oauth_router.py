@@ -1,4 +1,5 @@
 import logging
+import os
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
@@ -49,7 +50,10 @@ def google_callback(
         logger.info("JWT token created")
         
         # Перенаправить на фронтенд с параметром успеха
-        frontend_url = "http://localhost:5173/login"
+        base_frontend = os.getenv("FRONTEND_URL")
+        if not base_frontend:
+            raise HTTPException(status_code=500, detail="FRONTEND_URL environment variable is not set")
+        frontend_url = base_frontend.rstrip("/") + "/login"
         redirect_response = RedirectResponse(url=f"{frontend_url}?auth=success")
 
         # Установить cookie с токеном
@@ -73,7 +77,10 @@ def google_callback(
         print(f"ERROR: Full traceback: {error_details}")
         logger.error(f"Google OAuth callback error: {str(e)}")
         logger.error(f"Full traceback: {error_details}")
-        frontend_url = "http://localhost:5173/login"
+        base_frontend = os.getenv("FRONTEND_URL")
+        if not base_frontend:
+            raise HTTPException(status_code=500, detail="FRONTEND_URL environment variable is not set")
+        frontend_url = base_frontend.rstrip("/") + "/login"
         return RedirectResponse(url=f"{frontend_url}?error={str(e)}")
 
 

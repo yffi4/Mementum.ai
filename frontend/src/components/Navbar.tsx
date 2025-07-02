@@ -14,6 +14,7 @@ import {
 } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { getApiUrls } from "../config/api";
 import "../styles/Navbar.css";
 
 interface NavbarProps {
@@ -67,11 +68,8 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
     if (isAnalyzing) return;
     try {
       setIsAnalyzing(true);
-      await axios.post(
-        "http://localhost:8000/notes/analyze-all",
-        {},
-        { withCredentials: true }
-      );
+      const apiUrls = getApiUrls();
+      await axios.post(apiUrls.notesAnalyzeAll, {}, { withCredentials: true });
       // После анализа перезагружаем страницу, чтобы подтянуть обновленные данные
       window.location.reload();
     } catch (err) {

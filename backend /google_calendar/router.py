@@ -7,6 +7,7 @@ from jwt_auth.auth import get_current_active_user, oauth2_scheme
 from models import User
 from .service import google_calendar_service
 from .schemas import *
+import os
 
 router = APIRouter()
 
@@ -42,20 +43,17 @@ async def google_callback(
         )
         
         # Перенаправляем на фронтенд с успешным результатом
-        return RedirectResponse(
-            url="http://localhost:5173/calendar?auth=success",
-            status_code=302
-        )
+        frontend_url = os.getenv("FRONTEND_URL")
+        if not frontend_url:
+            raise HTTPException(status_code=500, detail="FRONTEND_URL environment variable is not set")
+        redirect_success = f"{frontend_url.rstrip('/')}/calendar?auth=success"
+        return RedirectResponse(url=redirect_success, status_code=302)
     except ValueError as e:
-        return RedirectResponse(
-            url=f"http://localhost:5173/calendar?auth=error&message={str(e)}",
-            status_code=302
-        )
+        redirect_error = f"{frontend_url.rstrip('/')}/calendar?auth=error&message={str(e)}"
+        return RedirectResponse(url=redirect_error, status_code=302)
     except Exception as e:
-        return RedirectResponse(
-            url=f"http://localhost:5173/calendar?auth=error&message=Authentication failed",
-            status_code=302
-        )
+        redirect_error = f"{frontend_url.rstrip('/')}/calendar?auth=error&message=Authentication failed"
+        return RedirectResponse(url=redirect_error, status_code=302)
 
 
 @router.get("/user-info", response_model=GoogleCalendarUser)

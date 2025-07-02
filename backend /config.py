@@ -13,10 +13,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = Field(default=os.getenv("GOOGLE_CLIENT_SECRET"))
     GOOGLE_REDIRECT_URI: str = Field(default=os.getenv("GOOGLE_REDIRECT_URI"))
     # FRONTEND_URLS : str
-    # REDIS_PORT : str
-    # REDIS_HOST: str
-    # CELERY_BROKER_URL: str
-    # CELERY_RESULT_BACKEND: str
+    REDIS_URL: str = Field(default=os.getenv("REDIS_URL"))
+    CELERY_BROKER_URL: str = Field(default=os.getenv("REDIS_URL"))
+    CELERY_RESULT_BACKEND: str = Field(default=os.getenv("REDIS_URL"))
     OPENAI_API_KEY : str = Field(default=os.getenv("OPENAI_API_KEY"))
     class Config:
         env_file = str(Path(__file__).parent.parent / ".env")

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../services/apiClient";
+import { getApiUrls } from "../config/api";
 
 // Типы
 export interface Note {
@@ -24,9 +25,10 @@ export interface UpdateNoteData extends Partial<CreateNoteData> {
 }
 
 // API функции
+const apiUrls = getApiUrls();
 const notesApi = {
   getAll: async (): Promise<Note[]> => {
-    const response = await apiClient.get("http://localhost:8000/notes/");
+    const response = await apiClient.get(apiUrls.notes);
     if (!response.ok) {
       throw new Error("Failed to fetch notes");
     }
@@ -34,7 +36,7 @@ const notesApi = {
   },
 
   getById: async (id: string): Promise<Note> => {
-    const response = await apiClient.get(`http://localhost:8000/notes/${id}/`);
+    const response = await apiClient.get(`${apiUrls.notes}${id}/`);
     if (!response.ok) {
       throw new Error("Failed to fetch note");
     }
@@ -48,10 +50,7 @@ const notesApi = {
       enable_background_tasks: false,
     };
 
-    const response = await apiClient.post(
-      "http://localhost:8000/ai-agent/process",
-      agentRequest
-    );
+    const response = await apiClient.post(apiUrls.aiAgentProcess, agentRequest);
     if (!response.ok) {
       throw new Error("Failed to create note with AI");
     }
@@ -71,10 +70,7 @@ const notesApi = {
   },
 
   update: async (data: UpdateNoteData): Promise<Note> => {
-    const response = await apiClient.put(
-      `http://localhost:8000/notes/${data.id}/`,
-      data
-    );
+    const response = await apiClient.put(`${apiUrls.notes}${data.id}/`, data);
     if (!response.ok) {
       throw new Error("Failed to update note");
     }
@@ -82,9 +78,7 @@ const notesApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const response = await apiClient.delete(
-      `http://localhost:8000/notes/${id}/`
-    );
+    const response = await apiClient.delete(`${apiUrls.notes}${id}/`);
     if (!response.ok) {
       throw new Error("Failed to delete note");
     }

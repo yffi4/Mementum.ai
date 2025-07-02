@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { getApiUrls } from "../config/api";
 import "../styles/AuthPages.css";
 import NeonBackground from "../components/NeonBackground";
 import { FiMail, FiLock } from "react-icons/fi";
@@ -37,13 +38,15 @@ export default function LoginPage() {
     }
   }, [searchParams, navigate]);
 
+  const apiUrls = getApiUrls();
+
   const mutation = useMutation({
     mutationFn: async (data: LoginForm) => {
       const params = new URLSearchParams();
       params.append("username", data.username);
       params.append("password", data.password);
 
-      const res = await axios.post("http://localhost:8000/auth/token", params, {
+      const res = await axios.post(apiUrls.login, params, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },

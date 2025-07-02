@@ -17,7 +17,10 @@ class GoogleCalendarService:
     def __init__(self):
         self.client_id = os.getenv("GOOGLE_CLIENT_ID")
         self.client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-        self.redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/calendar/callback")
+        google_redirect = os.getenv("GOOGLE_REDIRECT_URI")
+        if not google_redirect:
+            raise ValueError("GOOGLE_REDIRECT_URI environment variable is not set")
+        self.redirect_uri = google_redirect
         self.scopes = [
             'https://www.googleapis.com/auth/calendar',
             'https://www.googleapis.com/auth/userinfo.email',

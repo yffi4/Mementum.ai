@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import CodeDemoComponent from "../components/CodeDemoComponent";
 import { Link } from "react-router-dom";
+import { getApiUrls } from "../config/api";
 import Navbar from "../components/Navbar";
 import NeonBackground from "../components/NeonBackground";
 import axios from "axios";
@@ -12,7 +13,8 @@ const CodeDemoPage: React.FC = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/auth/status", {
+        const apiUrls = getApiUrls();
+        const response = await axios.get(apiUrls.authStatus, {
           withCredentials: true,
         });
         setUser(response.data.user);

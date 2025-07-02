@@ -15,8 +15,9 @@ from config import settings
 class GoogleOAuthService:
     def __init__(self):
         # Fallback redirect URI for local development if none provided
-        default_redirect = "http://localhost:8000/auth/google/callback"
-        redirect_uri = settings.GOOGLE_REDIRECT_URI or default_redirect
+        if not settings.GOOGLE_REDIRECT_URI:
+            raise ValueError("GOOGLE_REDIRECT_URI environment variable is not set")
+        redirect_uri = settings.GOOGLE_REDIRECT_URI
         self.redirect_uri = redirect_uri
 
         self.client_config = {

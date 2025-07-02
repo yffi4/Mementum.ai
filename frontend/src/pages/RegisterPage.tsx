@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { getApiUrls } from "../config/api";
 import "../styles/AuthPages.css";
 import NeonBackground from "../components/NeonBackground";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
@@ -21,15 +22,13 @@ export default function RegisterPage() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
+  const apiUrls = getApiUrls();
+
   const mutation = useMutation({
     mutationFn: async (data: RegisterForm) => {
-      const res = await axios.post(
-        "http://localhost:8000/auth/register",
-        data,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(apiUrls.register, data, {
+        withCredentials: true,
+      });
       return res.data;
     },
     onError: (err: any) => {

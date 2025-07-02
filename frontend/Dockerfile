@@ -1,31 +1,29 @@
-# Многостадийная сборка для оптимизации размера образа
+# Multi-stage build for optimal image size
 FROM node:20-alpine AS base
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
+# Copy package files for better caching
 COPY package*.json ./
-
-# Устанавливаем зависимости
 RUN npm ci --only=production && npm cache clean --force
 
-# Development стадия
-FROM base AS development
+# Development stage
+FROM node:20-alpine AS development
+WORKDIR /app
+COPY package*.json ./
 RUN npm ci
 COPY . .
-EXPOSE 3000
+EXPOSE 5173
 CMD ["npm", "run", "dev"]
 
-# Build стадия
+# Build stage
 FROM base AS build
 RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production стадия
+# Production stage with Nginx
 FROM nginx:alpine AS production
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"] 

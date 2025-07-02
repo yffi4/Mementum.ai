@@ -3,22 +3,23 @@ version: "3.8"
 services:
   # PostgreSQL база данных
   postgres:
-    image: postgres:15
+    image: postgres:17
     container_name: mementum_postgres
     environment:
-      POSTGRES_DB: notes_db
-      POSTGRES_USER: notes_user
-      POSTGRES_PASSWORD: notes_password
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
-    networks:
-      - mementum_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notes_user -d notes_db"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,8 +33,6 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - mementum_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -49,66 +48,48 @@ services:
       dockerfile: Dockerfile
     container_name: mementum_backend
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=notes_db
-      - DB_USER=notes_user
-      - DB_PASSWORD=notes_password
-      - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-change-in-production}
-      - FRONTEND_URLS=http://localhost:3000,http://frontend:3000
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      # Database
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - ASYNC_DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      # App Config
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - DEBUG=${DEBUG:-true}
+
+      # URLs (без дефолтов - обязательно задавать в .env)
+      - FRONTEND_URL=${FRONTEND_URL}
+      - FRONTEND_URLS=${FRONTEND_URLS}
+
+      # Redis & Celery
+      - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+      # API Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:8000/auth/google/callback}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
     ports:
       - "8000:8000"
     volumes:
       - ./backend :/app
-      - backend_uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - mementum_network
     restart: unless-stopped
     command: >
       sh -c "
         echo 'Waiting for database...' &&
-        while ! pg_isready -h postgres -p 5432 -U notes_user; do
+        while ! pg_isready -h postgres -p 5432 -U ${POSTGRES_USER}; do
           sleep 2;
         done &&
         echo 'Database is ready!' &&
-        alembic upgrade head &&
         uvicorn main:app --host 0.0.0.0 --port 8000 --reload
       "
-
-  # React Frontend
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: development
-    container_name: mementum_frontend
-    environment:
-      - VITE_API_URL=http://localhost:8000
-      - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
-    networks:
-      - mementum_network
-    restart: unless-stopped
-    command: npm run dev
 
   # Celery Worker для фоновых задач
   celery_worker:
@@ -117,17 +98,19 @@ services:
       dockerfile: Dockerfile
     container_name: mementum_celery_worker
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=notes_db
-      - DB_USER=notes_user
-      - DB_PASSWORD=notes_password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      # Database
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - ASYNC_DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      # Redis & Celery
+      - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+      # API Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - PYTHONPATH=/app
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     volumes:
       - ./backend :/app
     depends_on:
@@ -135,10 +118,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - mementum_network
     restart: unless-stopped
-    command: celery -A celery_app worker --loglevel=info --concurrency=4 -Q default,high_priority,low_priority,ai_tasks
+    command: celery -A celery_app worker --loglevel=info --concurrency=2 -Q default,high_priority,low_priority,ai_tasks
 
   # Celery Beat для периодических задач
   celery_beat:
@@ -147,17 +128,17 @@ services:
       dockerfile: Dockerfile
     container_name: mementum_celery_beat
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=notes_db
-      - DB_USER=notes_user
-      - DB_PASSWORD=notes_password
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      # Database
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - ASYNC_DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      # Redis & Celery
+      - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+      # API Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - PYTHONPATH=/app
     volumes:
       - ./backend :/app
     depends_on:
@@ -165,78 +146,35 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - mementum_network
     restart: unless-stopped
     command: celery -A celery_app beat --loglevel=info
 
-  # Nginx для продакшена (опционально)
-  nginx:
-    image: nginx:alpine
-    container_name: mementum_nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - nginx_logs:/var/log/nginx
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - mementum_network
-    restart: unless-stopped
-    profiles:
-      - production
-
-  # Monitoring с Prometheus (опционально)
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: mementum_prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
-    networks:
-      - mementum_network
-    restart: unless-stopped
-    profiles:
-      - monitoring
-
-  # Grafana для визуализации метрик (опционально)
-  grafana:
-    image: grafana/grafana:latest
-    container_name: mementum_grafana
-    ports:
-      - "3001:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana:/etc/grafana/provisioning
+  # React/Vite Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: mementum_frontend
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
-    networks:
-      - mementum_network
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_FRONTEND_URL=${VITE_FRONTEND_URL}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
     restart: unless-stopped
-    profiles:
-      - monitoring
+    command: npm run dev
 
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
-  backend_uploads:
-    driver: local
-  nginx_logs:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
-    driver: local
 
 networks:
-  mementum_network:
-    driver: bridge
+  default:
     name: mementum_network

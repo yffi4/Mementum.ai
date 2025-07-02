@@ -1,30 +1,32 @@
-FROM python:3.12-slim
+# Multi-stage build for production optimization
+FROM python:3.12-slim as base
 
-# Устанавливаем рабочую директорию
-WORKDIR /app
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Устанавливаем системные зависимости
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Копируем файлы зависимостей
-COPY requirements.txt .
+# Set work directory
+WORKDIR /app
 
-# Устанавливаем Python зависимости
+# Copy and install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем код приложения
+# Development stage
+FROM base as development
+# Copy source code
 COPY . .
-
-# Создаем пользователя для безопасности
-RUN useradd --create-home --shell /bin/bash app \
-    && chown -R app:app /app
+# Run as non-root user for security
+RUN useradd --create-home --shell /bin/bash app && chown -R app:app /app
 USER app
-
-# Открываем порт
 EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
-# Команда для запуска приложения
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"] 

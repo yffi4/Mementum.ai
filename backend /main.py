@@ -8,6 +8,7 @@ from google_calendar.router import router as calendar_router
 from database import async_engine
 from models import Base
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 # Глобальная схема безопасности для Swagger UI
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -23,11 +24,16 @@ app = FastAPI(
 )
 
 # CORS middleware
+frontend_urls_env = os.getenv("FRONTEND_URLS", os.getenv("FRONTEND_URL", ""))
+if frontend_urls_env:
+    frontend_urls = frontend_urls_env.split(",")
+    frontend_urls.extend(["chrome-extension://*"])  # Добавляем поддержку расширений
+else:
+    frontend_urls = ["chrome-extension://*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", 
-                   "http://127.0.0.1:5173", 
-                   "chrome-extension://*"],  # Vite dev server
+    allow_origins=frontend_urls,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

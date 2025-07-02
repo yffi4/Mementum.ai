@@ -499,7 +499,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
-  margin-top: 50px;
+  margin-top: 100px;
   width: 100%;
   max-width: 540px;
 }
@@ -769,4 +769,8 @@ body {
     align-items: flex-start;
     gap: 0.5rem;
   }
+}
+
+.notes-top {
+  padding-top: 12rem; /* equivalent of pt-48 */
 }

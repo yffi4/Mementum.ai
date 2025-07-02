@@ -1,0 +1,222 @@
+/* Custom Navbar Styles */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: 4rem; /* 64px */
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(
+    135deg,
+    rgba(11, 12, 42, 0.9) 0%,
+    rgba(24, 27, 58, 0.9) 100%
+  );
+  border-bottom: 1px solid rgba(111, 234, 255, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Container inside navbar */
+.navbar-container {
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  position: relative;
+}
+
+/* Logo */
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(161, 138, 255, 0.4));
+}
+
+/* Remove all the complex grid layout */
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* Logo wrapper stays left */
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* Nav Items - absolutely centered */
+.nav-items {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Right section stays right */
+.right-section {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.6rem;
+  min-width: 110px;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #b8f2ff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(111, 234, 255, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+
+.nav-btn:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(161, 138, 255, 0.25);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(161, 138, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Analyze button (inherits nav-btn but with accent) */
+.analyze-btn {
+  background: rgba(147, 51, 234, 0.16);
+  border-color: rgba(161, 138, 255, 0.4);
+}
+
+.analyze-btn:hover {
+  box-shadow: 0 8px 32px rgba(161, 138, 255, 0.45);
+}
+
+/* Disabled state */
+.nav-btn.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Avatar */
+.nav-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 12px rgba(111, 234, 255, 0.5);
+  margin-left: 0.75rem;
+  margin-right: 0;
+  cursor: pointer;
+}
+
+/* Logout button special style */
+.logout-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  margin-left: 1rem;
+}
+
+.logout-btn:hover {
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+}
+
+/* Mobile Menu button */
+.mobile-btn {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .nav-center {
+    display: none;
+  }
+  .mobile-btn {
+    display: flex;
+  }
+}
+
+/* Spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Profile dropdown */
+.profile-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: rgba(11, 12, 42, 0.95);
+  border: 1px solid rgba(111, 234, 255, 0.2);
+  backdrop-filter: blur(16px);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0;
+  min-width: 140px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+}
+
+.profile-menu-item {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #b8f2ff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.profile-menu-item:hover {
+  background: rgba(161, 138, 255, 0.12);
+  color: #ffffff;
+}

@@ -853,3 +853,46 @@ async def get_notes_by_category(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ошибка получения заметок: {str(e)}"
         )
+
+
+# ---------- Новый эндпоинт: заметки сгруппированные по категориям ----------
+
+@router.get("/categories/grouped")
+async def get_notes_grouped(
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Вернуть все заметки пользователя, сгруппированные по категориям."""
+    try:
+        result = await db.execute(
+            select(Note).filter(Note.user_id == current_user.id)
+        )
+        notes = result.scalars().all()
+
+        grouped: Dict[str, list] = {}
+        for note in notes:
+            category = note.category.strip() if note.category else "Общее"
+            grouped.setdefault(category, []).append({
+                "id": note.id,
+                "title": note.title,
+                "content": note.content,
+                "category": category,
+                "importance": note.importance or 1,
+                "tags": json.loads(note.tags) if note.tags else [],
+                "summary": note.summary or note.content[:200],
+                "created_at": note.created_at,
+                "updated_at": getattr(note, "updated_at", note.created_at)
+            })
+
+        # Сортируем категории по количеству заметок
+        sorted_grouped = dict(sorted(grouped.items(), key=lambda x: len(x[1]), reverse=True))
+
+        return {"groups": sorted_grouped}
+
+    except Exception as e:
+        import traceback
+        print("ERROR in get_notes_grouped:", traceback.format_exc())
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Ошибка получения сгруппированных заметок: {str(e)}"
+        )

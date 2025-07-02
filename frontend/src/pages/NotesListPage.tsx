@@ -7,8 +7,7 @@ import { useState, useEffect } from "react";
 import "../styles/NoteListPage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
-import { FiPlus, FiTag, FiFilter } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { FiTag } from "react-icons/fi";
 
 // Типы для заметок
 interface Note {
@@ -44,21 +43,12 @@ const fetchNotes = async (): Promise<Note[]> => {
   return response.data;
 };
 
-const fetchCategories = async (): Promise<Category[]> => {
-  const response = await axios.get("http://localhost:8000/notes/categories", {
-    withCredentials: true,
-  });
-  return response.data.categories;
-};
-
-const fetchNotesByCategory = async (category: string): Promise<Note[]> => {
-  const response = await axios.get(
-    `http://localhost:8000/notes/by-category/${category}`,
-    {
-      withCredentials: true,
-    }
+const fetchGroupedNotes = async (): Promise<Record<string, Note[]>> => {
+  const resp = await axios.get(
+    "http://localhost:8000/notes/categories/grouped",
+    { withCredentials: true }
   );
-  return response.data.notes;
+  return resp.data.groups;
 };
 
 const analyzeAllNotes = async () => {
@@ -301,7 +291,6 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
 }
 
 export default function NotesListPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -321,31 +310,19 @@ export default function NotesListPage() {
   }, []);
 
   const {
-    data: notes,
-    isLoading: notesLoading,
-    error,
-    refetch: refetchNotes,
+    data: grouped,
+    isLoading,
+    refetch: refetchGrouped,
   } = useQuery({
-    queryKey: ["notes", selectedCategory],
-    queryFn: selectedCategory
-      ? () => fetchNotesByCategory(selectedCategory)
-      : fetchNotes,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
-
-  const { data: categories, refetch: refetchCategories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
-    staleTime: 5 * 60 * 1000,
+    queryKey: ["notes-grouped"],
+    queryFn: fetchGroupedNotes,
   });
 
   const handleAnalyzeNotes = async () => {
     setIsAnalyzing(true);
     try {
       await analyzeAllNotes();
-      await refetchNotes();
-      await refetchCategories();
+      await refetchGrouped();
     } catch (error) {
       console.error("Ошибка анализа заметок:", error);
     } finally {
@@ -353,99 +330,48 @@ export default function NotesListPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="page-bg relative overflow-hidden">
+        <NeonBackground />
+        <Navbar user={user || undefined} />
+        <div className="notes-top">
+          <LoadingState />
+        </div>
+      </div>
+    );
+  }
+
+  if (!grouped) {
+    return (
+      <div className="page-bg relative overflow-hidden">
+        <NeonBackground />
+        <Navbar user={user || undefined} />
+        <div className="notes-top text-center text-gray-400">
+          No notes found.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-bg relative overflow-hidden">
       <NeonBackground />
       <Navbar user={user || undefined} />
 
-      <div className="notes-container relative z-10 animate-fadeInUp pt-32">
-        <div className="notes-header">
-          <h2 className="notes-title">
-            {selectedCategory ? `Категория: ${selectedCategory}` : "Your Notes"}
-          </h2>
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleAnalyzeNotes}
-              disabled={isAnalyzing}
-              className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:bg-purple-500/30 transition-all duration-300 flex items-center gap-2"
-            >
-              <FiFilter size={50} />
-              {isAnalyzing ? "Analayzing..." : "Analyze notes"}
-            </motion.button>
-            <Link
-              to="/notes/create"
-              className="notes-create-btn shimmer-gradient flex items-center gap-2"
-            >
-              <FiPlus size={18} /> New Note
-            </Link>
-          </div>
-        </div>
-
-        {/* Categories Filter */}
-        {categories && categories.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <div className="flex flex-wrap gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-full text-sm transition-all duration-300 ${
-                  selectedCategory === null
-                    ? "bg-neon-green/20 text-neon-green border border-neon-green/30"
-                    : "bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-600/50"
-                }`}
-              >
-                Все заметки
-              </motion.button>
-              {categories.map((category) => (
-                <motion.button
-                  key={category.name}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSelectedCategory(category.name)}
-                  className={`px-4 py-2 rounded-full text-sm transition-all duration-300 flex items-center gap-2 ${
-                    selectedCategory === category.name
-                      ? "bg-neon-blue/20 text-neon-blue border border-neon-blue/30"
-                      : "bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-600/50"
-                  }`}
-                >
-                  <FiTag size={12} />
-                  {category.name}
-                  <span className="bg-gray-600 text-gray-200 px-2 py-0.5 rounded-full text-xs">
-                    {category.count}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        <div className="notes-list">
-          {notesLoading && <LoadingState />}
-          {error && (
-            <ErrorState error={error as Error} onRetry={() => refetchNotes()} />
-          )}
-          {notes && notes.length === 0 && (
-            <div className="note-card-placeholder">
-              {selectedCategory
-                ? `Нет заметок в категории "${selectedCategory}"`
-                : "No notes yet. Create your first AI-powered note!"}
-            </div>
-          )}
-          {notes && notes.length > 0 && (
-            <>
+      <div className="notes-top max-w-6xl mx-auto px-4 space-y-12">
+        {Object.entries(grouped).map(([category, notes]) => (
+          <section key={category}>
+            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#a18aff] to-[#6feaff] bg-clip-text text-transparent drop-shadow">
+              {category} ({notes.length})
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {notes.map((note) => (
                 <NoteCard key={note.id} note={note} />
               ))}
-            </>
-          )}
-        </div>
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );

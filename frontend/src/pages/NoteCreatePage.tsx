@@ -19,12 +19,13 @@ interface CreateNoteData {
 }
 
 interface CreateNoteResponse {
-  id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
+  note_id?: number; // ID, как возвращается AgentResponse
+  id?: string; // резервная совместимость
+  title?: string;
+  content?: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
   aiProcessed?: boolean;
   aiSummary?: string;
   connections?: number;
@@ -77,10 +78,17 @@ export default function NoteCreatePage() {
   const createNoteMutation = useMutation({
     mutationFn: createNoteWithAI,
     onSuccess: (newNote) => {
-      // Обновляем кеш списка заметок
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      // Перенаправляем на страницу заметки или список
-      navigate(`/notes/${newNote.id}`);
+      // Обновляем кеш группированных заметок
+      queryClient.invalidateQueries({ queryKey: ["notes-grouped"] });
+
+      const createdId = (newNote as any).note_id ?? (newNote as any).id;
+
+      if (createdId) {
+        navigate(`/notes/${createdId}`);
+      } else {
+        // Если ID не получен, возвращаем пользователя к списку заметок
+        navigate("/notes");
+      }
     },
     onError: (error) => {
       console.error("Error creating note:", error);

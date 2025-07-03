@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Calendar, AlertCircle, CheckCircle } from "lucide-react";
+import { Calendar, AlertCircle, CheckCircle } from "lucide-react";
 import { authApi, type AuthStatus } from "../services/authApi";
 
 interface GoogleAuthProps {

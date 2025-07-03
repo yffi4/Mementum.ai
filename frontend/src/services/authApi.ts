@@ -200,7 +200,19 @@ class AuthApiService {
       throw new Error("Failed to fetch calendar events");
     }
 
-    return response.json();
+    const data = await response.json();
+
+    // Ensure we return an array
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && Array.isArray(data.events)) {
+      return data.events;
+    } else if (data && Array.isArray(data.items)) {
+      return data.items;
+    } else {
+      console.warn("Calendar events response is not an array:", data);
+      return [];
+    }
   }
 
   async createCalendarEvent(
@@ -239,13 +251,9 @@ class AuthApiService {
   }
 
   async getUserInfo() {
-    const response = await this.fetchWithAuth(`${apiUrls.userInfo}`);
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user info");
-    }
-
-    return response.json();
+    // Use getAuthStatus instead since /auth/user doesn't exist
+    const authStatus = await this.getAuthStatus();
+    return authStatus.user;
   }
 
   // Note calendar events

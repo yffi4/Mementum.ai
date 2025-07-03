@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import AuthNav from "../components/AuthNav";
 import NeonBackground from "../components/NeonBackground";
 import "../styles/LandingPage.css";
@@ -174,6 +175,7 @@ function useFadeIn(delay = 0) {
 }
 
 const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const showHero = useFadeIn(100);
   const showInput = useFadeIn(600);
   const showFeatures = useFadeIn(1100);
@@ -242,7 +244,14 @@ const LandingPage: React.FC = () => {
                 </div>
               ) : (
                 <button className="try-button">
-                  <span className="button-text">{TRY_LABEL}</span>
+                  <span
+                    className="button-text"
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                  >
+                    {TRY_LABEL}
+                  </span>
                 </button>
               )}
             </div>

@@ -1,5 +1,4 @@
-# Python
-__pycache__/
+
 *.py[cod]
 *$py.class
 *.so
@@ -57,7 +56,7 @@ docker-compose.yml
 .env.production
 
 # Alembic
-migration/versions/
+
 
 # Documentation
 README.md

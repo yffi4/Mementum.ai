@@ -9,12 +9,10 @@ import {
   FiClock,
   FiMapPin,
   FiUsers,
-  FiPlus,
   FiRefreshCw,
   FiChevronLeft,
   FiChevronRight,
   FiFilter,
-  FiSettings,
 } from "react-icons/fi";
 
 const CALENDAR_COLORS = {
@@ -168,11 +166,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({ isAuthenticated }) => {
       currentDate.getFullYear(),
       currentDate.getMonth(),
       1
-    );
-    const endOfMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
     );
     const startDate = new Date(startOfMonth);
     startDate.setDate(startDate.getDate() - startDate.getDay());

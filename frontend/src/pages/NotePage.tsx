@@ -16,8 +16,6 @@ import {
   FiTag,
   FiStar,
   FiBookOpen,
-  FiClock,
-  FiUser,
 } from "react-icons/fi";
 import { authApi } from "../services/authApi";
 
@@ -132,222 +130,219 @@ const getImportanceLevel = (importance: number) => {
   return { text: "Низкая", color: "text-green-400", bg: "bg-green-500/20" };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const formatContent = (content: string) => {
-  // Разбиваем контент на блоки более умно
-  const lines = content.split("\n");
-  const blocks = [];
-  let currentBlock = "";
-  let currentType = "paragraph";
+// const formatContent = (content: string) => {
+//   // Разбиваем контент на блоки более умно
+//   const lines = content.split("\n");
+//   const blocks = [];
+//   let currentBlock = "";
+//   let currentType = "paragraph";
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
+//   for (let i = 0; i < lines.length; i++) {
+//     const line = lines[i];
+//     const trimmed = line.trim();
 
-    // Пустая строка - завершаем текущий блок
-    if (!trimmed) {
-      if (currentBlock.trim()) {
-        blocks.push({
-          type: currentType,
-          content: currentBlock.trim(),
-          index: blocks.length,
-        });
-        currentBlock = "";
-        currentType = "paragraph";
-      }
-      continue;
-    }
+//     // Пустая строка - завершаем текущий блок
+//     if (!trimmed) {
+//       if (currentBlock.trim()) {
+//         blocks.push({
+//           type: currentType,
+//           content: currentBlock.trim(),
+//           index: blocks.length,
+//         });
+//         currentBlock = "";
+//         currentType = "paragraph";
+//       }
+//       continue;
+//     }
 
-    // Заголовки с ** или ###
-    if (trimmed.match(/^\*\*[^*]+\*\*:?\*\*?$/)) {
-      if (currentBlock.trim()) {
-        blocks.push({
-          type: currentType,
-          content: currentBlock.trim(),
-          index: blocks.length,
-        });
-      }
-      const text = trimmed.replace(/^\*\*([^*]+)\*\*:?\*\*?$/, "$1");
-      blocks.push({
-        type: "section-header",
-        content: text,
-        index: blocks.length,
-      });
-      currentBlock = "";
-      currentType = "paragraph";
-      continue;
-    }
+//     // Заголовки с ** или ###
+//     if (trimmed.match(/^\*\*[^*]+\*\*:?\*\*?$/)) {
+//       if (currentBlock.trim()) {
+//         blocks.push({
+//           type: currentType,
+//           content: currentBlock.trim(),
+//           index: blocks.length,
+//         });
+//       }
+//       const text = trimmed.replace(/^\*\*([^*]+)\*\*:?\*\*?$/, "$1");
+//       blocks.push({
+//         type: "section-header",
+//         content: text,
+//         index: blocks.length,
+//       });
+//       currentBlock = "";
+//       currentType = "paragraph";
+//       continue;
+//     }
 
-    // Заголовки с #
-    if (trimmed.match(/^#+\s/)) {
-      if (currentBlock.trim()) {
-        blocks.push({
-          type: currentType,
-          content: currentBlock.trim(),
-          index: blocks.length,
-        });
-      }
-      const level = trimmed.match(/^#+/)?.[0].length || 1;
-      const text = trimmed.replace(/^#+\s*/, "");
-      blocks.push({
-        type: "heading",
-        content: text,
-        level: Math.min(level, 3),
-        index: blocks.length,
-      });
-      currentBlock = "";
-      currentType = "paragraph";
-      continue;
-    }
+//     // Заголовки с #
+//     if (trimmed.match(/^#+\s/)) {
+//       if (currentBlock.trim()) {
+//         blocks.push({
+//           type: currentType,
+//           content: currentBlock.trim(),
+//           index: blocks.length,
+//         });
+//       }
+//       const level = trimmed.match(/^#+/)?.[0].length || 1;
+//       const text = trimmed.replace(/^#+\s*/, "");
+//       blocks.push({
+//         type: "heading",
+//         content: text,
+//         level: Math.min(level, 3),
+//         index: blocks.length,
+//       });
+//       currentBlock = "";
+//       currentType = "paragraph";
+//       continue;
+//     }
 
-    // Разделители ---
-    if (trimmed === "---") {
-      if (currentBlock.trim()) {
-        blocks.push({
-          type: currentType,
-          content: currentBlock.trim(),
-          index: blocks.length,
-        });
-      }
-      blocks.push({ type: "divider", content: "", index: blocks.length });
-      currentBlock = "";
-      currentType = "paragraph";
-      continue;
-    }
+//     // Разделители ---
+//     if (trimmed === "---") {
+//       if (currentBlock.trim()) {
+//         blocks.push({
+//           type: currentType,
+//           content: currentBlock.trim(),
+//           index: blocks.length,
+//         });
+//       }
+//       blocks.push({ type: "divider", content: "", index: blocks.length });
+//       currentBlock = "";
+//       currentType = "paragraph";
+//       continue;
+//     }
 
-    // Списки
-    if (trimmed.match(/^[-*•]\s/)) {
-      if (currentType !== "list") {
-        if (currentBlock.trim()) {
-          blocks.push({
-            type: currentType,
-            content: currentBlock.trim(),
-            index: blocks.length,
-          });
-        }
-        currentBlock = "";
-        currentType = "list";
-      }
-      currentBlock += (currentBlock ? "\n" : "") + line;
-      continue;
-    }
+//     // Списки
+//     if (trimmed.match(/^[-*•]\s/)) {
+//       if (currentType !== "list") {
+//         if (currentBlock.trim()) {
+//           blocks.push({
+//             type: currentType,
+//             content: currentBlock.trim(),
+//             index: blocks.length,
+//           });
+//         }
+//         currentBlock = "";
+//         currentType = "list";
+//       }
+//       currentBlock += (currentBlock ? "\n" : "") + line;
+//       continue;
+//     }
 
-    // Нумерованные списки
-    if (trimmed.match(/^\d+\.\s/)) {
-      if (currentType !== "numbered-list") {
-        if (currentBlock.trim()) {
-          blocks.push({
-            type: currentType,
-            content: currentBlock.trim(),
-            index: blocks.length,
-          });
-        }
-        currentBlock = "";
-        currentType = "numbered-list";
-      }
-      currentBlock += (currentBlock ? "\n" : "") + line;
-      continue;
-    }
+//     // Нумерованные списки
+//     if (trimmed.match(/^\d+\.\s/)) {
+//       if (currentType !== "numbered-list") {
+//         if (currentBlock.trim()) {
+//           blocks.push({
+//             type: currentType,
+//             content: currentBlock.trim(),
+//             index: blocks.length,
+//           });
+//         }
+//         currentBlock = "";
+//         currentType = "numbered-list";
+//       }
+//       currentBlock += (currentBlock ? "\n" : "") + line;
+//       continue;
+//     }
 
-    // Цитаты
-    if (trimmed.startsWith(">")) {
-      if (currentType !== "quote") {
-        if (currentBlock.trim()) {
-          blocks.push({
-            type: currentType,
-            content: currentBlock.trim(),
-            index: blocks.length,
-          });
-        }
-        currentBlock = "";
-        currentType = "quote";
-      }
-      currentBlock += (currentBlock ? "\n" : "") + line;
-      continue;
-    }
+//     // Цитаты
+//     if (trimmed.startsWith(">")) {
+//       if (currentType !== "quote") {
+//         if (currentBlock.trim()) {
+//           blocks.push({
+//             type: currentType,
+//             content: currentBlock.trim(),
+//             index: blocks.length,
+//           });
+//         }
+//         currentBlock = "";
+//         currentType = "quote";
+//       }
+//       currentBlock += (currentBlock ? "\n" : "") + line;
+//       continue;
+//     }
 
-    // Обычный текст
-    if (currentType !== "paragraph") {
-      if (currentBlock.trim()) {
-        blocks.push({
-          type: currentType,
-          content: currentBlock.trim(),
-          index: blocks.length,
-        });
-      }
-      currentBlock = "";
-      currentType = "paragraph";
-    }
-    currentBlock += (currentBlock ? "\n" : "") + line;
-  }
+//     // Обычный текст
+//     if (currentType !== "paragraph") {
+//       if (currentBlock.trim()) {
+//         blocks.push({
+//           type: currentType,
+//           content: currentBlock.trim(),
+//           index: blocks.length,
+//         });
+//       }
+//       currentBlock = "";
+//       currentType = "paragraph";
+//     }
+//     currentBlock += (currentBlock ? "\n" : "") + line;
+//   }
 
-  // Добавляем последний блок
-  if (currentBlock.trim()) {
-    blocks.push({
-      type: currentType,
-      content: currentBlock.trim(),
-      index: blocks.length,
-    });
-  }
+//   // Добавляем последний блок
+//   if (currentBlock.trim()) {
+//     blocks.push({
+//       type: currentType,
+//       content: currentBlock.trim(),
+//       index: blocks.length,
+//     });
+//   }
 
-  return blocks;
-};
+//   return blocks;
+// };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const renderTextWithLinks = (text: string) => {
-  // Обработка ссылок в квадратных скобках
-  const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const urlPattern = /(https?:\/\/[^\s)]+)/g;
+// const renderTextWithLinks = (text: string) => {
+//   // Обработка ссылок в квадратных скобках
+//   const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+//   const urlPattern = /(https?:\/\/[^\s)]+)/g;
 
-  let processedText = text;
-  const elements = [];
-  let lastIndex = 0;
+//   const elements = [];
+//   let lastIndex = 0;
 
-  // Сначала обрабатываем markdown ссылки
-  let match;
-  while ((match = linkPattern.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      elements.push(text.slice(lastIndex, match.index));
-    }
-    elements.push(
-      <a
-        key={match.index}
-        href={match[2]}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="content-link"
-      >
-        {match[1]}
-      </a>
-    );
-    lastIndex = match.index + match[0].length;
-  }
+//   // Сначала обрабатываем markdown ссылки
+//   let match;
+//   while ((match = linkPattern.exec(text)) !== null) {
+//     if (match.index > lastIndex) {
+//       elements.push(text.slice(lastIndex, match.index));
+//     }
+//     elements.push(
+//       <a
+//         key={match.index}
+//         href={match[2]}
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         className="content-link"
+//       >
+//         {match[1]}
+//       </a>
+//     );
+//     lastIndex = match.index + match[0].length;
+//   }
 
-  if (lastIndex < text.length) {
-    const remainingText = text.slice(lastIndex);
-    // Обрабатываем обычные URL в оставшемся тексте
-    const parts = remainingText.split(urlPattern);
-    for (let i = 0; i < parts.length; i++) {
-      if (urlPattern.test(parts[i])) {
-        elements.push(
-          <a
-            key={`url-${i}`}
-            href={parts[i]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="content-link"
-          >
-            {parts[i]}
-          </a>
-        );
-      } else if (parts[i]) {
-        elements.push(parts[i]);
-      }
-    }
-  }
+//   if (lastIndex < text.length) {
+//     const remainingText = text.slice(lastIndex);
+//     // Обрабатываем обычные URL в оставшемся тексте
+//     const parts = remainingText.split(urlPattern);
+//     for (let i = 0; i < parts.length; i++) {
+//       if (urlPattern.test(parts[i])) {
+//         elements.push(
+//           <a
+//             key={`url-${i}`}
+//             href={parts[i]}
+//             target="_blank"
+//             rel="noopener noreferrer"
+//             className="content-link"
+//           >
+//             {parts[i]}
+//           </a>
+//         );
+//       } else if (parts[i]) {
+//         elements.push(parts[i]);
+//       }
+//     }
+//   }
 
-  return elements.length > 0 ? elements : text;
-};
+//   return elements.length > 0 ? elements : text;
+// };
 
 // Компонент ошибки
 function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {

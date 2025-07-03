@@ -24,11 +24,6 @@ interface Note {
   connections?: number;
 }
 
-interface Category {
-  name: string;
-  count: number;
-}
-
 interface User {
   id: number;
   username: string;
@@ -37,13 +32,6 @@ interface User {
 }
 
 // API функции
-const fetchNotes = async (): Promise<Note[]> => {
-  const apiUrls = getApiUrls();
-  const response = await axios.get(apiUrls.notes, {
-    withCredentials: true,
-  });
-  return response.data;
-};
 
 const fetchGroupedNotes = async (): Promise<Record<string, Note[]>> => {
   const apiUrls = getApiUrls();
@@ -51,18 +39,6 @@ const fetchGroupedNotes = async (): Promise<Record<string, Note[]>> => {
     withCredentials: true,
   });
   return resp.data.groups;
-};
-
-const analyzeAllNotes = async () => {
-  const apiUrls = getApiUrls();
-  const response = await axios.post(
-    apiUrls.notesAnalyzeAll,
-    {},
-    {
-      withCredentials: true,
-    }
-  );
-  return response.data;
 };
 
 // Компонент карточки заметки
@@ -263,39 +239,8 @@ function LoadingState() {
   );
 }
 
-// Компонент ошибки
-function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
-  return (
-    <div className="notes-error">
-      <div className="error-icon">
-        <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-          <path
-            d="M12 8v4M12 16h.01"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-      <h3 className="error-title">Something went wrong</h3>
-      <p className="error-message">{error.message}</p>
-      <button onClick={onRetry} className="auth-btn">
-        Try Again
-      </button>
-    </div>
-  );
-}
-
 export default function NotesListPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Получаем пользователя
   useEffect(() => {
@@ -313,26 +258,10 @@ export default function NotesListPage() {
     fetchUser();
   }, []);
 
-  const {
-    data: grouped,
-    isLoading,
-    refetch: refetchGrouped,
-  } = useQuery({
+  const { data: grouped, isLoading } = useQuery({
     queryKey: ["notes-grouped"],
     queryFn: fetchGroupedNotes,
   });
-
-  const handleAnalyzeNotes = async () => {
-    setIsAnalyzing(true);
-    try {
-      await analyzeAllNotes();
-      await refetchGrouped();
-    } catch (error) {
-      console.error("Ошибка анализа заметок:", error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   if (isLoading) {
     return (

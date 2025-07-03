@@ -8,10 +8,7 @@ interface NoteCalendarEventsProps {
   noteTitle: string;
 }
 
-const NoteCalendarEvents: React.FC<NoteCalendarEventsProps> = ({
-  noteId,
-  noteTitle,
-}) => {
+const NoteCalendarEvents: React.FC<NoteCalendarEventsProps> = ({ noteId }) => {
   const [events, setEvents] = useState<NoteCalendarEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);

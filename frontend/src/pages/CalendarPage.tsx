@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {
-  authApi,
-  type CalendarEvent,
-  type NoteCalendarEvent,
-} from "../services/authApi";
+import { authApi } from "../services/authApi";
 import GoogleAuth from "../components/GoogleAuth";
 import Navbar from "../components/Navbar";
 import NeonBackground from "../components/NeonBackground";
@@ -35,7 +31,6 @@ interface ExtendedEvent {
 
 const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<ExtendedEvent[]>([]);
-  const [noteEvents, setNoteEvents] = useState<NoteCalendarEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<ExtendedEvent | null>(

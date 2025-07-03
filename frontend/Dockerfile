@@ -1,29 +1,28 @@
-# Multi-stage build for optimal image size
-FROM node:20-alpine AS base
+# === Стадия 1: билд React-приложения ===
+FROM node:22 AS build
+
 WORKDIR /app
 
-# Copy package files for better caching
-COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+ENV NODE_OPTIONS=--max_old_space_size=2048
 
-# Development stage
-FROM node:20-alpine AS development
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-EXPOSE 5173
-CMD ["npm", "run", "dev"]
 
-# Build stage
-FROM base AS build
-RUN npm ci
+
+RUN npm cache clean --force
+# Устанавливаем зависимости
+COPY package*.json ./
+RUN npm install
+
+# Копируем исходники и билдим
 COPY . .
 RUN npm run build
 
-# Production stage with Nginx
-FROM nginx:alpine AS production
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"] 
+# === Стадия 2: Nginx для прод-сервера ===
+
+# Копируем дефолтную конфигурацию nginx (если хочешь настроить — дальше)
+# Если не указывать свой, nginx сам отработает с index.html
+# Но можно подправить немного (см. ниже)
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]

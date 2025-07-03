@@ -20,11 +20,12 @@ app = FastAPI(
     # Добавляем конфигурацию безопасности для Swagger
     swagger_ui_parameters={
         "persistAuthorization": True,
-    }
+    },
+    root_path="/api"
 )
 
 # CORS middleware
-frontend_urls_env = os.getenv("FRONTEND_URLS", os.getenv("FRONTEND_URL", ""))
+frontend_urls_env = os.getenv("FRONTEND_URL", os.getenv("FRONTEND_URL", ""))
 if frontend_urls_env:
     frontend_urls = frontend_urls_env.split(",")
     frontend_urls.extend(["chrome-extension://*"])  # Добавляем поддержку расширений

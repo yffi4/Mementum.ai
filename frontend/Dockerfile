@@ -14,7 +14,7 @@ RUN npm install
 
 # Копируем исходники и билдим
 COPY . .
-RUN npm run build
+
 
 # === Стадия 2: Nginx для прод-сервера ===
 
@@ -25,4 +25,4 @@ RUN npm run build
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "build"]

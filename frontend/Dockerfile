@@ -19,8 +19,4 @@ FROM nginx:alpine
 # Копируем собранное приложение из стадии build
 COPY --from=build /app/dist /usr/share/nginx/html
 
-
-
-EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

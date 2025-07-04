@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL,
-  FRONTEND_URL: import.meta.env.VITE_FRONTEND_URL,
+  BASE_URL: import.meta.env.VITE_API_URL ?? "https://mementum.pro/api",
+  FRONTEND_URL: import.meta.env.VITE_FRONTEND_URL ?? "https://mementum.pro",
 
   // API Endpoints
   endpoints: {

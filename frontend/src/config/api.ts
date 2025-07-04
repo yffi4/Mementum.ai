@@ -52,7 +52,7 @@ export const getApiUrls = () => ({
   status: buildApiUrl(API_CONFIG.endpoints.auth.status),
   google: buildApiUrl(API_CONFIG.endpoints.auth.google),
   googleAuth: buildApiUrl(API_CONFIG.endpoints.auth.google),
-  googleDisconnect: buildApiUrl(API_CONFIG.endpoints.auth.googleDisconnect),
+  googleDiscteonnect: buildApiUrl(API_CONFIG.endpoints.auth.googleDisconnect),
   disconnectGoogle: buildApiUrl(API_CONFIG.endpoints.auth.googleDisconnect),
   userInfo: buildApiUrl(API_CONFIG.endpoints.auth.userInfo),
 

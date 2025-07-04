@@ -44,7 +44,7 @@ interface UpdateNoteData {
 const apiUrls = getApiUrls();
 
 const fetchNote = async (id: string): Promise<Note> => {
-  const response = await axios.get(`${apiUrls.notes}${id}/`, {
+  const response = await axios.get(`/api/notes/${id}/`, {
     withCredentials: true,
   });
   return response.data;

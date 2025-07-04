@@ -32,7 +32,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "5173:80"
+      - "80:80"
     environment:
       - REACT_APP_API_URL=${REACT_APP_API_URL}
       - VITE_API_URL=${VITE_API_URL}

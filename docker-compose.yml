@@ -31,8 +31,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     environment:
       - REACT_APP_API_URL=${REACT_APP_API_URL}
       - VITE_API_URL=${VITE_API_URL}

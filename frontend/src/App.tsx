@@ -8,6 +8,7 @@ import NotePage from "./pages/NotePage";
 import CalendarPage from "./pages/CalendarPage";
 import Profile from "./pages/Profile";
 import CodeDemoPage from "./pages/CodeDemoPage";
+import PrivacyPolicy from "./pages/PrivacyPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/calendar" element={<CalendarPage />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/code-demo" element={<CodeDemoPage />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
     </Routes>
   );
 }

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Capture thoughts instantly with AI-powered structured notes",
   "permissions": ["activeTab", "contextMenus", "storage"],
-  "host_permissions": ["http://localhost:8000/*"],
+  "host_permissions": ["https://mementum.pro/api*"],
   "background": {
     "service_worker": "background.js"
   },
@@ -20,7 +20,7 @@
     "default_title": "Mementum.ai - Quick Notes",
     "default_icon": "logo_cirlce.png"
   },
- 
+
   "web_accessible_resources": [
     {
       "resources": ["popup.html", "popup.css", "popup.js"],

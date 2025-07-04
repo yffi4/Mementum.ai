@@ -1,7 +1,7 @@
 class MementumPopup {
   constructor() {
-    this.apiUrl = "http://localhost:8000"; // Ваш API URL
-    this.webAppUrl = "http://localhost:5173"; // Vite обычно использует порт 5173
+    this.apiUrl = "https://mementum.pro/api"; // Ваш API URL
+    this.webAppUrl = "https://mementum.pro"; // Vite обычно использует порт 5173
     this.init();
   }
 

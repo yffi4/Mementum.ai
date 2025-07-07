@@ -51,7 +51,7 @@
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  padding: 0 1rem;
+  padding: 80px 1rem 0; /* Отступ сверху для AuthNav */
 }
 
 .title {
@@ -707,5 +707,27 @@
 
   .feature-card {
     padding: 2.5rem;
+  }
+}
+
+/* Дополнительные адаптивные отступы для AuthNav */
+
+/* Адаптивные отступы для AuthNav */
+@media (max-width: 768px) {
+  .main {
+    padding: 60px 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 50px 0.75rem 0;
+  }
+}
+
+/* Ландшафтная ориентация */
+@media (max-width: 768px) and (orientation: landscape) {
+  .main {
+    padding: 45px 1rem 0;
   }
 }

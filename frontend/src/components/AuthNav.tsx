@@ -4,7 +4,7 @@ import "../styles/Components.css";
 export default function AuthNav() {
   const location = useLocation();
   return (
-    <nav className="absolute top-0 right-0 p-8 z-[60] flex gap-4">
+    <nav className="auth-nav">
       {location.pathname !== "/login" && (
         <Link to="/login" className="nav-btn nav-btn-outline">
           Sign in

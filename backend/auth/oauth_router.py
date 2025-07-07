@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db, get_async_db
-from jwt_auth.auth import create_access_token, get_current_active_user, oauth2_scheme
+from jwt_auth.auth import create_access_token, get_current_active_user, oauth2_scheme, create_refresh_token, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 from models import User
 from .google_oauth import google_oauth_service
 
@@ -25,7 +25,7 @@ def google_login():
 
 
 @router.get("/google/callback")
-def google_callback(
+async def google_callback(
     code: str,
     db: Session = Depends(get_db),
 ):
@@ -44,10 +44,16 @@ def google_callback(
         print(f"DEBUG: User created/updated: {user.email}, ID: {user.id}")
         logger.info(f"User created/updated: {user.email}")
 
-        # Создать JWT токен для аутентификации в приложении
+        # Создать JWT access токен и refresh токен для аутентификации в приложении
         access_token = create_access_token(data={"sub": user.email})
-        print(f"DEBUG: JWT token created")
-        logger.info("JWT token created")
+        
+        # Для создания refresh токена нужна async session
+        from database import async_sessionmaker
+        async with async_sessionmaker() as async_db:
+            refresh_token = await create_refresh_token(user.id, async_db)
+            
+        print(f"DEBUG: JWT tokens created")
+        logger.info("JWT tokens created")
         
         # Перенаправить на фронтенд с параметром успеха
         base_frontend = os.getenv("FRONTEND_URL")
@@ -56,14 +62,23 @@ def google_callback(
         frontend_url = base_frontend.rstrip("/") + "/login"
         redirect_response = RedirectResponse(url=f"{frontend_url}?auth=success")
 
-        # Установить cookie с токеном
+        # Установить cookies с токенами
         redirect_response.set_cookie(
             key="access_token",
             value=access_token,
             httponly=True,
             secure=False,  # False для localhost
             samesite="lax",
-            max_age=1800  # 30 минут
+            max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60  # 30 минут
+        )
+        
+        redirect_response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,  # False для localhost
+            samesite="lax",
+            max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60  # 7 дней
         )
         print(f"DEBUG: Cookie set successfully, redirecting to frontend")
         logger.info("Cookie set successfully, redirecting to frontend")

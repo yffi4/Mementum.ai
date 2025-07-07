@@ -35,9 +35,12 @@ export default function RegisterPage() {
       // Успешная авторизация через Google (токен уже в cookie)
       // Очищаем URL параметры и обновляем состояние auth
       window.history.replaceState({}, document.title, "/register");
-      checkAuth().then(() => {
-        navigate("/notes");
-      });
+      // Небольшая задержка чтобы cookies успели установиться
+      setTimeout(() => {
+        checkAuth().then(() => {
+          navigate("/notes");
+        });
+      }, 100);
     } else if (authError) {
       setError(`Google authorization failed: ${authError}`);
       // Очищаем URL параметры

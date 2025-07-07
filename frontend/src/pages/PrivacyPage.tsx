@@ -66,8 +66,8 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <p className="text-[#4ade80] font-medium text-sm">
-              ✅ We do not collect browsing history, cookies, or any unrelated
-              personal data.
+              ✅ We do not collect browsing history or other personal data not
+              related to the application.
             </p>
           </div>
         </div>
@@ -122,71 +122,33 @@ const PrivacyPolicy: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-[#d1d5db] leading-relaxed">
-            We use cookies to enhance your experience on our website. Here's how
-            we use them:
+            We use cookies only to help you log into your account and stay
+            logged in while using our website.
           </p>
 
-          <div className="space-y-4">
-            <div
-              className="p-4 rounded-lg border"
-              style={{
-                background: "rgba(161, 138, 255, 0.1)",
-                borderColor: "rgba(161, 138, 255, 0.3)",
-              }}
-            >
-              <h4 className="font-semibold text-[#a18aff] mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#a18aff] rounded-full"></span>
-                Essential Cookies
-              </h4>
-              <p className="text-[#d1d5db] text-sm mb-3">
-                These cookies are necessary for the website to function and
-                cannot be disabled in our systems.
+          <div
+            className="p-4 rounded-lg border"
+            style={{
+              background: "rgba(161, 138, 255, 0.1)",
+              borderColor: "rgba(161, 138, 255, 0.3)",
+            }}
+          >
+            <h4 className="font-semibold text-[#a18aff] mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#a18aff] rounded-full"></span>
+              What are cookies and why do we need them?
+            </h4>
+            <p className="text-[#d1d5db] text-sm mb-3">
+              Cookies are small files that are saved in your browser. We use
+              them for only one purpose:
+            </p>
+            <div className="bg-white/5 p-3 rounded-lg">
+              <p className="text-[#b8f2ff] text-sm font-medium">
+                🔐 To remember that you are logged into your account
               </p>
-              <ul className="space-y-2 text-[#d1d5db] text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#a18aff] text-xs mt-1">•</span>
-                  <span>Authentication tokens to keep you logged in</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#a18aff] text-xs mt-1">•</span>
-                  <span>Session management and security</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#a18aff] text-xs mt-1">•</span>
-                  <span>Cookie consent preferences</span>
-                </li>
-              </ul>
-            </div>
-
-            <div
-              className="p-4 rounded-lg border"
-              style={{
-                background: "rgba(111, 234, 255, 0.1)",
-                borderColor: "rgba(111, 234, 255, 0.3)",
-              }}
-            >
-              <h4 className="font-semibold text-[#6feaff] mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#6feaff] rounded-full"></span>
-                Analytics Cookies (Optional)
-              </h4>
-              <p className="text-[#d1d5db] text-sm mb-3">
-                These cookies help us understand how visitors use our website so
-                we can improve it.
+              <p className="text-[#d1d5db] text-xs mt-1">
+                Without this, you would have to enter your username and password
+                every time you visit a new page
               </p>
-              <ul className="space-y-2 text-[#d1d5db] text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#6feaff] text-xs mt-1">•</span>
-                  <span>Anonymous usage statistics</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#6feaff] text-xs mt-1">•</span>
-                  <span>Performance metrics</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#6feaff] text-xs mt-1">•</span>
-                  <span>User behavior patterns (anonymized)</span>
-                </li>
-              </ul>
             </div>
           </div>
 
@@ -198,47 +160,28 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <h4 className="font-semibold text-[#4ade80] mb-2">
-              Cookie Management
+              In simple terms
             </h4>
             <p className="text-[#d1d5db] text-sm">
-              You can manage your cookie preferences at any time by clicking the
-              cookie preferences link in the footer of any page or by adjusting
-              your browser settings. Note that disabling certain cookies may
-              affect the functionality of our website.
+              When you register or log into your account, we save a special
+              "pass" (token) in your browser. This "pass" allows the website to
+              know that it's you and show your notes. Without this, our website
+              cannot work properly.
             </p>
           </div>
 
           <div
             className="p-4 rounded-lg border"
             style={{
-              background: "rgba(239, 68, 68, 0.1)",
-              borderColor: "rgba(239, 68, 68, 0.3)",
+              background: "rgba(59, 130, 246, 0.1)",
+              borderColor: "rgba(59, 130, 246, 0.3)",
             }}
           >
-            <h4 className="font-semibold text-[#ef4444] mb-2">
-              What We DON'T Do
-            </h4>
-            <ul className="space-y-2 text-[#d1d5db] text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-[#ef4444] text-xs mt-1">✗</span>
-                <span>
-                  We don't use cookies for advertising or tracking across
-                  websites
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#ef4444] text-xs mt-1">✗</span>
-                <span>
-                  We don't sell or share cookie data with third parties
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#ef4444] text-xs mt-1">✗</span>
-                <span>
-                  We don't use cookies to build profiles for marketing purposes
-                </span>
-              </li>
-            </ul>
+            <h4 className="font-semibold text-[#3b82f6] mb-2">Your privacy</h4>
+            <p className="text-[#d1d5db] text-sm">
+              We do NOT use cookies for advertising, tracking, or any other
+              purposes. Only to help you use your account.
+            </p>
           </div>
         </div>
       ),

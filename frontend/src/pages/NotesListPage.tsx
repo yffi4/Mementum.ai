@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
 import "../styles/NoteListPage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";

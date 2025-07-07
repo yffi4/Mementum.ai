@@ -19,4 +19,10 @@ FROM nginx:alpine
 # Копируем собранное приложение из стадии build
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Копируем конфигурацию nginx для SPA
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Создаем директории для логов
+RUN mkdir -p /var/log/nginx
+
 CMD ["nginx", "-g", "daemon off;"]

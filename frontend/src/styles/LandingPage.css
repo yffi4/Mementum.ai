@@ -517,3 +517,195 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Добавляем адаптивность для мобильных устройств */
+@media (max-width: 767px) {
+  .main {
+    padding: 0 1rem;
+    min-height: 100vh;
+  }
+
+  .title {
+    font-size: 32px;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .input-section {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .input-container {
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .text-input {
+    font-size: 16px;
+    min-height: 40px;
+  }
+
+  .button-container {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .try-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 16px;
+  }
+
+  .creating-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 16px;
+  }
+
+  .result-card {
+    padding: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  .result-title {
+    font-size: 14px;
+  }
+
+  .result-details {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .result-label {
+    font-size: 11px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+    text-align: left;
+  }
+
+  .feature-title {
+    font-size: 18px;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+  }
+
+  .feature-icon {
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .main {
+    padding: 0 0.75rem;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .input-container {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .text-input {
+    font-size: 14px;
+  }
+
+  .feature-card {
+    padding: 1rem;
+  }
+
+  .feature-title {
+    font-size: 16px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+  }
+}
+
+/* Для средних экранов (планшеты) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .title {
+    font-size: 56px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+  }
+
+  .main {
+    padding: 0 2rem;
+  }
+
+  .input-section {
+    max-width: 36rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    padding: 1.75rem;
+  }
+}
+
+/* Для больших экранов */
+@media (min-width: 1200px) {
+  .title {
+    font-size: 80px;
+  }
+
+  .subtitle {
+    font-size: 28px;
+  }
+
+  .main {
+    padding: 0 3rem;
+  }
+
+  .input-section {
+    max-width: 40rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 72rem;
+  }
+
+  .feature-card {
+    padding: 2.5rem;
+  }
+}

@@ -745,17 +745,22 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .notes-container {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
+    max-width: 100%;
   }
 
   .notes-header {
     flex-direction: column;
-    align-items: stretch;
     gap: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
   }
 
   .notes-create-btn {
-    align-self: flex-start;
+    padding: 0.75rem 1.5rem;
+    font-size: 14px;
+    width: 100%;
+    max-width: 200px;
   }
 
   .note-card-header {
@@ -764,117 +769,296 @@ body {
     gap: 0.5rem;
   }
 
+  .note-card-title {
+    font-size: 16px;
+    margin-bottom: 0.5rem;
+  }
+
   .note-card-footer {
     flex-direction: column;
+    gap: 0.75rem;
     align-items: flex-start;
+  }
+
+  .card-metadata {
+    flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  .category-badge {
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .note-card-date {
+    font-size: 11px;
+  }
+
+  .note-card-preview {
+    margin: 0.75rem 0;
+  }
+
+  .note-card-preview p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .preview-label {
+    font-size: 11px;
+    margin-bottom: 0.25rem;
+  }
+
+  .note-tag {
+    font-size: 10px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .note-tag-more {
+    font-size: 10px;
+  }
+
+  .importance-badge {
+    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .card-stats {
+    font-size: 11px;
+  }
+
+  .note-connections {
+    font-size: 11px;
+  }
+
+  .note-card {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .note-card:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .notes-container {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .notes-header {
+    margin-bottom: 1rem;
+  }
+
+  .notes-title {
+    font-size: 20px;
+  }
+
+  .notes-create-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 13px;
+  }
+
+  .note-card {
+    padding: 0.75rem;
+  }
+
+  .note-card-title {
+    font-size: 15px;
+  }
+
+  .note-card-preview p {
+    font-size: 12px;
+  }
+
+  .category-badge {
+    font-size: 10px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .note-card-date {
+    font-size: 10px;
+  }
+
+  .note-tag {
+    font-size: 9px;
+    padding: 0.15rem 0.3rem;
+  }
+
+  .importance-badge {
+    font-size: 10px;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* Для средних экранов (планшеты) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .notes-container {
+    padding: 1.5rem 1rem;
+    max-width: 900px;
+  }
+
+  .notes-header {
+    margin-bottom: 2rem;
+  }
+
+  .notes-title {
+    font-size: 24px;
+  }
+
+  .notes-create-btn {
+    padding: 0.7rem 1.3rem;
+    font-size: 15px;
+  }
+
+  .note-card {
+    padding: 1.25rem;
+  }
+
+  .note-card-title {
+    font-size: 18px;
+  }
+
+  .note-card-preview p {
+    font-size: 14px;
+  }
+}
+
+/* Для больших экранов */
+@media (min-width: 1200px) {
+  .notes-container {
+    max-width: 1000px;
+    padding: 2.5rem 1rem;
+  }
+
+  .notes-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .notes-title {
+    font-size: 28px;
+  }
+
+  .notes-create-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 16px;
+  }
+
+  .note-card {
+    padding: 1.5rem;
+  }
+
+  .note-card-title {
+    font-size: 20px;
   }
 }
 
 .notes-top {
-  padding-top: 12rem; /* equivalent of pt-48 */
+  width: 100%;
+  margin-bottom: 2rem;
 }
 
-/* Category section styling */
 .category-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .category-header {
-  position: relative;
-  margin-bottom: 2rem;
-  padding: 1.5rem 0;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  border-bottom: 2px solid rgba(111, 234, 255, 0.2);
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(111, 234, 255, 0.2);
 }
 
 .category-title {
-  align-items: center;
-  justify-content: center;
-  font-size: 1.75rem !important;
-  font-weight: 700 !important;
-  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  text-shadow: 0 0 20px rgba(161, 138, 255, 0.3);
-  margin: 0 !important;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  background-color: rgba(24, 27, 58, 0.4);
-  border: 1px solid rgba(111, 234, 255, 0.15);
-  backdrop-filter: blur(10px);
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
+  font-size: 20px;
+  font-weight: 700;
+  color: #b8f2ff;
+  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
+  user-select: none;
 }
 
 .category-title:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(161, 138, 255, 0.2);
-  border-color: rgba(111, 234, 255, 0.3);
+  filter: drop-shadow(0 0 8px rgba(161, 138, 255, 0.4));
 }
 
 .category-title::before {
   content: "";
   position: absolute;
-  top: 0;
+  bottom: -2px;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(161, 138, 255, 0.1) 0%,
-    rgba(111, 234, 255, 0.1) 100%
-  );
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #a18aff 0%, #6feaff 100%);
+  transition: width 0.3s ease;
 }
 
 .category-title:hover::before {
-  opacity: 1;
+  width: 100%;
 }
 
 .category-notes-grid {
-  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
-/* Enhanced category count styling */
 .category-count {
-  background: rgba(111, 234, 255, 0.15);
-  color: #6feaff;
+  background: rgba(161, 138, 255, 0.2);
+  color: #a18aff;
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
-  font-size: 0.9rem;
+  font-size: 12px;
   font-weight: 600;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  min-width: 2rem;
-  height: 1.75rem;
-  line-height: 1;
-  border: 1px solid rgba(111, 234, 255, 0.3);
+  gap: 0.25rem;
 }
 
-/* Responsive adjustments */
+/* Адаптивность для категорий */
 @media (max-width: 768px) {
   .category-title {
-    font-size: 1.5rem !important;
-    padding: 0.5rem 1rem;
+    font-size: 16px;
   }
 
   .category-header {
-    margin-bottom: 1.5rem;
-    padding: 1rem 0;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .category-notes-grid {
-    margin-top: 1.5rem;
+    gap: 0.75rem;
+  }
+
+  .category-count {
+    font-size: 11px;
+    padding: 0.2rem 0.6rem;
+  }
+}
+
+/* Для планшетов - показываем сетку для категорий */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .category-notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Для больших экранов - показываем 2 колонки */
+@media (min-width: 1025px) {
+  .category-notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }

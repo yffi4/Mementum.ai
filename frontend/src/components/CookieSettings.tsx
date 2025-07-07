@@ -15,7 +15,6 @@ const CookieSettings: React.FC<CookieSettingsProps> = ({ className = "" }) => {
     acceptCookies,
     declineCookies,
     resetConsent,
-    hasAcceptedCookies,
     getConsentData,
   } = useCookieConsent();
 

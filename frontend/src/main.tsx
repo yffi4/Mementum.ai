@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Создаем QueryClient с настройками для React 19
 const queryClient = new QueryClient({
@@ -66,7 +67,9 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </QueryClientProvider>
       </BrowserRouter>
     </ErrorBoundary>

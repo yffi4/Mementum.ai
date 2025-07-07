@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { getApiUrls } from "../config/api";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/AuthPages.css";
 import NeonBackground from "../components/NeonBackground";
 import { FiMail, FiLock } from "react-icons/fi";
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { checkAuth } = useAuth();
 
   // Проверить результат Google OAuth
   useEffect(() => {
@@ -26,17 +28,17 @@ export default function LoginPage() {
 
     if (authSuccess === "success") {
       // Успешная авторизация через Google (токен уже в cookie)
-      // Очищаем URL параметры и перенаправляем
+      // Очищаем URL параметры и обновляем состояние auth
       window.history.replaceState({}, document.title, "/login");
-      setTimeout(() => {
+      checkAuth().then(() => {
         navigate("/notes");
-      }, 500); // Небольшая задержка для лучшего UX
+      });
     } else if (authError) {
       setError(`Google authorization failed: ${authError}`);
       // Очищаем URL параметры
       window.history.replaceState({}, document.title, "/login");
     }
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, checkAuth]);
 
   const apiUrls = getApiUrls();
 
@@ -62,8 +64,9 @@ export default function LoginPage() {
           : "Login failed");
       setError(message);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setError("");
+      await checkAuth(); // Обновляем состояние аутентификации
       navigate("/notes/");
     },
   });

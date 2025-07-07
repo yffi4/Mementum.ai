@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getApiUrls } from "../config/api";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/NoteCreatePage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
@@ -57,26 +58,10 @@ export default function NoteCreatePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  // Получаем пользователя
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const apiUrls = getApiUrls();
-        const response = await axios.get(apiUrls.authStatus, {
-          withCredentials: true,
-        });
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("Ошибка получения пользователя:", error);
-      }
-    };
-    fetchUser();
-  }, []);
 
   const createNoteMutation = useMutation({
     mutationFn: createNoteWithAI,

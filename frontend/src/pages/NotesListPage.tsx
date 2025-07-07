@@ -9,6 +9,7 @@ import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
 import { FiTag } from "react-icons/fi";
 import { getApiUrls } from "../config/api";
+import { useAuth } from "../contexts/AuthContext";
 
 // Типы для заметок
 interface Note {
@@ -240,23 +241,7 @@ function LoadingState() {
 }
 
 export default function NotesListPage() {
-  const [user, setUser] = useState<User | null>(null);
-
-  // Получаем пользователя
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const apiUrls = getApiUrls();
-        const response = await axios.get(apiUrls.authStatus, {
-          withCredentials: true,
-        });
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("Ошибка получения пользователя:", error);
-      }
-    };
-    fetchUser();
-  }, []);
+  const { user } = useAuth();
 
   const { data: grouped, isLoading } = useQuery({
     queryKey: ["notes-grouped"],

@@ -15,6 +15,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { getApiUrls } from "../config/api";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/Navbar.css";
 
 interface NavbarProps {
@@ -31,6 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const { logout } = useAuth();
 
   const profileRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,11 +55,8 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
     { path: "/calendar", label: "Calendar", icon: <FiCalendar size={18} /> },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    document.cookie =
-      "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    navigate("/");
+  const handleLogout = async () => {
+    await logout();
   };
 
   const toggleMobileMenu = () => {

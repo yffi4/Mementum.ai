@@ -9,8 +9,17 @@ import CalendarPage from "./pages/CalendarPage";
 import Profile from "./pages/Profile";
 import CodeDemoPage from "./pages/CodeDemoPage";
 import PrivacyPolicy from "./pages/PrivacyPage";
+import LoadingScreen from "./components/LoadingScreen";
+import { useAuth } from "./contexts/AuthContext";
 
 export default function App() {
+  const { loading } = useAuth();
+
+  // Показываем загрузку пока проверяем авторизацию
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

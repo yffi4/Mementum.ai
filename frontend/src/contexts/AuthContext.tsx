@@ -1,13 +1,8 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { authApi } from "../services/authApi";
-import { AuthStatus } from "../services/authApi";
+import type { ReactNode } from "react";
+import type { AuthStatus } from "../services/authApi";
 
 interface AuthContextType {
   user: AuthStatus["user"] | null;
@@ -41,11 +36,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const authStatus = await authApi.getAuthStatus();
       setUser(authStatus.user);
-      return authStatus;
     } catch (error) {
       console.error("Auth check failed:", error);
       setUser(null);
-      return null;
     }
   };
 
@@ -67,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
 
       try {
-        const authStatus = await checkAuth();
+        const authStatus = await authApi.getAuthStatus();
 
         if (authStatus && authStatus.user) {
           // Пользователь авторизован

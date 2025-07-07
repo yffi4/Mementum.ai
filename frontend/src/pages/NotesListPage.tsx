@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../styles/NoteListPage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
@@ -23,13 +23,6 @@ interface Note {
   createdAt: string;
   updatedAt: string;
   connections?: number;
-}
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  google_picture?: string;
 }
 
 // API функции

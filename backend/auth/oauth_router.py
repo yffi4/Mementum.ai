@@ -48,8 +48,8 @@ async def google_callback(
         access_token = create_access_token(data={"sub": user.email})
         
         # Для создания refresh токена нужна async session
-        from database import async_sessionmaker
-        async with async_sessionmaker() as async_db:
+        from database import AsyncSessionLocal
+        async with AsyncSessionLocal() as async_db:
             refresh_token = await create_refresh_token(user.id, async_db)
             
         print(f"DEBUG: JWT tokens created")

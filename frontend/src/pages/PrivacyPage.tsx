@@ -1,9 +1,17 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Link } from "react-router-dom"
-import { motion } from "framer-motion"
-import { FiShield, FiLock, FiEye, FiDatabase, FiUsers, FiMail, FiArrowLeft } from "react-icons/fi"
+import type React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  FiShield,
+  FiLock,
+  FiEye,
+  FiDatabase,
+  FiUsers,
+  FiMail,
+  FiArrowLeft,
+} from "react-icons/fi";
 
 const PrivacyPolicy: React.FC = () => {
   const sections = [
@@ -13,9 +21,11 @@ const PrivacyPolicy: React.FC = () => {
       icon: <FiShield size={24} />,
       content: (
         <p className="text-[#d1d5db] leading-relaxed">
-          Mementum.ai – Quick Notes is a Chrome extension that helps users quickly save selected text from web pages and
-          generate structured notes using an AI assistant. We are committed to protecting your privacy and being
-          transparent about the data we collect and how it is used.
+          Mementum.ai – Quick Notes is a Chrome extension that helps users
+          quickly save selected text from web pages and generate structured
+          notes using an AI assistant. We are committed to protecting your
+          privacy and being transparent about the data we collect and how it is
+          used.
         </p>
       ),
     },
@@ -28,11 +38,16 @@ const PrivacyPolicy: React.FC = () => {
           <ul className="space-y-3 text-[#d1d5db]">
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full mt-2 flex-shrink-0" />
-              <span>Email address, username, and password (when registering via email)</span>
+              <span>
+                Email address, username, and password (when registering via
+                email)
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#a18aff] rounded-full mt-2 flex-shrink-0" />
-              <span>Google account basic info (when registering via Google)</span>
+              <span>
+                Google account basic info (when registering via Google)
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full mt-2 flex-shrink-0" />
@@ -51,7 +66,8 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <p className="text-[#4ade80] font-medium text-sm">
-              ✅ We do not collect browsing history, cookies, or any unrelated personal data.
+              ✅ We do not collect browsing history, cookies, or any unrelated
+              personal data.
             </p>
           </div>
         </div>
@@ -63,7 +79,9 @@ const PrivacyPolicy: React.FC = () => {
       icon: <FiEye size={24} />,
       content: (
         <div className="space-y-4">
-          <p className="text-[#d1d5db] leading-relaxed">Your data is used solely for the following purposes:</p>
+          <p className="text-[#d1d5db] leading-relaxed">
+            Your data is used solely for the following purposes:
+          </p>
           <div className="grid gap-4 md:grid-cols-1">
             {[
               "To authenticate and authorize your account",
@@ -84,7 +102,8 @@ const PrivacyPolicy: React.FC = () => {
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
                   style={{
-                    background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
+                    background:
+                      "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                   }}
                 >
                   {index + 1}
@@ -111,12 +130,14 @@ const PrivacyPolicy: React.FC = () => {
               },
               {
                 title: "Selected Text",
-                description: "Sent over secure HTTPS and used only for immediate processing — not stored on servers",
+                description:
+                  "Sent over secure HTTPS and used only for immediate processing — not stored on servers",
                 color: "#6feaff",
               },
               {
                 title: "Generated Notes",
-                description: "Stored locally in your browser using Chrome's storage API",
+                description:
+                  "Stored locally in your browser using Chrome's storage API",
                 color: "#4ade80",
               },
             ].map((item, index) => (
@@ -153,7 +174,9 @@ const PrivacyPolicy: React.FC = () => {
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
               <div className="w-3 h-3 bg-[#a18aff] rounded-full" />
-              <span className="text-[#d1d5db]">Our own backend AI APIs for generating notes</span>
+              <span className="text-[#d1d5db]">
+                Our own backend AI APIs for generating notes
+              </span>
             </div>
           </div>
           <div
@@ -163,7 +186,9 @@ const PrivacyPolicy: React.FC = () => {
               borderColor: "rgba(74, 222, 128, 0.3)",
             }}
           >
-            <p className="text-[#4ade80] font-medium">🔒 We do not share or sell your data to any third parties.</p>
+            <p className="text-[#4ade80] font-medium">
+              🔒 We do not share or sell your data to any third parties.
+            </p>
           </div>
         </div>
       ),
@@ -175,7 +200,8 @@ const PrivacyPolicy: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-[#d1d5db] leading-relaxed">
-            You can request deletion of your account and data by contacting us at:
+            You can request deletion of your account and data by contacting us
+            at:
           </p>
           <motion.a
             href="mailto:support@mementum.pro"
@@ -194,7 +220,7 @@ const PrivacyPolicy: React.FC = () => {
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0b0c2a] to-[#1b1740] pt-20">
@@ -216,7 +242,10 @@ const PrivacyPolicy: React.FC = () => {
         />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        className="relative z-10 max-w-4xl px-4 sm:px-6 lg:px-8 py-12"
+        style={{ margin: "0 auto" }}
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -243,7 +272,9 @@ const PrivacyPolicy: React.FC = () => {
           >
             Privacy Policy
           </h1>
-          <p className="text-xl text-[#b8f2ff] mb-2">for Mementum.ai – Quick Notes</p>
+          <p className="text-xl text-[#b8f2ff] mb-2">
+            for Mementum.ai – Quick Notes
+          </p>
           <p className="text-[#9ca3af]">Last updated: July 4, 2025</p>
         </motion.div>
 
@@ -270,13 +301,16 @@ const PrivacyPolicy: React.FC = () => {
                   <div
                     className="p-3 rounded-xl"
                     style={{
-                      background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
+                      background:
+                        "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                       boxShadow: "0 4px 16px rgba(161, 138, 255, 0.3)",
                     }}
                   >
                     <div className="text-white">{section.icon}</div>
                   </div>
-                  <h2 className="text-2xl font-bold text-white">{section.title}</h2>
+                  <h2 className="text-2xl font-bold text-white">
+                    {section.title}
+                  </h2>
                 </div>
 
                 {/* Section Content */}
@@ -306,7 +340,8 @@ const PrivacyPolicy: React.FC = () => {
           >
             <h3 className="text-2xl font-bold text-white mb-4">Contact</h3>
             <p className="text-[#d1d5db] mb-6">
-              If you have any questions about this privacy policy, please contact us at:
+              If you have any questions about this privacy policy, please
+              contact us at:
             </p>
             <motion.a
               href="mailto:support@mementum.pro"
@@ -336,7 +371,7 @@ const PrivacyPolicy: React.FC = () => {
         </motion.div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PrivacyPolicy
+export default PrivacyPolicy;

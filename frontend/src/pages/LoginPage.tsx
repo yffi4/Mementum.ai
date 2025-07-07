@@ -217,6 +217,14 @@ export default function LoginPage() {
         <div className="auth-link">
           No account? <Link to="/register">Sign up</Link>
         </div>
+        <div className="text-center text-sm text-gray-400 mt-4">
+          <Link
+            to="/privacy"
+            className="text-purple-400 hover:text-purple-300 underline"
+          >
+            Privacy Policy
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -116,6 +116,134 @@ const PrivacyPolicy: React.FC = () => {
       ),
     },
     {
+      id: "cookie-policy",
+      title: "Cookie Policy",
+      icon: <FiShield size={24} />,
+      content: (
+        <div className="space-y-4">
+          <p className="text-[#d1d5db] leading-relaxed">
+            We use cookies to enhance your experience on our website. Here's how
+            we use them:
+          </p>
+
+          <div className="space-y-4">
+            <div
+              className="p-4 rounded-lg border"
+              style={{
+                background: "rgba(161, 138, 255, 0.1)",
+                borderColor: "rgba(161, 138, 255, 0.3)",
+              }}
+            >
+              <h4 className="font-semibold text-[#a18aff] mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#a18aff] rounded-full"></span>
+                Essential Cookies
+              </h4>
+              <p className="text-[#d1d5db] text-sm mb-3">
+                These cookies are necessary for the website to function and
+                cannot be disabled in our systems.
+              </p>
+              <ul className="space-y-2 text-[#d1d5db] text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#a18aff] text-xs mt-1">•</span>
+                  <span>Authentication tokens to keep you logged in</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#a18aff] text-xs mt-1">•</span>
+                  <span>Session management and security</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#a18aff] text-xs mt-1">•</span>
+                  <span>Cookie consent preferences</span>
+                </li>
+              </ul>
+            </div>
+
+            <div
+              className="p-4 rounded-lg border"
+              style={{
+                background: "rgba(111, 234, 255, 0.1)",
+                borderColor: "rgba(111, 234, 255, 0.3)",
+              }}
+            >
+              <h4 className="font-semibold text-[#6feaff] mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#6feaff] rounded-full"></span>
+                Analytics Cookies (Optional)
+              </h4>
+              <p className="text-[#d1d5db] text-sm mb-3">
+                These cookies help us understand how visitors use our website so
+                we can improve it.
+              </p>
+              <ul className="space-y-2 text-[#d1d5db] text-sm">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#6feaff] text-xs mt-1">•</span>
+                  <span>Anonymous usage statistics</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#6feaff] text-xs mt-1">•</span>
+                  <span>Performance metrics</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#6feaff] text-xs mt-1">•</span>
+                  <span>User behavior patterns (anonymized)</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div
+            className="p-4 rounded-lg border"
+            style={{
+              background: "rgba(74, 222, 128, 0.1)",
+              borderColor: "rgba(74, 222, 128, 0.3)",
+            }}
+          >
+            <h4 className="font-semibold text-[#4ade80] mb-2">
+              Cookie Management
+            </h4>
+            <p className="text-[#d1d5db] text-sm">
+              You can manage your cookie preferences at any time by clicking the
+              cookie preferences link in the footer of any page or by adjusting
+              your browser settings. Note that disabling certain cookies may
+              affect the functionality of our website.
+            </p>
+          </div>
+
+          <div
+            className="p-4 rounded-lg border"
+            style={{
+              background: "rgba(239, 68, 68, 0.1)",
+              borderColor: "rgba(239, 68, 68, 0.3)",
+            }}
+          >
+            <h4 className="font-semibold text-[#ef4444] mb-2">
+              What We DON'T Do
+            </h4>
+            <ul className="space-y-2 text-[#d1d5db] text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-[#ef4444] text-xs mt-1">✗</span>
+                <span>
+                  We don't use cookies for advertising or tracking across
+                  websites
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#ef4444] text-xs mt-1">✗</span>
+                <span>
+                  We don't sell or share cookie data with third parties
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#ef4444] text-xs mt-1">✗</span>
+                <span>
+                  We don't use cookies to build profiles for marketing purposes
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      ),
+    },
+    {
       id: "data-security",
       title: "Data Storage and Security",
       icon: <FiLock size={24} />,

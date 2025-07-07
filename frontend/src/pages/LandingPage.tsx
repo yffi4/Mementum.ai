@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import AuthNav from "../components/AuthNav";
 import NeonBackground from "../components/NeonBackground";
+import CookieConsent from "../components/CookieConsent";
 import "../styles/LandingPage.css";
 
 const TITLE = "Mementum.ai";
@@ -298,6 +299,18 @@ const LandingPage: React.FC = () => {
           ))}
         </div>
       </main>
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent
+        onAccept={() => {
+          console.log("Landing page: Cookies accepted");
+          // Здесь можно добавить аналитику или другие действия
+        }}
+        onDecline={() => {
+          console.log("Landing page: Cookies declined");
+          // Отключаем аналитику и трекинг
+        }}
+      />
     </div>
   );
 };

@@ -204,7 +204,7 @@ const PrivacyPolicy: React.FC = () => {
             at:
           </p>
           <motion.a
-            href="mailto:support@mementum.pro"
+            href="mailto:ikulesh200515@gmail.com"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-3 px-6 py-4 rounded-xl font-semibold transition-all duration-300"
@@ -215,7 +215,7 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <FiMail size={20} />
-            support@mementum.pro
+            ikulesh200515@gmail.com
           </motion.a>
         </div>
       ),
@@ -344,7 +344,7 @@ const PrivacyPolicy: React.FC = () => {
               contact us at:
             </p>
             <motion.a
-              href="mailto:support@mementum.pro"
+              href="mailto:ikulesh200515@gmail.com"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300"
@@ -355,7 +355,7 @@ const PrivacyPolicy: React.FC = () => {
               }}
             >
               <FiMail size={24} />
-              support@mementum.pro
+              ikulesh200515@gmail.com
             </motion.a>
           </div>
         </motion.div>

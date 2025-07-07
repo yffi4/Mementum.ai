@@ -732,3 +732,117 @@ a:hover,
     font-size: 0.75rem;
   }
 }
+
+/* Стили для CookieConsent компонента */
+.cookie-consent-card {
+  position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Адаптивные стили для CookieConsent */
+@media (max-width: 768px) {
+  .cookie-consent-card {
+    margin: 0 0.75rem;
+    padding: 1.25rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .cookie-consent-card h3 {
+    font-size: 1rem;
+  }
+
+  .cookie-consent-card p {
+    font-size: 0.875rem;
+  }
+
+  .cookie-consent-card .flex.items-start.gap-3 {
+    gap: 0.75rem;
+  }
+
+  .cookie-consent-card .w-10.h-10 {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .cookie-consent-card .flex.gap-2 button {
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cookie-consent-card {
+    margin: 0 0.5rem;
+    padding: 1rem !important;
+  }
+
+  .cookie-consent-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .cookie-consent-card p {
+    font-size: 0.8rem;
+  }
+
+  .cookie-consent-card .flex.gap-2 button {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8rem;
+  }
+
+  .cookie-consent-card .text-xs {
+    font-size: 0.7rem;
+  }
+
+  .cookie-consent-card ul li {
+    font-size: 0.7rem;
+  }
+}
+
+/* Ландшафтная ориентация для cookie banner */
+@media (max-width: 768px) and (orientation: landscape) {
+  .cookie-consent-card {
+    padding: 1rem !important;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .cookie-consent-card .flex.flex-col.gap-2 {
+    gap: 0.5rem;
+  }
+
+  .cookie-consent-card .mb-4 {
+    margin-bottom: 0.75rem;
+  }
+
+  .cookie-consent-card .mb-3 {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Анимации для cookie consent */
+@keyframes cookieSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cookie-consent-enter {
+  animation: cookieSlideUp 0.3s ease-out;
+}
+
+/* Отключение анимаций на слабых устройствах */
+@media (prefers-reduced-motion: reduce) {
+  .cookie-consent-card {
+    animation: none !important;
+  }
+
+  .cookie-consent-enter {
+    animation: none !important;
+  }
+}

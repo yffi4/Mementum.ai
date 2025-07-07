@@ -6,6 +6,7 @@ import { getApiUrls } from "../config/api";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/AuthPages.css";
 import NeonBackground from "../components/NeonBackground";
+import CookieConsent from "../components/CookieConsent";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import { authApi } from "../services/authApi";
 
@@ -256,6 +257,18 @@ export default function RegisterPage() {
           Already have an account? <Link to="/login">Sign in</Link>
         </div>
       </div>
+
+      {/* Cookie Consent */}
+      <CookieConsent
+        onAccept={() => {
+          console.log("Register page: Cookies accepted");
+          // Здесь можно добавить аналитику или другие действия
+        }}
+        onDecline={() => {
+          console.log("Register page: Cookies declined");
+          // Отключаем аналитику и трекинг
+        }}
+      />
     </div>
   );
 }

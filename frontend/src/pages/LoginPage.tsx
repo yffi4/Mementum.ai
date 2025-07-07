@@ -6,6 +6,7 @@ import { getApiUrls } from "../config/api";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/AuthPages.css";
 import NeonBackground from "../components/NeonBackground";
+import CookieConsent from "../components/CookieConsent";
 import { FiMail, FiLock } from "react-icons/fi";
 import { authApi } from "../services/authApi";
 
@@ -229,6 +230,18 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+
+      {/* Cookie Consent */}
+      <CookieConsent
+        onAccept={() => {
+          console.log("Login page: Cookies accepted");
+          // Здесь можно добавить аналитику или другие действия
+        }}
+        onDecline={() => {
+          console.log("Login page: Cookies declined");
+          // Отключаем аналитику и трекинг
+        }}
+      />
     </div>
   );
 }

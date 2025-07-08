@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FiEdit3,
   FiZap,
   FiTag,
-  FiTrendingUp,
-  FiBookOpen,
   FiLayers,
   FiTarget,
   FiGlobe,

@@ -246,7 +246,7 @@ export default function NotesListPage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user || undefined} />
-        <div className="notes-top">
+        <div className="notes-top w-full flex justify-center items-center min-h-screen">
           <LoadingState />
         </div>
       </div>
@@ -264,7 +264,7 @@ export default function NotesListPage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user || undefined} />
-        <div className="notes-top">
+        <div className="notes-top w-full flex justify-center pt-20">
           <NotesOnboarding />
         </div>
       </div>
@@ -276,7 +276,7 @@ export default function NotesListPage() {
       <NeonBackground />
       <Navbar user={user || undefined} />
 
-      <div className="notes-top max-w-6xl mx-auto px-4 space-y-12">
+      <div className="notes-top max-w-6xl mx-auto px-4 space-y-12 pt-20">
         {Object.entries(grouped || {}).map(([category, notes]) => (
           <section key={category} className="category-section">
             <div className="category-header">

@@ -14,7 +14,6 @@ import {
   FiPlay,
   FiStar,
   FiTrendingUp,
-  FiCheckCircle,
 } from "react-icons/fi"
 
 interface DemoNote {
@@ -31,32 +30,32 @@ interface DemoNote {
 const demoNotes: DemoNote[] = [
   {
     id: "demo-1",
-    title: "Learning React Hooks",
-    content: "useState, useEffect, useCallback - essential hooks for state management and side effects...",
+    title: "React Hooks Guide",
+    content: "useState, useEffect, useCallback essentials...",
     category: "Learning",
     importance: 8,
-    tags: ["react", "javascript", "frontend"],
-    summary: "Note about key React hooks and their application in development",
+    tags: ["react", "javascript"],
+    summary: "Key React hooks for development",
     demoType: "ai",
   },
   {
     id: "demo-2",
-    title: "Startup Idea",
-    content: "AI-powered travel planning assistant considering weather and local events...",
+    title: "Travel AI Assistant",
+    content: "Smart planning with weather integration...",
     category: "Ideas",
     importance: 9,
-    tags: ["startup", "ai", "travel"],
-    summary: "Concept for a smart travel assistant for tourists",
+    tags: ["startup", "ai"],
+    summary: "AI-powered travel planning concept",
     demoType: "importance",
   },
   {
     id: "demo-3",
-    title: "Financial Plan 2024",
-    content: "Goals: save 500k, invest in ETFs, reduce expenses by 20%...",
+    title: "2024 Financial Goals",
+    content: "Save 500k, invest in ETFs, reduce expenses...",
     category: "Finance",
     importance: 7,
-    tags: ["finance", "planning", "2024"],
-    summary: "Personal financial goals and strategy for achievement",
+    tags: ["finance", "planning"],
+    summary: "Personal financial strategy",
     demoType: "categories",
   },
 ]
@@ -65,48 +64,48 @@ const features = [
   {
     icon: FiZap,
     title: "AI Processing",
-    description: "Artificial intelligence automatically structures your thoughts, creates summaries and suggests tags",
+    description: "Automatically structure thoughts and create summaries",
   },
   {
     icon: FiLayers,
     title: "Smart Categories",
-    description: "Automatic note categorization: Learning, Projects, Ideas, Work and more",
+    description: "Auto-categorize notes by topic and context",
   },
   {
     icon: FiTarget,
-    title: "Importance System",
-    description: "Rate note importance from 1 to 10 for effective prioritization",
+    title: "Priority System",
+    description: "Rate importance from 1-10 for better focus",
   },
   {
     icon: FiGlobe,
-    title: "Connections & Context",
-    description: "System finds connections between notes and creates contextual knowledge network",
+    title: "Smart Connections",
+    description: "Find relationships between your notes",
   },
 ]
 
 const steps = [
   {
     number: "01",
-    title: "Write Your Thoughts",
-    description: "Just start typing - no need to worry about structure or format",
+    title: "Write Freely",
+    description: "Just type your thoughts naturally",
     icon: FiEdit3,
   },
   {
     number: "02",
     title: "AI Analyzes",
-    description: "Our AI processes your content and extracts key insights",
+    description: "Extract insights automatically",
     icon: FiZap,
   },
   {
     number: "03",
-    title: "Smart Organization",
-    description: "Notes are automatically categorized and tagged for easy retrieval",
+    title: "Auto-Organize",
+    description: "Categorize and tag intelligently",
     icon: FiLayers,
   },
   {
     number: "04",
     title: "Build Knowledge",
-    description: "Watch your ideas connect and grow into a powerful knowledge base",
+    description: "Connect ideas into a network",
     icon: FiTrendingUp,
   },
 ]
@@ -117,37 +116,29 @@ export default function NotesOnboarding() {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      Learning: "text-[#6feaff] bg-[#6feaff]/20 border-[#6feaff]/50",
-      Projects: "text-[#a18aff] bg-[#a18aff]/20 border-[#a18aff]/50",
-      Ideas: "text-[#6feaff] bg-[#6feaff]/20 border-[#6feaff]/50",
-      Work: "text-[#a18aff] bg-[#a18aff]/20 border-[#a18aff]/50",
-      Finance: "text-[#6feaff] bg-[#6feaff]/20 border-[#6feaff]/50",
+      Learning: "text-[#6feaff] bg-[#6feaff]/10 border-[#6feaff]/30",
+      Ideas: "text-[#a18aff] bg-[#a18aff]/10 border-[#a18aff]/30",
+      Finance: "text-[#6feaff] bg-[#6feaff]/10 border-[#6feaff]/30",
     }
-    return colors[category as keyof typeof colors] || "text-[#b8f2ff] bg-[#b8f2ff]/20 border-[#b8f2ff]/50"
+    return colors[category as keyof typeof colors] || "text-[#b8f2ff] bg-[#b8f2ff]/10 border-[#b8f2ff]/30"
   }
 
   const getImportanceLevel = (importance: number) => {
     if (importance >= 8)
       return {
-        text: "Critical",
-        color: "text-[#a18aff] bg-[#a18aff]/20 border-[#a18aff]/50",
+        text: "High",
+        color: "text-[#a18aff] bg-[#a18aff]/10 border-[#a18aff]/30",
         icon: "🔥",
       }
     if (importance >= 6)
       return {
-        text: "High",
-        color: "text-[#6feaff] bg-[#6feaff]/20 border-[#6feaff]/50",
+        text: "Med",
+        color: "text-[#6feaff] bg-[#6feaff]/10 border-[#6feaff]/30",
         icon: "⚡",
-      }
-    if (importance >= 4)
-      return {
-        text: "Medium",
-        color: "text-[#b8f2ff] bg-[#b8f2ff]/20 border-[#b8f2ff]/50",
-        icon: "📝",
       }
     return {
       text: "Low",
-      color: "text-[#d1d5db] bg-[#d1d5db]/20 border-[#d1d5db]/50",
+      color: "text-[#d1d5db] bg-[#d1d5db]/10 border-[#d1d5db]/30",
       icon: "📋",
     }
   }
@@ -157,50 +148,49 @@ export default function NotesOnboarding() {
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10"
+          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-8"
           style={{
             background: "radial-gradient(circle, #a18aff 0%, transparent 70%)",
-            filter: "blur(40px)",
+            filter: "blur(60px)",
           }}
         />
         <div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full opacity-10"
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-8"
           style={{
             background: "radial-gradient(circle, #6feaff 0%, transparent 70%)",
-            filter: "blur(40px)",
+            filter: "blur(60px)",
           }}
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-32">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center space-y-8"
+          className="text-center space-y-6"
         >
           <div className="relative">
             <div
-              className="absolute inset-0 rounded-full blur-3xl opacity-30 animate-pulse"
+              className="absolute inset-0 rounded-full blur-2xl opacity-20"
               style={{
                 background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
               }}
             />
             <div
-              className="relative inline-flex items-center justify-center w-32 h-32 rounded-full shadow-2xl"
+              className="relative inline-flex items-center justify-center w-20 h-20 rounded-full shadow-xl"
               style={{
                 background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-                boxShadow: "0 0 40px rgba(161, 138, 255, 0.5)",
               }}
             >
-              <FiEdit3 size={48} className="text-white" />
+              <FiEdit3 size={32} className="text-white" />
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <h1
-              className="text-6xl md:text-8xl font-black leading-tight"
+              className="text-4xl md:text-6xl font-black leading-tight"
               style={{
                 background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                 backgroundClip: "text",
@@ -210,61 +200,50 @@ export default function NotesOnboarding() {
             >
               Your first note
             </h1>
-            <div
-              className="h-1 w-32 mx-auto rounded-full"
-              style={{
-                background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-              }}
-            />
-            <h2 className="text-3xl md:text-4xl font-bold text-white">the beginning of a great journey</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-white">the beginning of something great</h2>
           </div>
 
-          <p className="text-xl text-[#b8f2ff] max-w-3xl mx-auto leading-relaxed">
-            Transform chaotic thoughts into a structured knowledge system with AI-powered organization
+          <p className="text-lg text-[#b8f2ff] max-w-2xl mx-auto">
+            Transform chaotic thoughts into structured knowledge with AI
           </p>
 
-          <div className="pt-8">
+          <div className="pt-4">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/notes/create"
-                className="group relative inline-flex items-center px-12 py-6 text-white font-bold text-xl rounded-2xl transition-all duration-300 shadow-2xl"
+                className="group inline-flex items-center px-8 py-4 text-white font-semibold text-lg rounded-xl transition-all duration-300"
                 style={{
                   background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-                  boxShadow: "0 8px 32px rgba(161, 138, 255, 0.4)",
+                  boxShadow: "0 4px 20px rgba(161, 138, 255, 0.3)",
                 }}
               >
-                <div
-                  className="absolute inset-0 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-300"
-                  style={{
-                    background: "linear-gradient(135deg, #6feaff 0%, #a18aff 100%)",
-                  }}
-                />
-                <FiPlay className="relative mr-4" size={24} />
-                <span className="relative">Start Your Journey</span>
-                <FiArrowRight className="relative ml-4 transition-transform group-hover:translate-x-1" size={20} />
+                <FiPlay className="mr-3" size={20} />
+                Start Your Journey
+                <FiArrowRight className="ml-3 transition-transform group-hover:translate-x-1" size={18} />
               </Link>
             </motion.div>
           </div>
         </motion.div>
 
         {/* How It Works */}
-        <div className="space-y-16">
+        <div className="space-y-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4"
           >
             <div
-              className="inline-block px-6 py-2 rounded-full border"
+              className="inline-block px-4 py-2 rounded-full border text-sm font-medium"
               style={{
                 background: "rgba(161, 138, 255, 0.1)",
                 borderColor: "rgba(161, 138, 255, 0.3)",
+                color: "#a18aff",
               }}
             >
-              <span className="text-[#a18aff] font-semibold text-sm uppercase tracking-wider">How It Works</span>
+              How It Works
             </div>
-            <h2 className="text-5xl md:text-6xl font-black text-white">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               From Chaos to{" "}
               <span
                 style={{
@@ -277,79 +256,65 @@ export default function NotesOnboarding() {
                 Clarity
               </span>
             </h2>
-            <div
-              className="h-1 w-24 mx-auto rounded-full"
-              style={{
-                background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-              }}
-            />
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, index) => (
               <motion.div
                 key={step.number}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative backdrop-blur-sm border rounded-2xl p-8 transition-all duration-500 hover:scale-105"
+                className="group relative backdrop-blur-sm border rounded-xl p-6 transition-all duration-300 hover:scale-105"
                 style={{
-                  background: "rgba(24, 27, 58, 0.8)",
+                  background: "rgba(24, 27, 58, 0.6)",
                   borderColor: "rgba(111, 234, 255, 0.2)",
-                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                <div className="absolute top-4 right-4 text-6xl font-black opacity-10 group-hover:opacity-20 transition-opacity text-[#6feaff]">
+                <div className="absolute top-3 right-3 text-3xl font-black opacity-10 text-[#6feaff]">
                   {step.number}
                 </div>
 
-                <div className="relative space-y-6">
+                <div className="space-y-4">
                   <div
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300"
+                    className="inline-flex items-center justify-center w-12 h-12 rounded-lg"
                     style={{
                       background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                     }}
                   >
-                    <step.icon size={28} className="text-white" />
+                    <step.icon size={20} className="text-white" />
                   </div>
 
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-bold text-white group-hover:text-[#6feaff] transition-colors">
-                      {step.title}
-                    </h3>
-                    <p className="text-[#d1d5db] text-sm leading-relaxed group-hover:text-[#b8f2ff] transition-colors">
-                      {step.description}
-                    </p>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                    <p className="text-sm text-[#d1d5db]">{step.description}</p>
                   </div>
                 </div>
-
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-[#a18aff]/30 to-transparent" />
-                )}
               </motion.div>
             ))}
           </div>
         </div>
 
         {/* Features */}
-        <div className="space-y-16">
+        <div className="space-y-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4"
           >
             <div
-              className="inline-block px-6 py-2 rounded-full border"
+              className="inline-block px-4 py-2 rounded-full border text-sm font-medium"
               style={{
                 background: "rgba(111, 234, 255, 0.1)",
                 borderColor: "rgba(111, 234, 255, 0.3)",
+                color: "#6feaff",
               }}
             >
-              <span className="text-[#6feaff] font-semibold text-sm uppercase tracking-wider">Powerful Features</span>
+              Features
             </div>
-            <h2 className="text-5xl md:text-6xl font-black text-white">
-              What Makes Your Notes{" "}
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              What Makes Notes{" "}
               <span
                 style={{
                   background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
@@ -361,35 +326,23 @@ export default function NotesOnboarding() {
                 Special
               </span>
             </h2>
-            <div
-              className="h-1 w-24 mx-auto rounded-full"
-              style={{
-                background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-              }}
-            />
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
               onClick={() => setShowAllFeatures(!showAllFeatures)}
-              className="group inline-flex items-center px-8 py-3 backdrop-blur-sm border text-[#6feaff] font-semibold rounded-xl transition-all duration-300"
+              className="inline-flex items-center px-6 py-2 backdrop-blur-sm border text-[#6feaff] font-medium rounded-lg transition-all duration-300 text-sm"
               style={{
-                background: "rgba(24, 27, 58, 0.5)",
+                background: "rgba(24, 27, 58, 0.4)",
                 borderColor: "rgba(111, 234, 255, 0.3)",
               }}
             >
-              {showAllFeatures ? "Show Less" : "Show All Features"}
-              <FiArrowRight
-                className={`ml-3 transition-transform ${showAllFeatures ? "rotate-90" : "group-hover:translate-x-1"}`}
-                size={16}
-              />
+              {showAllFeatures ? "Show Less" : "Show All"}
+              <FiArrowRight className="ml-2" size={14} />
             </motion.button>
           </motion.div>
 
           <div
-            className={`grid gap-8 transition-all duration-700 ${
-              showAllFeatures
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-                : "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
+            className={`grid gap-6 transition-all duration-500 ${
+              showAllFeatures ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2"
             }`}
           >
             {features.slice(0, showAllFeatures ? 4 : 2).map((feature, index) => (
@@ -398,60 +351,52 @@ export default function NotesOnboarding() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative backdrop-blur-sm border rounded-2xl p-8 transition-all duration-500 hover:scale-105"
+                className="group backdrop-blur-sm border rounded-xl p-6 transition-all duration-300 hover:scale-105"
                 style={{
-                  background: "rgba(24, 27, 58, 0.8)",
+                  background: "rgba(24, 27, 58, 0.6)",
                   borderColor: "rgba(111, 234, 255, 0.2)",
-                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300"
+                    className="inline-flex items-center justify-center w-12 h-12 rounded-lg"
                     style={{
                       background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                     }}
                   >
-                    <feature.icon size={28} className="text-white" />
+                    <feature.icon size={20} className="text-white" />
                   </div>
 
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-bold text-white group-hover:text-[#6feaff] transition-colors">
-                      {feature.title}
-                    </h3>
-                    <p className="text-[#d1d5db] text-sm leading-relaxed group-hover:text-[#b8f2ff] transition-colors">
-                      {feature.description}
-                    </p>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-white">{feature.title}</h3>
+                    <p className="text-sm text-[#d1d5db]">{feature.description}</p>
                   </div>
-                </div>
-
-                <div className="absolute top-4 right-4 w-6 h-6 bg-[#4ade80]/20 border border-[#4ade80]/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <FiCheckCircle size={12} className="text-[#4ade80]" />
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Live Examples */}
-        <div className="space-y-16">
+        {/* Live Examples - Компактные */}
+        <div className="space-y-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4"
           >
             <div
-              className="inline-block px-6 py-2 rounded-full border"
+              className="inline-block px-4 py-2 rounded-full border text-sm font-medium"
               style={{
                 background: "rgba(161, 138, 255, 0.1)",
                 borderColor: "rgba(161, 138, 255, 0.3)",
+                color: "#a18aff",
               }}
             >
-              <span className="text-[#a18aff] font-semibold text-sm uppercase tracking-wider">See It In Action</span>
+              Live Examples
             </div>
-            <h2 className="text-5xl md:text-6xl font-black text-white">
-              Live{" "}
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              See{" "}
               <span
                 style={{
                   background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
@@ -460,80 +405,70 @@ export default function NotesOnboarding() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Examples
+                AI Magic
               </span>
             </h2>
-            <div
-              className="h-1 w-24 mx-auto rounded-full"
-              style={{
-                background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-              }}
-            />
-            <p className="text-xl text-[#b8f2ff] max-w-3xl mx-auto">
-              Hover over these example notes to see how our AI transforms your content
-            </p>
+            <p className="text-[#b8f2ff]">Hover to see how AI transforms your notes</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {demoNotes.map((note, index) => (
               <motion.div
                 key={note.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative backdrop-blur-sm border rounded-2xl p-8 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[400px] flex flex-col"
+                className="group relative backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:scale-105 cursor-pointer"
                 style={{
-                  background: "rgba(24, 27, 58, 0.8)",
+                  background: "rgba(24, 27, 58, 0.6)",
                   borderColor: "rgba(111, 234, 255, 0.2)",
-                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
                 }}
                 onMouseEnter={() => setActiveDemo(note.id)}
                 onMouseLeave={() => setActiveDemo(null)}
               >
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-xl font-bold text-white group-hover:text-[#6feaff] transition-colors flex-1 mr-4 leading-tight">
-                      {note.title}
-                    </h3>
+                <div className="space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-lg font-semibold text-white leading-tight flex-1">{note.title}</h3>
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${
+                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
                         getImportanceLevel(note.importance).color
                       }`}
                     >
-                      <span className="mr-1">{getImportanceLevel(note.importance).icon}</span>
-                      {note.importance}/10
+                      {getImportanceLevel(note.importance).icon} {note.importance}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  {/* Category */}
+                  <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${getCategoryColor(
+                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${getCategoryColor(
                         note.category,
                       )}`}
                     >
                       <FiTag className="mr-1" size={10} />
                       {note.category}
                     </span>
-                    <span className="text-xs text-[#9ca3af]">Just now</span>
+                    <span className="text-xs text-[#9ca3af]">2m ago</span>
                   </div>
 
-                  <div className="flex-1 space-y-3">
+                  {/* AI Summary */}
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <FiStar className="text-[#6feaff]" size={14} />
-                      <span className="text-sm font-semibold text-[#b8f2ff]">AI Summary:</span>
+                      <FiStar className="text-[#6feaff]" size={12} />
+                      <span className="text-xs font-medium text-[#b8f2ff]">AI Summary</span>
                     </div>
-                    <p className="text-sm text-[#d1d5db] leading-relaxed group-hover:text-[#b8f2ff] transition-colors">
-                      {note.summary}
-                    </p>
+                    <p className="text-sm text-[#d1d5db] leading-relaxed">{note.summary}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-auto">
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1">
                     {note.tags.map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
-                        className="text-xs px-2 py-1 border text-[#9ca3af] rounded-md"
+                        className="text-xs px-2 py-1 border text-[#9ca3af] rounded"
                         style={{
-                          background: "rgba(24, 27, 58, 0.5)",
+                          background: "rgba(24, 27, 58, 0.4)",
                           borderColor: "rgba(111, 234, 255, 0.2)",
                         }}
                       >
@@ -543,24 +478,26 @@ export default function NotesOnboarding() {
                   </div>
                 </div>
 
+                {/* Hover Effect */}
                 {activeDemo === note.id && (
                   <div
-                    className="absolute inset-0 rounded-2xl border animate-pulse"
+                    className="absolute inset-0 rounded-xl border"
                     style={{
-                      background: "linear-gradient(135deg, rgba(161, 138, 255, 0.1) 0%, rgba(111, 234, 255, 0.1) 100%)",
-                      borderColor: "rgba(111, 234, 255, 0.5)",
+                      background:
+                        "linear-gradient(135deg, rgba(161, 138, 255, 0.05) 0%, rgba(111, 234, 255, 0.05) 100%)",
+                      borderColor: "rgba(111, 234, 255, 0.4)",
                     }}
                   >
                     <div
-                      className="absolute top-4 right-4 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-lg"
+                      className="absolute top-3 right-3 text-white text-xs px-2 py-1 rounded font-medium"
                       style={{
                         background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
                       }}
                     >
-                      {note.demoType === "ai" && "🤖 AI Magic"}
-                      {note.demoType === "categories" && "📁 Auto-Categorized"}
-                      {note.demoType === "importance" && "⭐ Prioritized"}
-                      {note.demoType === "connections" && "🔗 Connected"}
+                      {note.demoType === "ai" && "🤖 AI"}
+                      {note.demoType === "categories" && "📁 Auto"}
+                      {note.demoType === "importance" && "⭐ Priority"}
+                      {note.demoType === "connections" && "🔗 Links"}
                     </div>
                   </div>
                 )}
@@ -569,69 +506,53 @@ export default function NotesOnboarding() {
           </div>
         </div>
 
-        {/* Call to Action */}
+        {/* Call to Action - Компактный */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center backdrop-blur-sm border rounded-3xl p-16 shadow-2xl"
+          className="text-center backdrop-blur-sm border rounded-2xl p-12"
           style={{
-            background: "rgba(24, 27, 58, 0.8)",
+            background: "rgba(24, 27, 58, 0.6)",
             borderColor: "rgba(111, 234, 255, 0.2)",
-            boxShadow: "0 8px 32px rgba(161, 138, 255, 0.2)",
           }}
         >
-          <div className="space-y-8">
-            <div className="relative">
-              <div
-                className="absolute inset-0 rounded-full blur-3xl opacity-40 animate-pulse"
-                style={{
-                  background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-                }}
-              />
-              <div
-                className="relative inline-flex items-center justify-center w-24 h-24 rounded-full shadow-2xl"
-                style={{
-                  background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-                  boxShadow: "0 0 40px rgba(161, 138, 255, 0.5)",
-                }}
-              >
-                <FiPlay size={32} className="text-white" />
-              </div>
+          <div className="space-y-6">
+            <div
+              className="inline-flex items-center justify-center w-16 h-16 rounded-full"
+              style={{
+                background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
+              }}
+            >
+              <FiPlay size={24} className="text-white" />
             </div>
 
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-black text-white">Ready to Transform Your Thoughts?</h2>
-              <p className="text-xl text-[#b8f2ff] max-w-2xl mx-auto leading-relaxed">
-                Join thousands of users who've revolutionized their note-taking with AI
+            <div className="space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Ready to Start?</h2>
+              <p className="text-lg text-[#b8f2ff] max-w-xl mx-auto">
+                Join thousands transforming their note-taking with AI
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to="/notes/create"
-                  className="group relative inline-flex items-center px-12 py-6 text-white font-bold text-xl rounded-2xl transition-all duration-300 shadow-2xl"
+                  className="group inline-flex items-center px-8 py-4 text-white font-semibold text-lg rounded-xl transition-all duration-300"
                   style={{
                     background: "linear-gradient(135deg, #a18aff 0%, #6feaff 100%)",
-                    boxShadow: "0 8px 32px rgba(161, 138, 255, 0.4)",
+                    boxShadow: "0 4px 20px rgba(161, 138, 255, 0.3)",
                   }}
                 >
-                  <div
-                    className="absolute inset-0 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-300"
-                    style={{
-                      background: "linear-gradient(135deg, #6feaff 0%, #a18aff 100%)",
-                    }}
-                  />
-                  <FiEdit3 className="relative mr-4" size={24} />
-                  <span className="relative">Create Your First Note</span>
-                  <FiArrowRight className="relative ml-4 transition-transform group-hover:translate-x-1" size={20} />
+                  <FiEdit3 className="mr-3" size={20} />
+                  Create First Note
+                  <FiArrowRight className="ml-3 transition-transform group-hover:translate-x-1" size={18} />
                 </Link>
               </motion.div>
 
               <div className="text-[#9ca3af] text-center space-y-1">
-                <div className="text-sm font-semibold">Free to start • No credit card required</div>
-                <div className="text-xs">Your ideas deserve better organization</div>
+                <div className="text-sm font-medium">Free to start • No card required</div>
+                <div className="text-xs">Your ideas deserve better</div>
               </div>
             </div>
           </div>

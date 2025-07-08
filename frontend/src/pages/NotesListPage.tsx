@@ -259,17 +259,7 @@ export default function NotesListPage() {
     Object.keys(grouped).length > 0 &&
     Object.values(grouped).some((notes) => notes.length > 0);
 
-  // Отладочная информация
-  console.log("Debug info:", {
-    grouped,
-    groupedKeys: grouped ? Object.keys(grouped) : "undefined",
-    groupedValues: grouped ? Object.values(grouped) : "undefined",
-    hasNotes,
-  });
-
-  // ВРЕМЕННО: принудительно показываем onboarding для тестирования
-  // if (!hasNotes) {
-  if (true) {
+  if (!hasNotes) {
     return (
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
@@ -287,23 +277,21 @@ export default function NotesListPage() {
       <Navbar user={user || undefined} />
 
       <div className="notes-top max-w-6xl mx-auto px-4 space-y-12">
-        {grouped
-          ? Object.entries(grouped).map(([category, notes]) => (
-              <section key={category} className="category-section">
-                <div className="category-header">
-                  <h2 className="category-title">
-                    {category}
-                    <span className="category-count">{notes.length}</span>
-                  </h2>
-                </div>
-                <div className="category-notes-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {notes.map((note) => (
-                    <NoteCard key={note.id} note={note} />
-                  ))}
-                </div>
-              </section>
-            ))
-          : null}
+        {Object.entries(grouped || {}).map(([category, notes]) => (
+          <section key={category} className="category-section">
+            <div className="category-header">
+              <h2 className="category-title">
+                {category}
+                <span className="category-count">{notes.length}</span>
+              </h2>
+            </div>
+            <div className="category-notes-grid grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {notes.map((note) => (
+                <NoteCard key={note.id} note={note} />
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );

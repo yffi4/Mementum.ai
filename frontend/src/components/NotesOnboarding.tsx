@@ -66,70 +66,66 @@ const features = [
     title: "AI Processing",
     description:
       "Artificial intelligence automatically structures your thoughts, creates summaries and suggests tags",
-    color: "from-purple-600 to-purple-400",
-    borderColor: "border-purple-400",
-    bgColor: "bg-white/95",
+    gradient: "from-purple-400 to-pink-400",
+    glow: "shadow-purple-500/50",
   },
   {
     icon: FiLayers,
     title: "Smart Categories",
     description:
       "Automatic note categorization: Learning, Projects, Ideas, Work and more",
-    color: "from-blue-600 to-blue-400",
-    borderColor: "border-blue-400",
-    bgColor: "bg-white/95",
+    gradient: "from-blue-400 to-cyan-400",
+    glow: "shadow-blue-500/50",
   },
   {
     icon: FiTarget,
     title: "Importance System",
     description:
       "Rate note importance from 1 to 10 for effective prioritization",
-    color: "from-orange-600 to-orange-400",
-    borderColor: "border-orange-400",
-    bgColor: "bg-white/95",
+    gradient: "from-orange-400 to-red-400",
+    glow: "shadow-orange-500/50",
   },
   {
     icon: FiGlobe,
     title: "Connections & Context",
     description:
       "System finds connections between notes and creates contextual knowledge network",
-    color: "from-green-600 to-green-400",
-    borderColor: "border-green-400",
-    bgColor: "bg-white/95",
+    gradient: "from-green-400 to-emerald-400",
+    glow: "shadow-green-500/50",
   },
 ];
 
 const steps = [
   {
-    number: 1,
+    number: "01",
     title: "Write Your Thoughts",
     description:
       "Just start typing - no need to worry about structure or format",
     icon: FiEdit3,
-    color: "from-cyan-500 to-cyan-600",
+    gradient: "from-cyan-400 to-blue-500",
   },
   {
-    number: 2,
+    number: "02",
     title: "AI Analyzes",
     description: "Our AI processes your content and extracts key insights",
     icon: FiZap,
-    color: "from-purple-500 to-purple-600",
+    gradient: "from-purple-400 to-pink-500",
   },
   {
-    number: 3,
+    number: "03",
     title: "Smart Organization",
     description:
       "Notes are automatically categorized and tagged for easy retrieval",
     icon: FiLayers,
-    color: "from-blue-500 to-blue-600",
+    gradient: "from-blue-400 to-indigo-500",
   },
   {
-    number: 4,
+    number: "04",
     title: "Build Knowledge",
     description:
       "Watch your ideas connect and grow into a powerful knowledge base",
     icon: FiTrendingUp,
-    color: "from-green-500 to-green-600",
+    gradient: "from-green-400 to-teal-500",
   },
 ];
 
@@ -139,15 +135,15 @@ export default function NotesOnboarding() {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      Learning: "text-blue-700 bg-blue-100 border-blue-300",
-      Projects: "text-green-700 bg-green-100 border-green-300",
-      Ideas: "text-purple-700 bg-purple-100 border-purple-300",
-      Work: "text-orange-700 bg-orange-100 border-orange-300",
-      Finance: "text-yellow-700 bg-yellow-100 border-yellow-300",
+      Learning: "text-blue-300 bg-blue-500/20 border-blue-400/50",
+      Projects: "text-green-300 bg-green-500/20 border-green-400/50",
+      Ideas: "text-purple-300 bg-purple-500/20 border-purple-400/50",
+      Work: "text-orange-300 bg-orange-500/20 border-orange-400/50",
+      Finance: "text-yellow-300 bg-yellow-500/20 border-yellow-400/50",
     };
     return (
       colors[category as keyof typeof colors] ||
-      "text-gray-700 bg-gray-100 border-gray-300"
+      "text-gray-300 bg-gray-500/20 border-gray-400/50"
     );
   };
 
@@ -155,151 +151,159 @@ export default function NotesOnboarding() {
     if (importance >= 8)
       return {
         text: "Critical",
-        color: "text-red-700 bg-red-100 border-red-300",
+        color: "text-red-300 bg-red-500/20 border-red-400/50",
         icon: "🔥",
       };
     if (importance >= 6)
       return {
         text: "High",
-        color: "text-orange-700 bg-orange-100 border-orange-300",
+        color: "text-orange-300 bg-orange-500/20 border-orange-400/50",
         icon: "⚡",
       };
     if (importance >= 4)
       return {
         text: "Medium",
-        color: "text-yellow-700 bg-yellow-100 border-yellow-300",
+        color: "text-yellow-300 bg-yellow-500/20 border-yellow-400/50",
         icon: "📝",
       };
     return {
       text: "Low",
-      color: "text-green-700 bg-green-100 border-green-300",
+      color: "text-green-300 bg-green-500/20 border-green-400/50",
       icon: "📋",
     };
   };
 
   return (
-    <div className="onboarding w-full flex justify-center">
-      <div className="max-w-7xl w-full px-6 pb-20">
+    <div className="w-full min-h-screen flex flex-col items-center justify-start">
+      <div className="max-w-7xl w-full px-8 py-16 space-y-32">
         {/* Hero Section */}
-        <div className="text-center mb-24 animate-fadeInUp">
-          <div className="mb-10">
-            <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 mb-8 shadow-2xl shadow-purple-500/30">
-              <FiEdit3 size={40} className="text-white" />
+        <div className="text-center space-y-8 animate-fadeInUp">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+            <div className="relative inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 shadow-2xl shadow-purple-500/50">
+              <FiEdit3 size={48} className="text-white" />
             </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-8 leading-tight">
-            Your first note —<br />
-            <span className="bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+
+          <div className="space-y-6">
+            <h1 className="text-6xl md:text-8xl font-black text-white leading-tight">
+              Your first note
+            </h1>
+            <div className="h-1 w-32 bg-gradient-to-r from-purple-400 to-cyan-400 mx-auto rounded-full"></div>
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               the beginning of a great journey
-            </span>
-          </h1>
-          <p className="text-2xl text-gray-200 max-w-4xl mx-auto mb-12 leading-relaxed font-medium">
+            </h2>
+          </div>
+
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Transform chaotic thoughts into a structured knowledge system with
-            AI-powered organization and insights
+            AI-powered organization
           </p>
 
-          <Link
-            to="/notes/create"
-            className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-black text-xl rounded-2xl hover:from-purple-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-110 shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50"
-          >
-            <FiPlay className="mr-4" size={28} />
-            Start Your Journey
-            <FiArrowRight className="ml-4" size={24} />
-          </Link>
+          <div className="pt-8">
+            <Link
+              to="/notes/create"
+              className="group relative inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/50"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-300"></div>
+              <FiPlay className="relative mr-4" size={24} />
+              <span className="relative">Start Your Journey</span>
+              <FiArrowRight
+                className="relative ml-4 transition-transform group-hover:translate-x-1"
+                size={20}
+              />
+            </Link>
+          </div>
         </div>
 
-        {/* How It Works Section */}
-        <div className="mb-28">
-          <div className="text-center mb-20">
-            <div className="inline-block bg-gradient-to-r from-purple-600 to-cyan-600 text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider mb-6">
-              How It Works
+        {/* How It Works */}
+        <div className="space-y-16">
+          <div className="text-center space-y-6">
+            <div className="inline-block px-6 py-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-400/50 rounded-full">
+              <span className="text-purple-300 font-semibold text-sm uppercase tracking-wider">
+                How It Works
+              </span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-black text-white">
               From Chaos to{" "}
               <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 Clarity
               </span>
             </h2>
-            <div className="w-32 h-2 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto font-medium">
-              Transform scattered thoughts into organized knowledge in just 4
-              simple steps
-            </p>
+            <div className="h-1 w-24 bg-gradient-to-r from-purple-400 to-cyan-400 mx-auto rounded-full"></div>
           </div>
 
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
               <div
                 key={step.number}
-                className="relative text-center animate-fadeInUp"
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 transition-all duration-500 hover:border-purple-400/50 hover:bg-gray-800/50 animate-fadeInUp"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="relative mb-8">
-                  <div
-                    className={`inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br ${step.color} shadow-2xl mb-6 transform transition-transform hover:scale-110`}
-                  >
-                    <step.icon size={36} className="text-white" />
-                  </div>
-                  <div className="absolute -top-3 -right-3 w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-black text-lg shadow-lg">
-                    {step.number}
-                  </div>
+                <div className="absolute top-4 right-4 text-6xl font-black text-gray-800 opacity-20 group-hover:opacity-30 transition-opacity">
+                  {step.number}
                 </div>
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-gray-200 min-h-[160px] flex flex-col justify-center">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed font-medium">
-                    {step.description}
-                  </p>
+
+                <div className="relative space-y-6">
+                  <div
+                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${step.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <step.icon size={28} className="text-white" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
 
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 -right-5 w-10 h-1 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full"></div>
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-purple-400/30 to-transparent"></div>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features Section */}
-        <div className="mb-28">
-          <div className="text-center mb-20">
-            <div className="inline-block bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider mb-6">
-              Powerful Features
+        {/* Features */}
+        <div className="space-y-16">
+          <div className="text-center space-y-6">
+            <div className="inline-block px-6 py-2 bg-gradient-to-r from-blue-500/20 to-green-500/20 border border-blue-400/50 rounded-full">
+              <span className="text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                Powerful Features
+              </span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-black text-white">
               What Makes Your Notes{" "}
               <span className="bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
                 Special
               </span>
             </h2>
-            <div className="w-32 h-2 bg-gradient-to-r from-blue-400 to-green-400 rounded-full mx-auto mb-8"></div>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto mb-10 font-medium">
-              Discover intelligent features that transform how you organize and
-              access your knowledge
-            </p>
+            <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-green-400 mx-auto rounded-full"></div>
+
             <button
               onClick={() => setShowAllFeatures(!showAllFeatures)}
-              className="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-105"
+              className="group inline-flex items-center px-8 py-3 bg-gray-900/50 border border-gray-600/50 text-cyan-300 font-semibold rounded-xl hover:border-cyan-400/50 hover:bg-gray-800/50 transition-all duration-300"
             >
-              {showAllFeatures ? (
-                <>
-                  Show Less{" "}
-                  <FiArrowRight className="ml-3 rotate-90" size={18} />
-                </>
-              ) : (
-                <>
-                  Show All Features <FiArrowRight className="ml-3" size={18} />
-                </>
-              )}
+              {showAllFeatures ? "Show Less" : "Show All Features"}
+              <FiArrowRight
+                className={`ml-3 transition-transform ${
+                  showAllFeatures ? "rotate-90" : "group-hover:translate-x-1"
+                }`}
+                size={16}
+              />
             </button>
           </div>
 
           <div
-            className={`grid gap-8 transition-all duration-500 ${
+            className={`grid gap-8 transition-all duration-700 ${
               showAllFeatures
-                ? "md:grid-cols-2 lg:grid-cols-4"
-                : "md:grid-cols-2 max-w-4xl mx-auto"
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+                : "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto"
             }`}
           >
             {features
@@ -307,65 +311,71 @@ export default function NotesOnboarding() {
               .map((feature, index) => (
                 <div
                   key={index}
-                  className={`relative ${feature.bgColor} backdrop-blur-sm rounded-2xl p-8 border-2 ${feature.borderColor} shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl animate-fadeInUp group`}
+                  className={`group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 transition-all duration-500 hover:border-purple-400/50 hover:bg-gray-800/50 hover:scale-105 animate-fadeInUp ${feature.glow} hover:shadow-2xl`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color} mb-6 shadow-lg group-hover:scale-110 transition-transform`}
-                  >
-                    <feature.icon size={32} className="text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed font-medium">
-                    {feature.description}
-                  </p>
+                  <div className="space-y-6">
+                    <div
+                      className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${feature.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <feature.icon size={28} className="text-white" />
+                    </div>
 
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-green-500 border-2 border-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                    <FiCheckCircle size={16} className="text-white" />
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="absolute top-4 right-4 w-6 h-6 bg-green-500/20 border border-green-400/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <FiCheckCircle size={12} className="text-green-400" />
                   </div>
                 </div>
               ))}
           </div>
         </div>
 
-        {/* Interactive Examples */}
-        <div className="mb-28">
-          <div className="text-center mb-20">
-            <div className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider mb-6">
-              See It In Action
+        {/* Live Examples */}
+        <div className="space-y-16">
+          <div className="text-center space-y-6">
+            <div className="inline-block px-6 py-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/50 rounded-full">
+              <span className="text-indigo-300 font-semibold text-sm uppercase tracking-wider">
+                See It In Action
+              </span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+            <h2 className="text-5xl md:text-6xl font-black text-white">
               Live{" "}
               <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 Examples
               </span>
             </h2>
-            <div className="w-32 h-2 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mx-auto mb-6"></div>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto font-medium">
+            <div className="h-1 w-24 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full"></div>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Hover over these example notes to see how our AI transforms your
               content
             </p>
           </div>
 
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {demoNotes.map((note, index) => (
               <div
                 key={note.id}
-                className={`group relative bg-white/95 backdrop-blur-sm rounded-2xl p-8 border-2 border-gray-200 shadow-2xl transition-all duration-300 hover:border-cyan-400 hover:shadow-3xl cursor-pointer animate-fadeInUp min-h-[360px] flex flex-col hover:scale-105`}
-                style={{ animationDelay: `${index * 0.15}s` }}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 transition-all duration-500 hover:border-cyan-400/50 hover:bg-gray-800/50 hover:scale-105 cursor-pointer animate-fadeInUp min-h-[400px] flex flex-col shadow-xl hover:shadow-2xl hover:shadow-cyan-500/20"
+                style={{ animationDelay: `${index * 0.1}s` }}
                 onMouseEnter={() => setActiveDemo(note.id)}
                 onMouseLeave={() => setActiveDemo(null)}
               >
-                {/* Title and Importance */}
-                <div className="flex items-start justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-gray-800 group-hover:text-cyan-600 transition-colors flex-1 mr-4 leading-tight">
-                    {note.title}
-                  </h3>
-                  <div className="flex items-center">
+                <div className="space-y-6 flex-1 flex flex-col">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors flex-1 mr-4 leading-tight">
+                      {note.title}
+                    </h3>
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-bold border ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${
                         getImportanceLevel(note.importance).color
                       }`}
                     >
@@ -375,52 +385,46 @@ export default function NotesOnboarding() {
                       {note.importance}/10
                     </span>
                   </div>
-                </div>
 
-                {/* Category and Date */}
-                <div className="flex items-center gap-4 mb-6">
-                  <span
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold border ${getCategoryColor(
-                      note.category
-                    )}`}
-                  >
-                    <FiTag className="mr-2" size={14} />
-                    {note.category}
-                  </span>
-                  <span className="text-sm text-gray-500 font-medium">
-                    Just now
-                  </span>
-                </div>
-
-                {/* Content Preview */}
-                <div className="mb-6 flex-1">
-                  <div className="flex items-center gap-3 mb-4">
-                    <FiStar className="text-yellow-500" size={16} />
-                    <span className="text-lg font-bold text-gray-700">
-                      AI Summary:
-                    </span>
-                  </div>
-                  <p className="text-gray-600 leading-relaxed font-medium">
-                    {note.summary}
-                  </p>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-3 mt-auto">
-                  {note.tags.map((tag, tagIndex) => (
+                  <div className="flex items-center gap-3">
                     <span
-                      key={tagIndex}
-                      className="text-sm px-3 py-1 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg font-medium"
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${getCategoryColor(
+                        note.category
+                      )}`}
                     >
-                      #{tag}
+                      <FiTag className="mr-1" size={10} />
+                      {note.category}
                     </span>
-                  ))}
+                    <span className="text-xs text-gray-500">Just now</span>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <FiStar className="text-yellow-400" size={14} />
+                      <span className="text-sm font-semibold text-gray-300">
+                        AI Summary:
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                      {note.summary}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {note.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="text-xs px-2 py-1 bg-gray-800/50 border border-gray-600/50 text-gray-400 rounded-md"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Feature Indicator */}
                 {activeDemo === note.id && (
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl border-2 border-cyan-400 animate-pulse pointer-events-none">
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-sm px-4 py-2 rounded-full font-bold shadow-xl">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-cyan-400/50 animate-pulse">
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-lg">
                       {note.demoType === "ai" && "🤖 AI Magic"}
                       {note.demoType === "categories" && "📁 Auto-Categorized"}
                       {note.demoType === "importance" && "⭐ Prioritized"}
@@ -434,36 +438,46 @@ export default function NotesOnboarding() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center bg-gradient-to-br from-purple-900/60 to-cyan-900/60 backdrop-blur-sm rounded-3xl p-16 border-2 border-purple-400/50 max-w-5xl mx-auto shadow-2xl shadow-purple-500/30">
-          <div className="mb-10">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 mb-8 shadow-2xl shadow-purple-500/30">
-              <FiPlay size={36} className="text-white" />
-            </div>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
-            Ready to Transform Your Thoughts?
-          </h2>
-          <p className="text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-            Join thousands of users who've revolutionized their note-taking with
-            AI-powered organization
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <Link
-              to="/notes/create"
-              className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-black text-xl rounded-2xl hover:from-purple-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-110 shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50"
-            >
-              <FiEdit3 className="mr-4" size={28} />
-              Create Your First Note
-              <FiArrowRight className="ml-4" size={24} />
-            </Link>
-
-            <div className="text-gray-200 text-center">
-              <div className="text-lg mb-2 font-bold">
-                Free to start • No credit card required
+        <div className="text-center bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-16 shadow-2xl shadow-purple-500/20">
+          <div className="space-y-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-full blur-3xl opacity-40 animate-pulse"></div>
+              <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 shadow-2xl shadow-purple-500/50">
+                <FiPlay size={32} className="text-white" />
               </div>
-              <div className="text-sm text-gray-300 font-medium">
-                Your ideas deserve better organization
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-black text-white">
+                Ready to Transform Your Thoughts?
+              </h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Join thousands of users who've revolutionized their note-taking
+                with AI
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center pt-4">
+              <Link
+                to="/notes/create"
+                className="group relative inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/50"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-300"></div>
+                <FiEdit3 className="relative mr-4" size={24} />
+                <span className="relative">Create Your First Note</span>
+                <FiArrowRight
+                  className="relative ml-4 transition-transform group-hover:translate-x-1"
+                  size={20}
+                />
+              </Link>
+
+              <div className="text-gray-400 text-center space-y-1">
+                <div className="text-sm font-semibold">
+                  Free to start • No credit card required
+                </div>
+                <div className="text-xs">
+                  Your ideas deserve better organization
+                </div>
               </div>
             </div>
           </div>

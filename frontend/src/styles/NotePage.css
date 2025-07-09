@@ -789,18 +789,58 @@
 }
 
 .note-markdown-content pre {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(124, 58, 237, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95) 0%,
+    rgba(30, 41, 59, 0.9) 100%
+  );
+  border: 1px solid rgba(124, 58, 237, 0.4);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1.5rem;
   overflow-x: auto;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.note-markdown-content pre::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(
+    90deg,
+    rgba(124, 58, 237, 0.1) 0%,
+    rgba(6, 182, 212, 0.1) 100%
+  );
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.note-markdown-content pre code {
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", "Monaco", monospace;
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: #e2e8f0;
+  background: none;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  display: block;
+  margin-top: 40px;
 }
 
 .note-markdown-content code {
-  font-family: "Fira Code", "Consolas", "Monaco", monospace;
-  font-size: 0.9em;
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", "Monaco", monospace;
+  font-size: 0.85em;
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(124, 58, 237, 0.3);
 }
 
 .note-markdown-content blockquote {

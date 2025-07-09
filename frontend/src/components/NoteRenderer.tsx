@@ -109,6 +109,7 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
     // Код
     code: ({ inline, className, children, ...props }: any) => {
       const match = /language-(\w+)/.exec(className || "");
+      const language = match?.[1] || "text";
 
       if (!inline) {
         return (
@@ -117,26 +118,23 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             className="my-6"
           >
-            <pre className="bg-gray-900/50 border border-purple-500/20 rounded-xl p-4 overflow-x-auto backdrop-blur-sm">
-              <code
-                className={`language-${match?.[1] || "text"} text-sm`}
-                {...props}
-              >
-                {String(children).replace(/\n$/, "")}
-              </code>
-            </pre>
+            <div className="relative">
+              <div className="absolute top-3 right-3 z-10">
+                <span className="text-xs text-gray-400 bg-gray-800/80 px-2 py-1 rounded uppercase tracking-wider">
+                  {language}
+                </span>
+              </div>
+              <pre>
+                <code className={className} {...props}>
+                  {String(children).replace(/\n$/, "")}
+                </code>
+              </pre>
+            </div>
           </motion.div>
         );
       }
 
-      return (
-        <code
-          className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 text-sm font-mono"
-          {...props}
-        >
-          {children}
-        </code>
-      );
+      return <code {...props}>{children}</code>;
     },
 
     // Ссылки

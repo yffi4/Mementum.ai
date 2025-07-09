@@ -2,9 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import "highlight.js/styles/tokyo-night-dark.css";
 
 interface NoteRendererProps {
   content: string;
@@ -250,7 +248,7 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
       <ReactMarkdown
         components={components}
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight, rehypeRaw]}
+        rehypePlugins={[rehypeRaw]}
       >
         {content}
       </ReactMarkdown>

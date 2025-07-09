@@ -1,83 +1,92 @@
 AGENT_PROMPTS = {
     "request_analysis": """
-    Проанализируй запрос пользователя и определи тип действия.
+    Analyze the user request and determine the type of action. 
+    IMPORTANT: Respond in the same language as the user request.
     
-    Запрос: {request}
+    Request: {request}
     
-    Верни JSON с полями:
-    - type: тип действия (create_note, create_plan, save_link, reminder, search, general)
-    - title: заголовок для заметки/плана
-    - category: категория (обучение, проект, идея, задача, ссылка, напоминание)
-    - description: описание
-    - url: URL если есть
-    - plan_type: тип плана (обучение, проект, исследование)
-    - complexity: сложность (простая, средняя, сложная)
-    - search_term: поисковый запрос
-    - format: формат заметки (структурированная, список, диаграмма)
+    Return JSON with fields:
+    - type: action type (create_note, create_plan, save_link, reminder, search, general)
+    - title: title for note/plan
+    - category: category (learning, project, idea, task, link, reminder)
+    - description: description
+    - url: URL if exists
+    - plan_type: plan type (learning, project, research)
+    - complexity: complexity (simple, medium, complex)
+    - search_term: search query
+    - format: note format (structured, list, diagram)
+    - language: detected language code (en, ru, es, fr, de, etc.)
     
-    Примеры:
-    - "сделай мне систем дизайн проекта" -> create_plan
-    - "сохрани эту ссылку" -> save_link
-    - "напомни мне завтра" -> reminder
-    - "найди все про Python" -> search
+    Examples:
+    - "сделай мне систем дизайн проекта" -> create_plan (ru)
+    - "create a system design project" -> create_plan (en)
+    - "save this link" -> save_link (en)
+    - "напомни мне завтра" -> reminder (ru)
+    - "find all about Python" -> search (en)
     """,
     
     "note_generation": """
-    Создай структурированную заметку на основе запроса пользователя и при этом по одной теме должна быть одна заметка, не создавай несколько.
+    Create a structured note based on the user request. 
+    IMPORTANT: Write the note in the same language as the original request.
     
-    Запрос: {request}
-    Категория: {category}
-    Формат: {format}
+    Request: {request}
+    Category: {category}
+    Format: {format}
+    Detected Language: {language}
     
-    Создай информативную, хорошо структурированную заметку с:
-    - Кратким описанием
-    - Основными пунктами
-    - Практическими примерами
-    - Ссылками на ресурсы (если уместно)
-    - Выводами и рекомендациями
+    Create an informative, well-structured note with:
+    - Brief description
+    - Main points
+    - Practical examples
+    - Resource links (if appropriate)
+    - Conclusions and recommendations
     
-    Используй markdown форматирование.
+    Use markdown formatting. Write everything in the language of the original request.
     """,
     
     "plan_generation": """
-    Создай детальный план {plan_type} со сложностью {complexity}.
+    Create a detailed {plan_type} plan with {complexity} complexity.
+    IMPORTANT: Write the plan in the same language as the original request.
     
-    Запрос: {request}
+    Request: {request}
+    Language: {language}
     
-    План должен включать:
-    - Цели и задачи
-    - Этапы выполнения
-    - Временные рамки
-    - Необходимые ресурсы
-    - Критерии успеха
-    - Возможные препятствия и решения
+    The plan should include:
+    - Goals and objectives
+    - Implementation stages
+    - Time frames
+    - Required resources
+    - Success criteria
+    - Possible obstacles and solutions
     
-    Сделай план практичным и выполнимым.
+    Make the plan practical and achievable. Write in the language of the original request.
     """,
     
     "step_extraction": """
-    Извлеки шаги из плана и создай структурированный список.
+    Extract steps from the plan and create a structured list.
+    IMPORTANT: Keep the same language as the original plan.
     
-    План:
+    Plan:
     {plan_content}
     
-    Верни JSON массив объектов:
+    Return JSON array of objects:
     [
         {{
-            "title": "Название шага",
-            "content": "Подробное описание шага с задачами и ресурсами"
+            "title": "Step title",
+            "content": "Detailed step description with tasks and resources"
         }}
     ]
     
-    Каждый шаг должен быть конкретным и измеримым.
+    Each step should be specific and measurable. Use the same language as the input.
     """,
     
     "time_extraction": """
-    Извлеки информацию о времени из запроса.
+    Extract time information from the request.
+    IMPORTANT: Keep the same language as the original request.
     
-    Запрос: {request}
+    Request: {request}
     
-    Верни JSON:
+    Return JSON:
     {{
         "start": "2024-01-01T10:00:00",
         "end": "2024-01-01T11:00:00",
@@ -85,71 +94,105 @@ AGENT_PROMPTS = {
         "recurring": false
     }}
     
-    Если время не указано, используй разумные значения по умолчанию.
+    If time is not specified, use reasonable defaults.
     """,
     
     "assistant": """
-    Ты - интеллектуальный помощник для управления знаниями и задачами.
-    Твоя задача - помогать пользователю организовывать информацию,
-    создавать планы, находить связи между идеями и оптимизировать рабочий процесс.
+    You are an intelligent assistant for knowledge and task management.
+    Your task is to help users organize information, create plans, find connections between ideas, and optimize workflow.
     
-    Отвечай кратко, но информативно. Предлагай практические решения.
+    IMPORTANT: Always respond in the same language as the user's question.
+    
+    Answer concisely but informatively. Suggest practical solutions.
     """,
     
     "summary_creation": """
-    Создай сводную заметку на основе организованных заметок.
+    Create a summary note based on organized notes.
+    IMPORTANT: Write the summary in the same language as the original request.
     
-    Запрос: {request}
-    Организованные заметки: {organized_notes}
+    Request: {request}
+    Organized notes: {organized_notes}
+    Language: {language}
     
-    Создай структурированную сводку с:
-    - Основными выводами
-    - Ключевыми темами
-    - Связями между заметками
-    - Рекомендациями для дальнейших действий
+    Create a structured summary with:
+    - Main conclusions
+    - Key themes
+    - Connections between notes
+    - Recommendations for further actions
+    
+    Write in the language of the original request.
     """,
     
     "categorization": """
-    Определи категорию заметки из списка:
-    - обучение (курсы, лекции, изучение технологий)
-    - проект (планы, задачи, этапы)
-    - идея (концепции, инновации, мысли)
-    - ссылка (веб-ресурсы, статьи, документы)
-    - напоминание (события, дедлайны, встречи)
-    - исследование (анализ, изучение, эксперименты)
-    - общая (разное, заметки, записи)
+    Determine the note category from the list. 
+    IMPORTANT: Analyze the content and return the category name in the same language as the content.
     
-    Содержимое заметки:
+    Categories:
+    - learning (courses, lectures, technology studies)
+    - project (plans, tasks, stages)
+    - idea (concepts, innovations, thoughts)
+    - link (web resources, articles, documents)
+    - reminder (events, deadlines, meetings)
+    - research (analysis, studies, experiments)
+    - general (miscellaneous, notes, records)
+    
+    Note content:
     {content}
     
-    Верни только название категории.
+    Return only the category name. If content is in Russian, return Russian category names:
+    - обучение, проект, идея, ссылка, напоминание, исследование, общая
+    If content is in English, return English category names.
     """,
     
     "importance_assessment": """
-    Оцени важность заметки по шкале от 1 до 10.
+    Assess the importance of the note on a scale from 1 to 10.
+    IMPORTANT: The assessment should be universal regardless of language.
     
-    Критерии:
-    - 1-3: низкая важность (общие заметки, временная информация)
-    - 4-6: средняя важность (полезная информация, ссылки)
-    - 7-8: высокая важность (ключевые идеи, планы проектов)
-    - 9-10: критическая важность (критические решения, важные дедлайны)
+    Criteria:
+    - 1-3: low importance (general notes, temporary information)
+    - 4-6: medium importance (useful information, links)
+    - 7-8: high importance (key ideas, project plans)
+    - 9-10: critical importance (critical decisions, important deadlines)
     
-    Содержимое заметки:
+    Note content:
     {content}
     
-    Верни только число от 1 до 10.
+    Return only a number from 1 to 10.
+    """,
+    
+    "summary_generation": """
+    Create a brief summary of the note (maximum 2-3 sentences).
+    IMPORTANT: Write the summary in the same language as the original note.
+    
+    Note content:
+    {content}
+    
+    The summary should reflect the main essence and key points.
+    Return only the summary without additional text.
+    """,
+    
+    "tags_generation": """
+    Generate 3-5 relevant tags for the note.
+    IMPORTANT: Generate tags in the same language as the note content.
+    
+    Note content:
+    {content}
+    
+    Return tags as a JSON array: ["tag1", "tag2", "tag3"]
+    Tags should be relevant and useful for searching and organizing.
     """,
     
     "connection_finding": """
-    Найди связи между новой заметкой и существующими.
+    Find connections between the new note and existing notes.
+    IMPORTANT: Maintain language consistency in relation descriptions.
     
-    Новая заметка:
+    New note:
     {new_content}
     
-    Существующие заметки:
+    Existing notes:
     {existing_notes}
     
-    Верни JSON массив объектов:
+    Return JSON array of objects:
     [
         {{
             "note_id": 123,
@@ -157,30 +200,104 @@ AGENT_PROMPTS = {
         }}
     ]
     
-    Типы связей:
-    - RELATED: связанные темы
-    - SIMILAR: похожие концепции
-    - CONTRAST: противоположные идеи
-    - PREREQUISITE: предварительные знания
-    - FOLLOW_UP: продолжение или развитие
+    Connection types:
+    - RELATED: related topics
+    - SIMILAR: similar concepts
+    - CONTRAST: opposite ideas
+    - PREREQUISITE: prerequisite knowledge
+    - FOLLOW_UP: continuation or development
     """,
     
     "note_organization": """
-    Организуй заметки в логические группы.
+    Organize notes into logical groups.
+    IMPORTANT: Use the same language as the notes for group names and descriptions.
     
-    Заметки:
+    Notes:
     {notes}
     
-    Верни JSON массив групп:
+    Return JSON array of groups:
     [
         {{
-            "group_name": "Название группы",
-            "theme": "Общая тема",
+            "group_name": "Group name",
+            "theme": "General theme",
             "notes": [1, 2, 3],
-            "summary": "Краткое описание группы"
+            "summary": "Brief group description"
         }}
     ]
     
-    Группируй по темам, проектам, временным периодам или типам контента.
+    Group by themes, projects, time periods, or content types.
+    Use the same language as the majority of notes in each group.
+    """,
+    
+    "language_detection": """
+    Detect the language of the given text and return the language code.
+    
+    Text: {text}
+    
+    Return only the language code (ru, en, es, fr, de, it, pt, etc.)
+    If the language cannot be determined, return "en" as default.
+    """,
+    
+    "keyword_extraction": """
+    Extract key words and phrases from the note.
+    IMPORTANT: Extract keywords in the same language as the note content.
+    
+    Note content:
+    {content}
+    
+    Return JSON array of keywords: ["keyword1", "keyword2", "keyword3"]
+    Extract 5-10 most relevant keywords and phrases.
+    """,
+    
+    "topics_detection": """
+    Detect main topics in the note.
+    IMPORTANT: Detect topics in the same language as the note content.
+    
+    Note content:
+    {content}
+    
+    Return JSON array of topics: ["topic1", "topic2", "topic3"]
+    Identify 3-5 main topics or themes.
+    """,
+    
+    "sentiment_analysis": """
+    Analyze the sentiment of the note content.
+    
+    Note content:
+    {content}
+    
+    Return sentiment as one of: positive, negative, neutral
+    """,
+    
+    "improvements_suggestion": """
+    Suggest improvements for the note.
+    IMPORTANT: Provide suggestions in the same language as the note content.
+    
+    Note content:
+    {content}
+    
+    Return JSON array of improvement suggestions:
+    ["suggestion1", "suggestion2", "suggestion3"]
+    
+    Suggest 3-5 practical improvements for structure, content, or clarity.
+    """,
+    
+    "action_items_extraction": """
+    Extract action items and tasks from the note.
+    IMPORTANT: Extract action items in the same language as the note content.
+    
+    Note content:
+    {content}
+    
+    Return JSON array of action items:
+    [
+        {{
+            "action": "Action description",
+            "priority": "high|medium|low",
+            "deadline": "YYYY-MM-DD or null"
+        }}
+    ]
+    
+    Extract clear, actionable tasks from the note content.
     """
 } 

@@ -111,38 +111,77 @@ class CalendarAgent:
         return has_event_keywords and (has_time_patterns or has_date_patterns)
 
     def _extract_events_with_gpt(self, note_content: str) -> List[Dict[str, Any]]:
-        """Использовать GPT для извлечения событий из заметки"""
+        """Использовать GPT для извлечения событий из заметки с поддержкой языка"""
         
-        system_prompt = """
-        Ты - AI ассистент для анализа заметок и создания событий календаря.
+        # Определяем язык заметки
+        text_lower = note_content.lower()
         
-        Проанализируй текст заметки и извлеки все упоминания о встречах, событиях, дедлайнах или других важных датах.
+        # Простое определение языка
+        russian_words = ['встреча', 'собрание', 'звонок', 'дедлайн', 'событие', 'завтра', 'сегодня', 'вчера', 'время', 'дата']
+        english_words = ['meeting', 'call', 'deadline', 'event', 'tomorrow', 'today', 'yesterday', 'time', 'date']
         
-        Для каждого найденного события верни JSON объект со следующими полями:
-        - title: краткое название события (обязательно)
-        - description: описание события (опционально)
-        - start_time: время начала в формате ISO 8601 (обязательно)
-        - end_time: время окончания в формате ISO 8601 (обязательно)
-        - location: место проведения (опционально)
-        - is_all_day: true если событие на весь день (по умолчанию false)
-        - reminder_minutes: за сколько минут напомнить (по умолчанию 30)
+        russian_count = sum(1 for word in russian_words if word in text_lower)
+        english_count = sum(1 for word in english_words if word in text_lower)
         
-        Если время не указано точно, предположи разумное время:
-        - Встречи/собрания: обычно 1-2 часа
-        - Звонки: 30-60 минут
-        - Дедлайны: установи на конец рабочего дня (18:00)
+        is_russian = russian_count > english_count
         
-        Если дата не указана точно (например, "завтра"), рассчитай дату относительно сегодняшнего дня.
-        
-        Верни массив JSON объектов. Если событий не найдено, верни пустой массив.
-        """
+        if is_russian:
+            system_prompt = """
+            Ты - AI ассистент для анализа заметок и создания событий календаря.
+            
+            Проанализируй текст заметки и извлеки все упоминания о встречах, событиях, дедлайнах или других важных датах.
+            
+            Для каждого найденного события верни JSON объект со следующими полями:
+            - title: краткое название события (обязательно)
+            - description: описание события (опционально)
+            - start_time: время начала в формате ISO 8601 (обязательно)
+            - end_time: время окончания в формате ISO 8601 (обязательно)
+            - location: место проведения (опционально)
+            - is_all_day: true если событие на весь день (по умолчанию false)
+            - reminder_minutes: за сколько минут напомнить (по умолчанию 30)
+            
+            Если время не указано точно, предположи разумное время:
+            - Встречи/собрания: обычно 1-2 часа
+            - Звонки: 30-60 минут
+            - Дедлайны: установи на конец рабочего дня (18:00)
+            
+            Если дата не указана точно (например, "завтра"), рассчитай дату относительно сегодняшнего дня.
+            
+            Верни массив JSON объектов. Если событий не найдено, верни пустой массив.
+            """
+        else:
+            system_prompt = """
+            You are an AI assistant for analyzing notes and creating calendar events.
+            
+            Analyze the note text and extract all mentions of meetings, events, deadlines, or other important dates.
+            
+            For each found event, return a JSON object with the following fields:
+            - title: brief event title (required)
+            - description: event description (optional)
+            - start_time: start time in ISO 8601 format (required)
+            - end_time: end time in ISO 8601 format (required)
+            - location: venue (optional)
+            - is_all_day: true if all-day event (default false)
+            - reminder_minutes: minutes before to remind (default 30)
+            
+            If time is not specified exactly, assume reasonable time:
+            - Meetings: usually 1-2 hours
+            - Calls: 30-60 minutes
+            - Deadlines: set to end of business day (6:00 PM)
+            
+            If date is not specified exactly (e.g., "tomorrow"), calculate date relative to today.
+            
+            Return an array of JSON objects. If no events found, return empty array.
+            """
         
         try:
+            user_message = f"Текст заметки:\n{note_content}" if is_russian else f"Note text:\n{note_content}"
+            
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Текст заметки:\n{note_content}"}
+                    {"role": "user", "content": user_message}
                 ],
                 temperature=0.3
             )

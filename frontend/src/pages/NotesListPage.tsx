@@ -6,7 +6,7 @@ import axios from "axios";
 import "../styles/NoteListPage.css";
 import NeonBackground from "../components/NeonBackground";
 import Navbar from "../components/Navbar";
-import NotesOnboarding from "../components/NotesOnboarding";
+
 import { FiTag } from "react-icons/fi";
 import { getApiUrls } from "../config/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -264,9 +264,8 @@ export default function NotesListPage() {
       <div className="page-bg relative overflow-hidden">
         <NeonBackground />
         <Navbar user={user || undefined} />
-        <div className="notes-top w-full flex justify-center pt-20">
-          <NotesOnboarding />
-        </div>
+      
+      
       </div>
     );
   }

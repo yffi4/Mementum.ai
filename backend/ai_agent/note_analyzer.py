@@ -7,178 +7,56 @@ from .prompts import AGENT_PROMPTS
 
 class NoteAnalyzer:
     """
-    Улучшенный анализатор заметок для точной категоризации, оценки важности и поиска связей
+    Улучшенный анализатор заметок с поддержкой многоязычности.
+    Определяет язык входящего текста и генерирует ответы на том же языке.
     """
     
-    # Предопределенные категории с четкими критериями
+    # Предопределенные категории для разных языков
     CATEGORIES = {
-        "Обучение": ["курс", "лекция", "изучение", "обучение", "образование", "tutorial", "гайд", "инструкция"],
-        "Проект": ["проект", "задача", "план", "этап", "milestone", "цель", "техзадание", "requirements"],
-        "Идея": ["идея", "концепция", "мысль", "инновация", "предложение", "brainstorm", "креатив"],
-        "Работа": ["работа", "офис", "коллега", "начальник", "задание", "отчет", "встреча", "совещание"],
-        "Исследование": ["исследование", "анализ", "изучение", "эксперимент", "данные", "статистика", "research"],
-        "Финансы": ["деньги", "бюджет", "расходы", "доходы", "инвестиции", "банк", "кредит", "налоги"],
-        "Здоровье": ["здоровье", "врач", "лечение", "диета", "спорт", "фитнес", "медицина", "болезнь"],
-        "Путешествия": ["путешествие", "поездка", "отпуск", "отель", "билет", "виза", "маршрут"],
-        "Покупки": ["покупка", "магазин", "товар", "цена", "скидка", "заказ", "доставка"],
-        "Личное": ["семья", "друзья", "хобби", "развлечения", "личное", "дневник", "размышления"],
-        "Технология": ["программирование", "код", "алгоритм", "технология", "софт", "hardware", "IT", "компьютер"],
-        "Ссылки": ["ссылка", "сайт", "статья", "видео", "ресурс", "документ", "источник", "материал"],
-        "Статьи": ["статья", "статья", "статья", "статья", "статья", "статья", "статья", "статья", "статья", "статья"],
-        "События": ["событие", "событие", "событие", "событие", "событие", "событие", "событие", "событие", "событие", "событие"],
-        "Книги": ["книга", "книга", "книга", "книга", "книга", "книга", "книга", "книга", "книга", "книга"],
-        "Фильмы": ["фильм", "фильм", "фильм", "фильм", "фильм", "фильм", "фильм", "фильм", "фильм", "фильм"],
-        "Музыка": ["музыка", "музыка", "музыка", "музыка", "музыка", "музыка", "музыка", "музыка", "музыка", "музыка"],
-        "Игры": ["игра", "игра", "игра", "игра", "игра", "игра", "игра", "игра", "игра", "игра"],
-        #"Прочее": ["прочее", "прочее", "прочее", "прочее", "прочее", "прочее", "прочее", "прочее", "прочее", "прочее"],
-        "Общее": []  # Для всего остального
+        "ru": {
+            "Обучение": ["курс", "лекция", "изучение", "обучение", "образование", "tutorial", "гайд", "инструкция"],
+            "Проект": ["проект", "задача", "план", "этап", "milestone", "цель", "техзадание", "requirements"],
+            "Идея": ["идея", "концепция", "мысль", "инновация", "предложение", "brainstorm", "креатив"],
+            "Работа": ["работа", "офис", "коллега", "начальник", "задание", "отчет", "встреча", "совещание"],
+            "Исследование": ["исследование", "анализ", "изучение", "эксперимент", "данные", "статистика", "research"],
+            "Финансы": ["деньги", "бюджет", "расходы", "доходы", "инвестиции", "банк", "кредит", "налоги"],
+            "Здоровье": ["здоровье", "врач", "лечение", "диета", "спорт", "фитнес", "медицина", "болезнь"],
+            "Путешествия": ["путешествие", "поездка", "отпуск", "отель", "билет", "виза", "маршрут"],
+            "Покупки": ["покупка", "магазин", "товар", "цена", "скидка", "заказ", "доставка"],
+            "Личное": ["семья", "друзья", "хобби", "личное", "дом", "отношения", "эмоции"],
+            "Техника": ["программирование", "код", "алгоритм", "технология", "IT", "software", "hardware"],
+            "Ссылки": ["ссылка", "статья", "документ", "ресурс", "материал", "источник"],
+            "Общее": ["заметка", "запись", "информация", "разное", "прочее"]
+        },
+        "en": {
+            "Learning": ["course", "lecture", "study", "education", "tutorial", "guide", "instruction", "training"],
+            "Project": ["project", "task", "plan", "stage", "milestone", "goal", "requirements", "specification"],
+            "Idea": ["idea", "concept", "thought", "innovation", "proposal", "brainstorm", "creative"],
+            "Work": ["work", "office", "colleague", "boss", "assignment", "report", "meeting", "conference"],
+            "Research": ["research", "analysis", "study", "experiment", "data", "statistics", "investigation"],
+            "Finance": ["money", "budget", "expenses", "income", "investment", "bank", "credit", "taxes"],
+            "Health": ["health", "doctor", "treatment", "diet", "sport", "fitness", "medicine", "illness"],
+            "Travel": ["travel", "trip", "vacation", "hotel", "ticket", "visa", "route"],
+            "Shopping": ["shopping", "store", "product", "price", "discount", "order", "delivery"],
+            "Personal": ["family", "friends", "hobby", "personal", "home", "relationships", "emotions"],
+            "Tech": ["programming", "code", "algorithm", "technology", "IT", "software", "hardware"],
+            "Links": ["link", "article", "document", "resource", "material", "source"],
+            "General": ["note", "record", "information", "miscellaneous", "other"]
+        }
     }
     
-    def __init__(self, openai_client: openai.AsyncOpenAI):
-        self.openai_client = openai_client
+    def __init__(self, openai_client: Optional[openai.AsyncOpenAI] = None):
+        self.openai_client = openai_client or openai.AsyncOpenAI()
     
-    def _extract_keywords_simple(self, content: str) -> List[str]:
-        """Простое извлечение ключевых слов без AI"""
-        # Удаляем знаки препинания и приводим к нижнему регистру
-        words = re.findall(r'\b\w+\b', content.lower())
-        # Фильтруем короткие слова и стоп-слова
-        stop_words = {'и', 'в', 'на', 'с', 'по', 'для', 'от', 'до', 'из', 'к', 'у', 'о', 'а', 'но', 'что', 'как', 'это', 'то', 'же', 'бы', 'не', 'или', 'да', 'нет'}
-        keywords = [word for word in words if len(word) > 2 and word not in stop_words]
-        return list(set(keywords))  # Убираем дубликаты
-    
-    def _categorize_by_keywords(self, content: str) -> str:
-        """Категоризация по ключевым словам как fallback"""
-        content_lower = content.lower()
-        
-        # Подсчитываем совпадения для каждой категории
-        category_scores = {}
-        for category, keywords in self.CATEGORIES.items():
-            if not keywords:  # Пропускаем "Общее"
-                continue
-            score = sum(1 for keyword in keywords if keyword in content_lower)
-            if score > 0:
-                category_scores[category] = score
-        
-        # Возвращаем категорию с наибольшим количеством совпадений
-        if category_scores:
-            return max(category_scores, key=category_scores.get)
-        
-        return "Общее"
-    
-    def _assess_importance_by_keywords(self, content: str) -> int:
-        """Оценка важности по ключевым словам как fallback"""
-        content_lower = content.lower()
-        
-        # Высокая важность (7-10)
-        high_importance = ['срочно', 'важно', 'критично', 'дедлайн', 'deadline', 'проект', 'встреча', 'звонок', 'задача', 'цель']
-        # Средняя важность (4-6)  
-        medium_importance = ['план', 'идея', 'изучить', 'прочитать', 'посмотреть', 'исследование']
-        # Низкая важность (1-3)
-        low_importance = ['заметка', 'мысль', 'интересно', 'возможно', 'может быть']
-        
-        high_count = sum(1 for word in high_importance if word in content_lower)
-        medium_count = sum(1 for word in medium_importance if word in content_lower)
-        low_count = sum(1 for word in low_importance if word in content_lower)
-        
-        # Длина контента тоже влияет на важность
-        length_factor = min(len(content) / 500, 2)  # Длинные заметки обычно важнее
-        
-        if high_count > 0:
-            return min(10, 7 + high_count + int(length_factor))
-        elif medium_count > 0:
-            return min(8, 4 + medium_count + int(length_factor))
-        elif low_count > 0:
-            return max(1, 3 - low_count + int(length_factor))
-        else:
-            return 5  # Средняя важность по умолчанию
-    
-    async def categorize_note(self, content: str) -> str:
+    async def detect_language(self, text: str) -> str:
         """
-        Улучшенная категоризация заметки с fallback
+        Определение языка текста
         """
-        if not content or len(content.strip()) < 10:
-            return "Общее"
+        if not text or len(text.strip()) < 3:
+            return "en"
         
         try:
-            prompt = f"""
-Определи наиболее подходящую категорию для заметки из следующего списка:
-
-КАТЕГОРИИ:
-• Обучение - курсы, лекции, изучение технологий, образовательные материалы
-• Проект - планы проектов, задачи, этапы работы, техзадания  
-• Идея - концепции, инновации, творческие мысли, предложения
-• Работа - рабочие задачи, встречи, отчеты, корпоративные дела
-• Исследование - анализ, изучение данных, эксперименты, research
-• Финансы - деньги, бюджет, инвестиции, расходы, доходы
-• Здоровье - медицина, фитнес, диета, лечение, самочувствие
-• Путешествия - поездки, отпуск, маршруты, отели, билеты
-• Покупки - товары, магазины, заказы, цены, скидки
-• Личное - семья, друзья, хобби, личные размышления
-• Техника - программирование, IT, технологии, код, алгоритмы
-• Ссылки - веб-ресурсы, статьи, документы, материалы для изучения
-• Общее - все остальное, что не подходит под другие категории
-
-ЗАМЕТКА:
-{content[:1000]}
-
-ИНСТРУКЦИЯ: Верни ТОЛЬКО название категории, без дополнительного текста.
-"""
-            
-            response = await self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",  # Используем более быструю модель
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1,
-                max_tokens=50
-            )
-            
-            result = response.choices[0].message.content.strip()
-            
-            # Проверяем, что результат - одна из наших категорий
-            if result in self.CATEGORIES:
-                return result
-            
-            # Если AI вернул что-то другое, пробуем найти похожую категорию
-            for category in self.CATEGORIES:
-                if category.lower() in result.lower():
-                    return category
-            
-            # Fallback к анализу ключевых слов
-            return self._categorize_by_keywords(content)
-            
-        except Exception as e:
-            print(f"Ошибка категоризации AI: {e}")
-            # Fallback к анализу ключевых слов
-            return self._categorize_by_keywords(content)
-    
-    async def assess_importance(self, content: str) -> int:
-        """
-        Улучшенная оценка важности заметки (1-10) с fallback
-        """
-        if not content or len(content.strip()) < 5:
-            return 3
-        
-        try:
-            prompt = f"""
-Оцени важность заметки по шкале от 1 до 10 на основе следующих критериев:
-
-ШКАЛА ВАЖНОСТИ:
-• 1-2: Очень низкая - случайные мысли, незначительные заметки
-• 3-4: Низкая - общая информация, интересные факты  
-• 5-6: Средняя - полезная информация, планы на будущее
-• 7-8: Высокая - важные задачи, ключевые идеи, рабочие проекты
-• 9-10: Критическая - срочные дедлайны, критически важные решения
-
-КРИТЕРИИ ОЦЕНКИ:
-- Срочность (есть ли дедлайны, временные рамки)
-- Влияние на работу/жизнь (насколько это важно для достижения целей)
-- Конкретность (четкие задачи важнее общих размышлений)
-- Практическая ценность (можно ли это использовать)
-
-ЗАМЕТКА:
-{content[:800]}
-
-ИНСТРУКЦИЯ: Верни ТОЛЬКО число от 1 до 10, без дополнительного текста.
-"""
+            prompt = AGENT_PROMPTS["language_detection"].format(text=text[:500])
             
             response = await self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -187,10 +65,117 @@ class NoteAnalyzer:
                 max_tokens=10
             )
             
-            result = response.choices[0].message.content.strip()
+            detected_lang = response.choices[0].message.content.strip().lower()
+            
+            # Проверяем на корректность
+            if detected_lang in ['ru', 'en', 'es', 'fr', 'de', 'it', 'pt', 'zh', 'ja', 'ko']:
+                return detected_lang
+            else:
+                return "en"
+                
+        except Exception as e:
+            print(f"Ошибка определения языка: {e}")
+            # Fallback - простая эвристика
+            return self._detect_language_fallback(text)
+    
+    def _detect_language_fallback(self, text: str) -> str:
+        """
+        Простое определение языка по ключевым словам
+        """
+        text_lower = text.lower()
+        
+        # Русские слова
+        russian_words = ['что', 'как', 'где', 'когда', 'зачем', 'почему', 'если', 'тогда', 'или', 'но', 'да', 'нет', 'это', 'для', 'из', 'на', 'в', 'с', 'по', 'к', 'от', 'за', 'над', 'под', 'перед', 'после', 'через', 'без', 'про', 'при', 'о', 'об', 'и', 'а', 'у', 'ы', 'э', 'ё', 'ю', 'я', 'щ', 'ъ', 'ь']
+        
+        # Английские слова
+        english_words = ['the', 'and', 'or', 'but', 'if', 'then', 'what', 'how', 'where', 'when', 'why', 'who', 'which', 'that', 'this', 'with', 'for', 'from', 'to', 'of', 'in', 'on', 'at', 'by', 'as', 'be', 'have', 'do', 'will', 'would', 'could', 'should', 'can', 'may', 'might', 'must']
+        
+        russian_count = sum(1 for word in russian_words if word in text_lower)
+        english_count = sum(1 for word in english_words if word in text_lower)
+        
+        if russian_count > english_count:
+            return "ru"
+        else:
+            return "en"
+    
+    async def categorize_note(self, content: str) -> str:
+        """
+        Улучшенная категоризация заметки с поддержкой языков
+        """
+        if not content or len(content.strip()) < 10:
+            return "General" if await self.detect_language(content) == "en" else "Общее"
+        
+        try:
+            # Определяем язык
+            language = await self.detect_language(content)
+            
+            # Используем новый промпт
+            prompt = AGENT_PROMPTS["categorization"].format(content=content[:1000])
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=50
+            )
+            
+            category = response.choices[0].message.content.strip()
+            
+            # Проверяем корректность категории
+            if language == "ru":
+                valid_categories = list(self.CATEGORIES["ru"].keys())
+            else:
+                valid_categories = list(self.CATEGORIES["en"].keys())
+            
+            if category in valid_categories:
+                return category
+            else:
+                return self._categorize_by_keywords(content, language)
+                
+        except Exception as e:
+            print(f"Ошибка категоризации AI: {e}")
+            language = await self.detect_language(content)
+            return self._categorize_by_keywords(content, language)
+    
+    def _categorize_by_keywords(self, content: str, language: str) -> str:
+        """
+        Категоризация по ключевым словам
+        """
+        content_lower = content.lower()
+        categories = self.CATEGORIES.get(language, self.CATEGORIES["en"])
+        
+        category_scores = {}
+        for category, keywords in categories.items():
+            score = sum(1 for keyword in keywords if keyword in content_lower)
+            if score > 0:
+                category_scores[category] = score
+        
+        if category_scores:
+            return max(category_scores, key=category_scores.get)
+        else:
+            return "General" if language == "en" else "Общее"
+    
+    async def assess_importance(self, content: str) -> int:
+        """
+        Оценка важности заметки (универсальная для всех языков)
+        """
+        if not content or len(content.strip()) < 10:
+            return 3
+        
+        try:
+            prompt = AGENT_PROMPTS["importance_assessment"].format(content=content[:1000])
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=10
+            )
             
             # Извлекаем число из ответа
-            numbers = re.findall(r'\d+', result)
+            import re
+            numbers = re.findall(r'\d+', response.choices[0].message.content)
+            
             if numbers:
                 importance = int(numbers[0])
                 return max(1, min(10, importance))  # Ограничиваем диапазон 1-10
@@ -200,29 +185,48 @@ class NoteAnalyzer:
             
         except Exception as e:
             print(f"Ошибка оценки важности AI: {e}")
-            # Fallback к анализу ключевых слов
             return self._assess_importance_by_keywords(content)
+    
+    def _assess_importance_by_keywords(self, content: str) -> int:
+        """
+        Оценка важности по ключевым словам
+        """
+        content_lower = content.lower()
+        
+        # Высокая важность
+        high_importance = ["urgent", "critical", "important", "deadline", "asap", "priority", "срочно", "критично", "важно", "дедлайн", "приоритет"]
+        
+        # Средняя важность
+        medium_importance = ["meeting", "task", "project", "goal", "plan", "встреча", "задача", "проект", "цель", "план"]
+        
+        # Низкая важность
+        low_importance = ["note", "idea", "thought", "maybe", "заметка", "идея", "мысль", "может быть"]
+        
+        high_score = sum(1 for word in high_importance if word in content_lower)
+        medium_score = sum(1 for word in medium_importance if word in content_lower)
+        low_score = sum(1 for word in low_importance if word in content_lower)
+        
+        if high_score > 0:
+            return min(8 + high_score, 10)
+        elif medium_score > 0:
+            return min(5 + medium_score, 7)
+        elif low_score > 0:
+            return max(1, 3 - low_score)
+        else:
+            return 5  # Средняя важность по умолчанию
     
     async def generate_summary(self, content: str) -> str:
         """
-        Улучшенная генерация краткого резюме заметки
+        Генерация краткого резюме на языке оригинала
         """
         if not content or len(content.strip()) < 20:
             return content[:100] + "..." if len(content) > 100 else content
         
         try:
-            prompt = f"""
-Создай краткое резюме заметки (максимум 2-3 предложения).
-Резюме должно отражать основную суть и ключевые моменты.
-
-ЗАМЕТКА:
-{content}
-
-ИНСТРУКЦИЯ: Верни только резюме, без дополнительного текста.
-"""
+            prompt = AGENT_PROMPTS["summary_generation"].format(content=content)
             
             response = await self.openai_client.chat.completions.create(
-                model="gpt-4.1-mini",
+                model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
                 max_tokens=200
@@ -233,257 +237,267 @@ class NoteAnalyzer:
             
         except Exception as e:
             print(f"Ошибка генерации резюме: {e}")
-            # Fallback - первые 200 символов
             return content[:200] + "..." if len(content) > 200 else content
     
     async def suggest_tags(self, content: str) -> List[str]:
         """
-        Улучшенное предложение тегов для заметки
+        Предложение тегов на языке оригинала
         """
         if not content or len(content.strip()) < 10:
             return []
         
         try:
-            prompt = f"""
-Предложи 3-7 релевантных тегов для заметки.
-Теги должны быть:
-- Короткими (1-2 слова)
-- Конкретными и полезными для поиска
-- На русском языке
-- Отражающими ключевые темы заметки
-
-ЗАМЕТКА:
-{content[:600]}
-
-ИНСТРУКЦИЯ: Верни теги через запятую, без дополнительного текста.
-Пример: программирование, python, веб-разработка, backend
-"""
+            prompt = AGENT_PROMPTS["tags_generation"].format(content=content[:1000])
             
             response = await self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.2,
+                temperature=0.3,
                 max_tokens=100
             )
             
-            result = response.choices[0].message.content.strip()
-            tags = [tag.strip() for tag in result.split(',') if tag.strip()]
-            
-            # Ограничиваем количество тегов и их длину
-            return [tag for tag in tags[:7] if len(tag) <= 30]
-            
+            # Парсим JSON ответ
+            try:
+                tags = json.loads(response.choices[0].message.content)
+                return tags[:5] if isinstance(tags, list) else []
+            except json.JSONDecodeError:
+                # Fallback - извлекаем теги из текста
+                content_text = response.choices[0].message.content
+                tags = [tag.strip() for tag in content_text.split(',') if tag.strip()]
+                return tags[:5]
+                
         except Exception as e:
             print(f"Ошибка генерации тегов: {e}")
-            # Fallback - извлекаем ключевые слова
-            keywords = self._extract_keywords_simple(content)
-            return keywords[:5]
+            return self._extract_tags_by_keywords(content)
     
-    async def find_connections(self, new_content: str, existing_notes: List[Any]) -> List[Dict[str, Any]]:
+    def _extract_tags_by_keywords(self, content: str) -> List[str]:
         """
-        Улучшенный поиск связей между заметками
+        Извлечение тегов по ключевым словам
         """
-        if not new_content or not existing_notes:
+        # Простое извлечение часто встречающихся слов
+        words = re.findall(r'\b\w+\b', content.lower())
+        word_freq = {}
+        for word in words:
+            if len(word) > 3:  # Игнорируем короткие слова
+                word_freq[word] = word_freq.get(word, 0) + 1
+        
+        # Сортируем по частоте и берем топ-5
+        sorted_words = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
+        return [word for word, freq in sorted_words[:5]]
+    
+    async def extract_keywords(self, content: str) -> List[str]:
+        """
+        Извлечение ключевых слов на языке оригинала
+        """
+        if not content or len(content.strip()) < 10:
             return []
         
         try:
-            # Ограничиваем количество заметок для анализа
-            notes_to_analyze = existing_notes[:20]
-            
-            notes_data = []
-            for note in notes_to_analyze:
-                notes_data.append({
-                    "id": note.id,
-                    "title": getattr(note, 'title', 'Без названия'),
-                    "content": note.content[:300],
-                    "category": getattr(note, 'category', 'Общее')
-                })
-            
-            prompt = f"""
-Найди связи между новой заметкой и существующими заметками.
-
-НОВАЯ ЗАМЕТКА:
-{new_content[:500]}
-
-СУЩЕСТВУЮЩИЕ ЗАМЕТКИ:
-{json.dumps(notes_data, ensure_ascii=False, indent=2)}
-
-ТИПЫ СВЯЗЕЙ:
-- RELATED: связанные темы или контекст
-- SIMILAR: похожие идеи или концепции  
-- FOLLOW_UP: продолжение или развитие темы
-- PREREQUISITE: необходимые предварительные знания
-
-ИНСТРУКЦИЯ: Верни JSON массив объектов со связями (максимум 5):
-[{{"note_id": 123, "relation": "RELATED", "reason": "обе заметки про Python"}}]
-
-Если связей нет, верни пустой массив: []
-"""
+            prompt = AGENT_PROMPTS["keyword_extraction"].format(content=content[:1000])
             
             response = await self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.2,
-                max_tokens=500
+                temperature=0.3,
+                max_tokens=150
             )
             
-            result = response.choices[0].message.content.strip()
-            connections = json.loads(result)
-            
-            # Валидируем результат
-            valid_connections = []
-            for conn in connections[:5]:  # Максимум 5 связей
-                if isinstance(conn, dict) and 'note_id' in conn and 'relation' in conn:
-                    valid_connections.append(conn)
-            
-            return valid_connections
-            
+            try:
+                keywords = json.loads(response.choices[0].message.content)
+                return keywords[:10] if isinstance(keywords, list) else []
+            except json.JSONDecodeError:
+                # Fallback
+                return self._extract_tags_by_keywords(content)
+                
         except Exception as e:
-            print(f"Ошибка поиска связей: {e}")
-            return []
-    
-    async def extract_keywords(self, content: str) -> List[str]:
-        """
-        Извлечение ключевых слов из заметки
-        """
-        return self._extract_keywords_simple(content)
+            print(f"Ошибка извлечения ключевых слов: {e}")
+            return self._extract_tags_by_keywords(content)
     
     async def detect_topics(self, content: str) -> List[str]:
         """
-        Определение основных тем заметки
+        Определение тем на языке оригинала
+        """
+        if not content or len(content.strip()) < 10:
+            return []
+        
+        try:
+            prompt = AGENT_PROMPTS["topics_detection"].format(content=content[:1000])
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=100
+            )
+            
+            try:
+                topics = json.loads(response.choices[0].message.content)
+                return topics[:5] if isinstance(topics, list) else []
+            except json.JSONDecodeError:
+                return []
+                
+        except Exception as e:
+            print(f"Ошибка определения тем: {e}")
+            return []
+    
+    async def analyze_sentiment(self, content: str) -> str:
+        """
+        Анализ настроения (универсальный для всех языков)
+        """
+        if not content or len(content.strip()) < 10:
+            return "neutral"
+        
+        try:
+            prompt = AGENT_PROMPTS["sentiment_analysis"].format(content=content[:1000])
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=20
+            )
+            
+            sentiment = response.choices[0].message.content.strip().lower()
+            
+            if sentiment in ['positive', 'negative', 'neutral']:
+                return sentiment
+            else:
+                return "neutral"
+                
+        except Exception as e:
+            print(f"Ошибка анализа настроения: {e}")
+            return "neutral"
+    
+    async def suggest_improvements(self, content: str) -> List[str]:
+        """
+        Предложения по улучшению на языке оригинала
         """
         if not content or len(content.strip()) < 20:
             return []
         
         try:
-            prompt = f"""
-Определи 2-4 основные темы в заметке.
-Темы должны быть конкретными и полезными.
-
-ЗАМЕТКА:
-{content[:600]}
-
-ИНСТРУКЦИЯ: Верни темы через запятую.
-Пример: веб-разработка, базы данных, оптимизация
-"""
+            prompt = AGENT_PROMPTS["improvements_suggestion"].format(content=content[:1000])
             
             response = await self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.2,
-                max_tokens=100
+                temperature=0.3,
+                max_tokens=200
             )
             
-            result = response.choices[0].message.content.strip()
-            topics = [topic.strip() for topic in result.split(',') if topic.strip()]
-            return topics[:4]
-            
+            try:
+                improvements = json.loads(response.choices[0].message.content)
+                return improvements[:5] if isinstance(improvements, list) else []
+            except json.JSONDecodeError:
+                return []
+                
         except Exception as e:
-            print(f"Ошибка определения тем: {e}")
+            print(f"Ошибка предложений по улучшению: {e}")
             return []
     
-    async def analyze_sentiment(self, content: str) -> Dict[str, Any]:
+    async def find_action_items(self, content: str) -> List[Dict[str, Any]]:
         """
-        Анализ тональности заметки
+        Извлечение действий на языке оригинала
         """
-        if not content:
-            return {"sentiment": "neutral", "confidence": 0.5}
+        if not content or len(content.strip()) < 20:
+            return []
         
         try:
-            # Простой анализ тональности по ключевым словам
-            positive_words = ['хорошо', 'отлично', 'успех', 'радость', 'позитив', 'удача', 'достижение']
-            negative_words = ['плохо', 'ошибка', 'проблема', 'неудача', 'грусть', 'сложно', 'трудно']
+            prompt = AGENT_PROMPTS["action_items_extraction"].format(content=content[:1000])
             
-            content_lower = content.lower()
-            positive_count = sum(1 for word in positive_words if word in content_lower)
-            negative_count = sum(1 for word in negative_words if word in content_lower)
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=200
+            )
             
-            if positive_count > negative_count:
-                sentiment = "positive"
-                confidence = min(0.9, 0.6 + (positive_count - negative_count) * 0.1)
-            elif negative_count > positive_count:
-                sentiment = "negative"  
-                confidence = min(0.9, 0.6 + (negative_count - positive_count) * 0.1)
-            else:
-                sentiment = "neutral"
-                confidence = 0.7
-            
-            return {
-                "sentiment": sentiment,
-                "confidence": confidence
-            }
-            
+            try:
+                actions = json.loads(response.choices[0].message.content)
+                return actions[:5] if isinstance(actions, list) else []
+            except json.JSONDecodeError:
+                return []
+                
         except Exception as e:
-            print(f"Ошибка анализа тональности: {e}")
-            return {"sentiment": "neutral", "confidence": 0.5}
+            print(f"Ошибка извлечения действий: {e}")
+            return []
     
-    async def find_action_items(self, content: str) -> List[str]:
+    async def find_connections(self, new_content: str, existing_notes: List[Any]) -> List[Dict[str, Any]]:
         """
-        Поиск задач и действий в заметке
+        Поиск связей между заметками
         """
-        if not content:
+        if not new_content or not existing_notes:
             return []
         
-        # Простой поиск по ключевым словам и паттернам
-        action_patterns = [
-            r'нужно\s+([^.!?]+)',
-            r'надо\s+([^.!?]+)', 
-            r'сделать\s+([^.!?]+)',
-            r'выполнить\s+([^.!?]+)',
-            r'TODO:?\s*([^.!?\n]+)',
-            r'[-•]\s*([^.!?\n]+)',
-        ]
-        
-        actions = []
-        for pattern in action_patterns:
-            matches = re.findall(pattern, content, re.IGNORECASE)
-            actions.extend([match.strip() for match in matches if len(match.strip()) > 5])
-        
-        return list(set(actions))[:10]  # Убираем дубликаты и ограничиваем количество
-    
-    async def suggest_improvements(self, content: str) -> List[str]:
-        """
-        Предложение улучшений для заметки
-        """
-        improvements = []
-        
-        if len(content) < 50:
-            improvements.append("Добавить больше деталей и контекста")
-        
-        if not re.search(r'[.!?]', content):
-            improvements.append("Структурировать текст с помощью знаков препинания")
-        
-        if len(content.split('\n')) == 1 and len(content) > 200:
-            improvements.append("Разбить текст на абзацы для лучшей читаемости")
-        
-        if not re.search(r'[0-9]', content) and 'план' in content.lower():
-            improvements.append("Добавить конкретные даты или числовые показатели")
-        
-        return improvements[:5]
+        try:
+            # Подготавливаем данные о существующих заметках
+            notes_data = []
+            for note in existing_notes[:20]:  # Ограничиваем до 20 заметок
+                notes_data.append({
+                    "id": note.id,
+                    "title": note.title,
+                    "content": note.content[:200],
+                    "category": getattr(note, 'category', 'General')
+                })
+            
+            prompt = AGENT_PROMPTS["connection_finding"].format(
+                new_content=new_content[:1000],
+                existing_notes=json.dumps(notes_data, ensure_ascii=False)
+            )
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=300
+            )
+            
+            try:
+                connections = json.loads(response.choices[0].message.content)
+                return connections[:10] if isinstance(connections, list) else []
+            except json.JSONDecodeError:
+                return []
+                
+        except Exception as e:
+            print(f"Ошибка поиска связей: {e}")
+            return []
     
     async def organize_notes(self, notes: List[Any]) -> List[Dict[str, Any]]:
         """
-        Организация заметок в логические группы
+        Организация заметок в группы
         """
         if not notes:
             return []
         
-        # Группируем по категориям
-        groups = {}
-        for note in notes:
-            category = getattr(note, 'category', 'Общее')
-            if category not in groups:
-                groups[category] = []
-            groups[category].append(note.id)
-        
-        # Формируем результат
-        result = []
-        for category, note_ids in groups.items():
-            if len(note_ids) > 1:  # Группы только если больше одной заметки
-                result.append({
-                    "group_name": f"Группа: {category}",
-                    "theme": category,
-                    "notes": note_ids,
-                    "summary": f"Заметки категории '{category}' ({len(note_ids)} шт.)"
+        try:
+            # Подготавливаем данные о заметках
+            notes_data = []
+            for note in notes[:50]:  # Ограничиваем до 50 заметок
+                notes_data.append({
+                    "id": note.id,
+                    "title": note.title,
+                    "content": note.content[:200],
+                    "category": getattr(note, 'category', 'General'),
+                    "created_at": str(note.created_at)
                 })
-        
-        return result 
+            
+            prompt = AGENT_PROMPTS["note_organization"].format(
+                notes=json.dumps(notes_data, ensure_ascii=False)
+            )
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=500
+            )
+            
+            try:
+                groups = json.loads(response.choices[0].message.content)
+                return groups if isinstance(groups, list) else []
+            except json.JSONDecodeError:
+                return []
+                
+        except Exception as e:
+            print(f"Ошибка организации заметок: {e}")
+            return [] 

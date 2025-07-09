@@ -76,6 +76,9 @@ async def _analyze_note_async(note_id: int, user_id: int, force: bool = False) -
         # Создаем анализатор
         analyzer = NoteAnalyzer()
         
+        # Определяем язык заметки
+        language = await analyzer.detect_language(note.content)
+        
         # Параллельный анализ всех аспектов
         tasks = [
             analyzer.categorize_note(note.content),

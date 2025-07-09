@@ -28,9 +28,9 @@ app = FastAPI(
 frontend_urls_env = os.getenv("FRONTEND_URL", os.getenv("FRONTEND_URL", ""))
 if frontend_urls_env:
     frontend_urls = frontend_urls_env.split(",")
-    frontend_urls.extend(["chrome-extension://*"])  # Добавляем поддержку расширений
+    frontend_urls.extend(["chrome-extension://mfgdogmepogfbcoopjiioabdfmfkkjan"])  # Добавляем поддержку расширений
 else:
-    frontend_urls = ["chrome-extension://*"]
+    frontend_urls = ["chrome-extension://mfgdogmepogfbcoopjiioabdfmfkkjan"]
 
 app.add_middleware(
     CORSMiddleware,

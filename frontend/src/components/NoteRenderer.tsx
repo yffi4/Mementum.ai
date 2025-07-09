@@ -105,7 +105,7 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
     ),
 
     // Код
-    code: ({ inline, className, children, ...props }: any) => {
+    code: ({ inline, className, children}: any) => {
       const match = /language-(\w+)/.exec(className || "");
       const language = match?.[1] || "text";
 

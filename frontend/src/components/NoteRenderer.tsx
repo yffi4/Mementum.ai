@@ -2,9 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
-import "highlight.js/styles/tokyo-night-dark.css";
 
 interface NoteRendererProps {
   content: string;
@@ -111,6 +109,24 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
       const match = /language-(\w+)/.exec(className || "");
       const language = match?.[1] || "text";
 
+      // Правильная обработка children - получаем текстовое содержимое
+      const getTextContent = (node: any): string => {
+        if (typeof node === "string") return node;
+        if (typeof node === "number") return String(node);
+        if (Array.isArray(node)) return node.map(getTextContent).join("");
+        if (
+          node &&
+          typeof node === "object" &&
+          node.props &&
+          node.props.children
+        ) {
+          return getTextContent(node.props.children);
+        }
+        return String(node || "");
+      };
+
+      const codeText = getTextContent(children);
+
       if (!inline) {
         return (
           <motion.div
@@ -125,16 +141,18 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
                 </span>
               </div>
               <pre>
-                <code className={className} {...props}>
-                  {String(children).replace(/\n$/, "")}
-                </code>
+                <code>{codeText.replace(/\n$/, "")}</code>
               </pre>
             </div>
           </motion.div>
         );
       }
 
-      return <code {...props}>{children}</code>;
+      return (
+        <code className="bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 text-sm font-mono">
+          {codeText}
+        </code>
+      );
     },
 
     // Ссылки
@@ -247,7 +265,7 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
       <ReactMarkdown
         components={components}
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight, rehypeRaw]}
+        rehypePlugins={[rehypeRaw]}
       >
         {content}
       </ReactMarkdown>

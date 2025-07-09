@@ -41,7 +41,19 @@ AGENT_PROMPTS = {
     - Resource links (if appropriate)
     - Conclusions and recommendations
     
-    Use markdown formatting. Write everything in the language of the original request.
+    IMPORTANT: Use beautiful Markdown formatting for better readability:
+    - Headers: # Main Title, ## Subtitle, ### Sub-subtitle
+    - Lists: - bullet point or 1. numbered list
+    - Code: `inline code` or ```language for code blocks
+    - Bold text: **bold text**
+    - Italic: *italic*
+    - Quotes: > quote
+    - Horizontal line: ---
+    - Links: [text](url)
+    - Tables: | Column 1 | Column 2 | with proper alignment
+    - Task lists: - [ ] unchecked task, - [x] checked task
+    
+    Make the note visually appealing and easy to read. Write everything in the language of the original request.
     """,
     
     "plan_generation": """
@@ -59,7 +71,19 @@ AGENT_PROMPTS = {
     - Success criteria
     - Possible obstacles and solutions
     
-    Make the plan practical and achievable. Write in the language of the original request.
+    IMPORTANT: Use beautiful Markdown formatting for better readability:
+    - Headers: # Main Title, ## Subtitle, ### Sub-subtitle
+    - Lists: - bullet point or 1. numbered list
+    - Code: `inline code` or ```language for code blocks
+    - Bold text: **bold text**
+    - Italic: *italic*
+    - Quotes: > quote
+    - Horizontal line: ---
+    - Links: [text](url)
+    - Tables: | Column 1 | Column 2 | with proper alignment
+    - Task lists: - [ ] unchecked task, - [x] checked task
+    
+    Make the plan practical, achievable, and visually appealing. Write in the language of the original request.
     """,
     
     "step_extraction": """
@@ -120,7 +144,19 @@ AGENT_PROMPTS = {
     - Connections between notes
     - Recommendations for further actions
     
-    Write in the language of the original request.
+    IMPORTANT: Use beautiful Markdown formatting for better readability:
+    - Headers: # Main Title, ## Subtitle, ### Sub-subtitle
+    - Lists: - bullet point or 1. numbered list
+    - Code: `inline code` or ```language for code blocks
+    - Bold text: **bold text**
+    - Italic: *italic*
+    - Quotes: > quote
+    - Horizontal line: ---
+    - Links: [text](url)
+    - Tables: | Column 1 | Column 2 | with proper alignment
+    - Task lists: - [ ] unchecked task, - [x] checked task
+    
+    Make the summary visually appealing and easy to read. Write in the language of the original request.
     """,
     
     "categorization": """

@@ -89,8 +89,7 @@ const NoteRenderer: React.FC<NoteRendererProps> = ({
     ),
 
     li: ({ children, ...props }: any) => (
-      <li className="text-gray-100 leading-relaxed relative pl-6" {...props}>
-        <span className="absolute left-0 top-0 text-cyan-400 font-bold">•</span>
+      <li className="text-gray-100 leading-relaxed" {...props}>
         {children}
       </li>
     ),

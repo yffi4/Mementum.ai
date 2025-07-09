@@ -501,3 +501,40 @@ class NoteAnalyzer:
         except Exception as e:
             print(f"Ошибка организации заметок: {e}")
             return [] 
+
+    async def generate_title(self, content: str) -> str:
+        """
+        Генерирует заголовок для заметки на основе содержимого
+        """
+        try:
+            # Обрезаем содержимое если оно слишком длинное
+            truncated_content = content[:1000] if len(content) > 1000 else content
+            
+            response = await self.openai_client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "user", "content": AGENT_PROMPTS["title_generation"].format(content=truncated_content)}
+                ],
+                max_tokens=50,
+                temperature=0.7
+            )
+            
+            title = response.choices[0].message.content.strip()
+            
+            # Убираем кавычки если они есть
+            if title.startswith('"') and title.endswith('"'):
+                title = title[1:-1]
+            if title.startswith("'") and title.endswith("'"):
+                title = title[1:-1]
+            
+            # Ограничиваем длину заголовка
+            if len(title) > 100:
+                title = title[:97] + "..."
+            
+            return title
+            
+        except Exception as e:
+            print(f"Ошибка генерации заголовка: {str(e)}")
+            # Возвращаем первые несколько слов содержимого как заголовок
+            words = content.split()[:5]
+            return " ".join(words) + ("..." if len(words) == 5 else "") 

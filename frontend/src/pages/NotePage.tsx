@@ -16,6 +16,7 @@ import {
   FiTag,
   FiStar,
   FiBookOpen,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { authApi } from "../services/authApi";
 
@@ -153,7 +154,7 @@ const getImportanceLevel = (importance: number) => {
 //         currentType = "paragraph";
 //       }
 //       continue;
-//     }
+//   }
 
 //     // Заголовки с ** или ###
 //     if (trimmed.match(/^\*\*[^*]+\*\*:?\*\*?$/)) {
@@ -388,6 +389,7 @@ export default function NotePage() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isRegeneratingTitle, setIsRegeneratingTitle] = useState(false);
 
   const [user, setUser] = useState<any>(null);
 
@@ -475,6 +477,28 @@ export default function NotePage() {
   // Удалить заметку
   const handleDelete = () => {
     deleteMutation.mutate();
+  };
+
+  // Регенерация заголовка
+  const regenerateTitle = async () => {
+    if (!editContent.trim()) return;
+
+    setIsRegeneratingTitle(true);
+    try {
+      const response = await axios.post(
+        "/api/ai-agent/generate-title",
+        { content: editContent },
+        { withCredentials: true }
+      );
+
+      if (response.data.title) {
+        setEditTitle(response.data.title);
+      }
+    } catch (error) {
+      console.error("Error regenerating title:", error);
+    } finally {
+      setIsRegeneratingTitle(false);
+    }
   };
 
   if (!id) {
@@ -568,13 +592,31 @@ export default function NotePage() {
         <div className="note-content-card">
           {isEditing ? (
             <form className="note-edit-form">
-              <input
-                className="note-input note-title-input focus:shadow-[0_0_8px_2px_#a18aff55]"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                placeholder="Title"
-                disabled={updateMutation.isPending}
-              />
+              <div className="title-input-container">
+                <input
+                  className="note-input note-title-input focus:shadow-[0_0_8px_2px_#a18aff55]"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Title"
+                  disabled={updateMutation.isPending}
+                />
+                <button
+                  type="button"
+                  className="regenerate-title-btn"
+                  onClick={regenerateTitle}
+                  disabled={
+                    updateMutation.isPending ||
+                    isRegeneratingTitle ||
+                    !editContent.trim()
+                  }
+                  title="Regenerate title with AI"
+                >
+                  <FiRefreshCw
+                    size={16}
+                    className={isRegeneratingTitle ? "animate-spin" : ""}
+                  />
+                </button>
+              </div>
               <textarea
                 className="note-input note-content-textarea focus:shadow-[0_0_8px_2px_#6feaff55]"
                 value={editContent}

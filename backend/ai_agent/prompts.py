@@ -209,95 +209,52 @@ AGENT_PROMPTS = {
     """,
     
     "note_organization": """
-    Organize notes into logical groups.
-    IMPORTANT: Use the same language as the notes for group names and descriptions.
+        Организуй следующие заметки в логические группы. Заметки на разных языках группируй отдельно.
+        Каждая группа должна иметь описательное название и содержать связанные заметки.
+        
+        Заметки: {notes}
+        
+        Верни JSON массив групп в формате:
+        [
+          {
+            "group_name": "Название группы",
+            "description": "Описание группы",
+            "note_ids": [список ID заметок],
+            "priority": "high|medium|low"
+          }
+        ]
+        """,
+        
+    "title_generation": """
+        Проанализируй следующий текст и создай для него краткий, информативный заголовок на том же языке, что и текст.
+
+        Правила для заголовка:
+        1. Должен быть коротким (3-8 слов)
+        2. Отражать основную тему или суть текста
+        3. Быть информативным и понятным
+        4. Написан на том же языке, что и исходный текст
+        5. Не должен быть слишком общим или абстрактным
+        6. Должен помочь быстро понять содержание заметки
+
+        Текст: {content}
+
+        Верни только заголовок, без дополнительного текста или объяснений.
+        """
     
-    Notes:
-    {notes}
-    
-    Return JSON array of groups:
-    [
-        {{
-            "group_name": "Group name",
-            "theme": "General theme",
-            "notes": [1, 2, 3],
-            "summary": "Brief group description"
-        }}
-    ]
-    
-    Group by themes, projects, time periods, or content types.
-    Use the same language as the majority of notes in each group.
-    """,
-    
-    "language_detection": """
-    Detect the language of the given text and return the language code.
-    
-    Text: {text}
-    
-    Return only the language code (ru, en, es, fr, de, it, pt, etc.)
-    If the language cannot be determined, return "en" as default.
-    """,
-    
-    "keyword_extraction": """
-    Extract key words and phrases from the note.
-    IMPORTANT: Extract keywords in the same language as the note content.
-    
-    Note content:
-    {content}
-    
-    Return JSON array of keywords: ["keyword1", "keyword2", "keyword3"]
-    Extract 5-10 most relevant keywords and phrases.
-    """,
-    
-    "topics_detection": """
-    Detect main topics in the note.
-    IMPORTANT: Detect topics in the same language as the note content.
-    
-    Note content:
-    {content}
-    
-    Return JSON array of topics: ["topic1", "topic2", "topic3"]
-    Identify 3-5 main topics or themes.
-    """,
-    
-    "sentiment_analysis": """
-    Analyze the sentiment of the note content.
-    
-    Note content:
-    {content}
-    
-    Return sentiment as one of: positive, negative, neutral
-    """,
-    
-    "improvements_suggestion": """
-    Suggest improvements for the note.
-    IMPORTANT: Provide suggestions in the same language as the note content.
-    
-    Note content:
-    {content}
-    
-    Return JSON array of improvement suggestions:
-    ["suggestion1", "suggestion2", "suggestion3"]
-    
-    Suggest 3-5 practical improvements for structure, content, or clarity.
-    """,
-    
-    "action_items_extraction": """
-    Extract action items and tasks from the note.
-    IMPORTANT: Extract action items in the same language as the note content.
-    
-    Note content:
-    {content}
-    
-    Return JSON array of action items:
-    [
-        {{
-            "action": "Action description",
-            "priority": "high|medium|low",
-            "deadline": "YYYY-MM-DD or null"
-        }}
-    ]
-    
-    Extract clear, actionable tasks from the note content.
-    """
-} 
+  } 
+
+TITLE_GENERATION_PROMPT = """
+Проанализируй следующий текст и создай для него краткий, информативный заголовок на том же языке, что и текст.
+
+Правила для заголовка:
+1. Должен быть коротким (3-8 слов)
+2. Отражать основную тему или суть текста
+3. Быть информативным и понятным
+4. Написан на том же языке, что и исходный текст
+5. Не должен быть слишком общим или абстрактным
+6. Должен помочь быстро понять содержание заметки
+
+Текст: {content}
+
+Верни только заголовок, без дополнительного текста или объяснений.
+""" 

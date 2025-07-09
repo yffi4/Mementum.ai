@@ -165,9 +165,12 @@ class AIAgent:
         # Генерируем структурированную заметку
         note_content = await self._generate_note_content(request, analysis)
         
+        # Автоматически генерируем заголовок на основе содержимого
+        generated_title = await self.note_analyzer.generate_title(note_content)
+        
         # Создаем заметку
         note_data = NoteCreate(
-            title=analysis.get("title", "Новая заметка"),
+            title=generated_title,
             content=note_content
         )
         
@@ -190,6 +193,7 @@ class AIAgent:
         return {
             "success": True,
             "note_id": note.id,
+            "title": note.title,
             "category": category,
             "importance": importance,
             "message": message

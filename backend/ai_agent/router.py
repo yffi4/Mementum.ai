@@ -377,6 +377,43 @@ async def search_related_links(
         )
 
 
+@router.post("/generate-title")
+async def generate_title(
+    request: Dict[str, str],
+    db: AsyncSession = Depends(get_async_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Генерация заголовка для заметки на основе содержимого
+    """
+    try:
+        content = request.get("content", "")
+        if not content or len(content.strip()) < 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Content is too short to generate a title"
+            )
+        
+        # Инициализируем анализатор заметок
+        from .note_analyzer import NoteAnalyzer
+        import openai
+        from config import settings
+        
+        openai_client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        note_analyzer = NoteAnalyzer(openai_client)
+        
+        # Генерируем заголовок
+        title = await note_analyzer.generate_title(content)
+        
+        return {"title": title}
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating title: {str(e)}"
+        )
+
+
 @router.get("/status")
 async def get_agent_status(
     db: AsyncSession = Depends(get_async_db),

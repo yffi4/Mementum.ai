@@ -612,21 +612,105 @@ body {
 }
 
 .note-tag {
-  background: rgba(161, 138, 255, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(161, 138, 255, 0.15) 0%,
+    rgba(111, 234, 255, 0.1) 100%
+  );
   color: #a18aff;
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.75rem;
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid rgba(161, 138, 255, 0.25);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  text-transform: none;
+  letter-spacing: 0.025em;
+}
+
+.note-tag::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.note-tag:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(161, 138, 255, 0.25) 0%,
+    rgba(111, 234, 255, 0.15) 100%
+  );
+  color: #ffffff;
+  border-color: rgba(161, 138, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(161, 138, 255, 0.3);
+}
+
+.note-tag:hover::before {
+  left: 100%;
 }
 
 .note-tag-more {
-  background: rgba(111, 234, 255, 0.2);
+  background: linear-gradient(
+    135deg,
+    rgba(111, 234, 255, 0.15) 0%,
+    rgba(161, 138, 255, 0.1) 100%
+  );
   color: #6feaff;
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.75rem;
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid rgba(111, 234, 255, 0.25);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.note-tag-more::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.note-tag-more:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(111, 234, 255, 0.25) 0%,
+    rgba(161, 138, 255, 0.15) 100%
+  );
+  color: #ffffff;
+  border-color: rgba(111, 234, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(111, 234, 255, 0.3);
+}
+
+.note-tag-more:hover::before {
+  left: 100%;
 }
 
 .note-connections {

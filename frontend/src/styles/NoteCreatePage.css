@@ -1,7 +1,7 @@
 /* Стили для страницы создания заметки */
 
 .note-create-card {
-  max-width: 900px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 2rem;
   background: linear-gradient(
@@ -397,7 +397,8 @@
 @media (max-width: 768px) {
   .note-create-card {
     padding: 1.5rem;
-    margin: 1rem;
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
   }
 
   .note-create-title {

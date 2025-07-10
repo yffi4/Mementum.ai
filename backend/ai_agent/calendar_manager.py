@@ -23,7 +23,7 @@ class CalendarManager:
         # Если изменяете эти области, удалите файл token.pickle
         self.SCOPES = [
             'https://www.googleapis.com/auth/calendar',
-            'https://www.googleapis.com/auth/calendar.events'
+            
         ]
     
     async def authenticate(self) -> bool:

@@ -22,7 +22,7 @@ class GoogleCalendarService:
             raise ValueError("GOOGLE_REDIRECT_URI environment variable is not set")
         self.redirect_uri = google_redirect
         self.scopes = [
-            'https://www.googleapis.com/auth/calendar',
+            'https://www.googleapis.com/auth/calendar.events',
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile'
         ]

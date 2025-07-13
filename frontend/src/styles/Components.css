@@ -680,8 +680,8 @@ a:hover,
   position: absolute;
   top: 0;
   right: 0;
-  padding: 2rem;
-  z-index: 60;
+  padding: 1rem;
+  z-index: 1000;
   display: flex;
   gap: 1rem;
 }
@@ -694,7 +694,7 @@ a:hover,
     right: 1rem;
     padding: 0;
     gap: 0.5rem;
-    z-index: 70;
+    z-index: 1000;
   }
 
   .auth-nav .nav-btn {

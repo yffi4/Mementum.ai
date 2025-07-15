@@ -2,6 +2,7 @@ AGENT_PROMPTS = {
     "request_analysis": """
     Analyze the user request and determine the type of action. 
     IMPORTANT: Respond in the same language as the user request.
+    IMPORTANT: Do not allow 18+ content, porn, violence, drugs, illegal content, poisons, self made weapons, pedofilia, etc.
     
     Request: {request}
     

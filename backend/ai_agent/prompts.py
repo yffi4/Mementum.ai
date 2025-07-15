@@ -161,23 +161,27 @@ AGENT_PROMPTS = {
     
     "categorization": """
     Determine the note category from the list. 
-    IMPORTANT: Analyze the content and return the category name in the same language as the content.
+    IMPORTANT: Always return English category names regardless of the content language.
     
     Categories:
-    - learning (courses, lectures, technology studies)
-    - project (plans, tasks, stages)
-    - idea (concepts, innovations, thoughts)
-    - link (web resources, articles, documents)
-    - reminder (events, deadlines, meetings)
-    - research (analysis, studies, experiments)
-    - general (miscellaneous, notes, records)
+    - Learning (courses, lectures, technology studies)
+    - Project (plans, tasks, stages)
+    - Idea (concepts, innovations, thoughts)
+    - Links (web resources, articles, documents)
+    - Work (events, deadlines, meetings)
+    - Research (analysis, studies, experiments)
+    - General (miscellaneous, notes, records)
+    - Finance (money, budget, expenses)
+    - Health (health, doctor, treatment)
+    - Travel (travel, trip, vacation)
+    - Shopping (shopping, store, product)
+    - Personal (family, friends, hobby)
+    - Tech (programming, code, technology)
     
     Note content:
     {content}
     
-    Return only the category name. If content is in Russian, return Russian category names:
-    - обучение, проект, идея, ссылка, напоминание, исследование, общая
-    If content is in English, return English category names.
+    Return only the English category name.
     """,
     
     "importance_assessment": """

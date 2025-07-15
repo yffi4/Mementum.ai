@@ -265,6 +265,76 @@ const PrivacyPolicy: React.FC = () => {
       ),
     },
     {
+      id: "google-user-data",
+      title: "Use of Google User Data",
+      icon: <FiLock size={24} />,
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+            <div className="w-3 h-3 bg-[#4285f4] rounded-full flex-shrink-0" />
+            <span className="text-[#d1d5db]">
+              Mementum.ai uses the Google Calendar API to allow users to view,
+              create, and manage their own calendar events.
+            </span>
+          </div>
+          <ul className="space-y-3 text-[#d1d5db]">
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
+              <span>
+                We strictly comply with Google’s API Services User Data Policy,
+                including the Limited Use requirements.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
+              <span>
+                We only use Google Calendar data to provide core app
+                functionality: organizing, structuring, and displaying user
+                events.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
+              <span>We do not use this data for advertising or analytics.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
+              <span>
+                We do not share or sell any user data to third parties.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
+              <span>
+                All access is performed with the user’s explicit consent via
+                OAuth 2.0.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
+              <span>
+                Our AI features operate only on user-authorized data and are
+                used to assist with scheduling, not for profiling or unrelated
+                processing.
+              </span>
+            </li>
+          </ul>
+          <div
+            className="p-4 rounded-lg border"
+            style={{
+              background: "rgba(74, 222, 128, 0.1)",
+              borderColor: "rgba(74, 222, 128, 0.3)",
+            }}
+          >
+            <p className="text-[#4ade80] font-medium text-sm">
+              🔒 We do not share or sell your Google Calendar data to any third
+              parties.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
       id: "your-rights",
       title: "Your Rights",
       icon: <FiMail size={24} />,

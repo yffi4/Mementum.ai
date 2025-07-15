@@ -93,19 +93,19 @@ function LoadingState() {
 // Вспомогательные функции
 const getCategoryColor = (category: string) => {
   const colors = {
-    Обучение: "text-blue-400 bg-blue-500/20 border-blue-500/30",
-    Проект: "text-green-400 bg-green-500/20 border-green-500/30",
-    Идея: "text-purple-400 bg-purple-500/20 border-purple-500/30",
-    Работа: "text-orange-400 bg-orange-500/20 border-orange-500/30",
-    Исследование: "text-cyan-400 bg-cyan-500/20 border-cyan-500/30",
-    Финансы: "text-yellow-400 bg-yellow-500/20 border-yellow-500/30",
-    Здоровье: "text-red-400 bg-red-500/20 border-red-500/30",
-    Путешествия: "text-indigo-400 bg-indigo-500/20 border-indigo-500/30",
-    Покупки: "text-pink-400 bg-pink-500/20 border-pink-500/30",
-    Личное: "text-emerald-400 bg-emerald-500/20 border-emerald-500/30",
-    Техника: "text-slate-400 bg-slate-500/20 border-slate-500/30",
-    Ссылки: "text-teal-400 bg-teal-500/20 border-teal-500/30",
-    Общее: "text-gray-400 bg-gray-500/20 border-gray-500/30",
+    Learning: "text-blue-400 bg-blue-500/20 border-blue-500/30",
+    Project: "text-green-400 bg-green-500/20 border-green-500/30",
+    Idea: "text-purple-400 bg-purple-500/20 border-purple-500/30",
+    Work: "text-orange-400 bg-orange-500/20 border-orange-500/30",
+    Research: "text-cyan-400 bg-cyan-500/20 border-cyan-500/30",
+    Finance: "text-yellow-400 bg-yellow-500/20 border-yellow-500/30",
+    Health: "text-red-400 bg-red-500/20 border-red-500/30",
+    Travel: "text-indigo-400 bg-indigo-500/20 border-indigo-500/30",
+    Shopping: "text-pink-400 bg-pink-500/20 border-pink-500/30",
+    Personal: "text-emerald-400 bg-emerald-500/20 border-emerald-500/30",
+    Tech: "text-slate-400 bg-slate-500/20 border-slate-500/30",
+    Links: "text-teal-400 bg-teal-500/20 border-teal-500/30",
+    General: "text-gray-400 bg-gray-500/20 border-gray-500/30",
   };
   return (
     colors[category as keyof typeof colors] ||

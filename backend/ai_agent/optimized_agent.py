@@ -20,7 +20,7 @@ class OptimizedAIAgent:
         # Оптимизированные промпты
         self.prompts = {
             'category': """Категоризируй текст одним словом из списка:
-Работа, Обучение, Личное, Финансы, Здоровье, Идея, Путешествия, Покупки, Общее.
+Work, Learning, Personal, Finance, Health, Idea, Travel, Shopping, General.
 Текст: {text}
 Категория:""",
             
@@ -130,7 +130,7 @@ class OptimizedAIAgent:
             cache.set(cache_key, category, ttl=timedelta(days=30))
             return category
         except Exception:
-            return "Общее"
+            return "General"
     
     def _quick_categorize(self, text: str) -> Optional[str]:
         """Быстрая категоризация по ключевым словам"""

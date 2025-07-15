@@ -745,7 +745,7 @@ async def analyze_all_notes(
                 print(f"Ошибка AI анализа заметки {note.id}: {str(e)}")
                 # Fallback на простой анализ
                 try:
-                    category = "Общее"
+                    category = "General"
                     importance = 3
                     tags = []
                     summary = note.content[:200] + "..." if len(note.content) > 200 else note.content
@@ -813,8 +813,8 @@ async def get_note_categories(
             if category and category.strip():
                 category_counts[category] = category_counts.get(category, 0) + 1
             else:
-                # Считаем заметки без категории как "Общее"
-                category_counts["Общее"] = category_counts.get("Общее", 0) + 1
+                # Считаем заметки без категории как "General"
+                category_counts["General"] = category_counts.get("General", 0) + 1
         
         print(f"Категории: {category_counts}")
         
@@ -850,12 +850,12 @@ async def get_notes_by_category(
 ):
     """Получить заметки по категории"""
     try:
-        if category == "Общее":
-            # Для категории "Общее" ищем заметки с пустой или null категорией
+        if category == "General":
+            # Для категории "General" ищем заметки с пустой или null категорией
             result = await db.execute(
                 select(Note)
                 .filter(Note.user_id == current_user.id)
-                .filter((Note.category.is_(None)) | (Note.category == '') | (Note.category == 'Общее'))
+                .filter((Note.category.is_(None)) | (Note.category == '') | (Note.category == 'General'))
                 .order_by(Note.created_at.desc())
             )
         else:
@@ -875,7 +875,7 @@ async def get_notes_by_category(
                     "id": note.id,
                     "title": note.title,
                     "content": note.content[:200] + "..." if len(note.content) > 200 else note.content,
-                    "category": note.category or "Общее",
+                    "category": note.category or "General",
                     "importance": note.importance or 1,
                     "tags": json.loads(note.tags) if note.tags else [],
                     "summary": note.summary or (note.content[:200] + "..." if len(note.content) > 200 else note.content),
@@ -912,7 +912,7 @@ async def get_notes_grouped(
 
         grouped: Dict[str, list] = {}
         for note in notes:
-            category = note.category.strip() if note.category else "Общее"
+            category = note.category.strip() if note.category else "General"
             grouped.setdefault(category, []).append({
                 "id": note.id,
                 "title": note.title,

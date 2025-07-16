@@ -59,7 +59,7 @@ const updateNote = async (id: string, data: UpdateNoteData): Promise<Note> => {
 };
 
 const deleteNote = async (id: string): Promise<void> => {
-  await axios.delete(`${apiUrls.notes}${id}/`, {
+  await axios.delete(`${apiUrls.notes}${id}`, {
     withCredentials: true,
   });
 };

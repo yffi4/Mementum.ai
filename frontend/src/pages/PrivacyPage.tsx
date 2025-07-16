@@ -273,49 +273,27 @@ const PrivacyPolicy: React.FC = () => {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
             <div className="w-3 h-3 bg-[#4285f4] rounded-full flex-shrink-0" />
             <span className="text-[#d1d5db]">
-              Mementum.ai uses the Google Calendar API to allow users to view,
-              create, and manage their own calendar events.
+              Our application strictly adheres to Google’s API Services User
+              Data Policy, including the Limited Use requirements.
             </span>
           </div>
           <ul className="space-y-3 text-[#d1d5db]">
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
               <span>
-                We strictly comply with Google’s API Services User Data Policy,
-                including the Limited Use requirements.
+                We only use Google user data to provide core features of the
+                app.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
-              <span>
-                We only use Google Calendar data to provide core app
-                functionality: organizing, structuring, and displaying user
-                events.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
-              <span>We do not use this data for advertising or analytics.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
-              <span>
-                We do not share or sell any user data to third parties.
-              </span>
+              <span>We do not share this data with any third party.</span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
               <span>
-                All access is performed with the user’s explicit consent via
-                OAuth 2.0.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
-              <span>
-                Our AI features operate only on user-authorized data and are
-                used to assist with scheduling, not for profiling or unrelated
-                processing.
+                We do not use the data for advertising or for any purpose
+                outside the scope of the app’s primary functionality.
               </span>
             </li>
           </ul>
@@ -327,8 +305,16 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <p className="text-[#4ade80] font-medium text-sm">
-              🔒 We do not share or sell your Google Calendar data to any third
-              parties.
+              For more details, please refer to Google’s{" "}
+              <a
+                href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#6feaff] hover:text-[#a18aff]"
+              >
+                API Services User Data Policy
+              </a>
+              .
             </p>
           </div>
         </div>
@@ -508,7 +494,15 @@ const PrivacyPolicy: React.FC = () => {
           transition={{ delay: 1, duration: 0.6 }}
           className="mt-12 text-center text-[#9ca3af] text-sm"
         >
-          <p>© 2025 Mementum.ai. All rights reserved.</p>
+          <p>
+            © 2025 Mementum.ai. All rights reserved. |
+            <Link
+              to="/privacy"
+              className="text-[#6feaff] underline hover:text-[#a18aff] ml-1"
+            >
+              Privacy Policy
+            </Link>
+          </p>
         </motion.div>
       </div>
     </div>

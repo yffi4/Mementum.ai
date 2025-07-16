@@ -503,7 +503,7 @@ const LandingPage: React.FC = () => {
             <div className="privacy-links">
               <h3>Privacy & Legal</h3>
               <div className="legal-links">
-                <Link to="/privacy-policy" className="legal-link">
+                <Link to="/privacy" className="legal-link">
                   🔒 Privacy Policy
                 </Link>
               </div>

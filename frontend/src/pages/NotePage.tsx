@@ -52,7 +52,7 @@ const fetchNote = async (id: string): Promise<Note> => {
 };
 
 const updateNote = async (id: string, data: UpdateNoteData): Promise<Note> => {
-  const response = await axios.put(`${apiUrls.notes}${id}/`, data, {
+  const response = await axios.put(`/api/notes/${id}`, data, {
     withCredentials: true,
   });
   return response.data;

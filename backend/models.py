@@ -46,7 +46,7 @@ class Note(Base):
 
     user = relationship("User", back_populates='notes')
     connections_as_a = relationship("NoteConnection", back_populates='note_a', foreign_keys='NoteConnection.note_a_id', cascade='all, delete-orphan')
-    connections_as_b = relationship("NoteConnection", back_populates='note_b', foreign_keys='NoteConnection.note_b_id')
+    connections_as_b = relationship("NoteConnection", back_populates='note_b', foreign_keys='NoteConnection.note_b_id', cascade='all, delete-orphan')
     calendar_events = relationship("NoteCalendarEvent", back_populates='note', cascade='all, delete-orphan')
     
 

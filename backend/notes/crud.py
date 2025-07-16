@@ -77,11 +77,19 @@ async def update_note(db: AsyncSession, note_id: int, user_id: int, note_update:
 
 
 async def delete_note(db: AsyncSession, note_id: int, user_id: int) -> bool:
-    """Удалить заметку"""
+    """Удалить заметку принудительно, игнорируя связи"""
     db_note = await get_note(db, note_id, user_id)
     if not db_note:
         return False
     
+    # Принудительно удаляем все связи, где заметка является note_a или note_b
+    await db.execute(
+        delete(NoteConnection).where(
+            (NoteConnection.note_a_id == note_id) | (NoteConnection.note_b_id == note_id)
+        )
+    )
+    
+    # Удаляем заметку
     await db.delete(db_note)
     await db.commit()
     return True

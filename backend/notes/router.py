@@ -256,18 +256,32 @@ async def delete_note(
     sync_db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Удалить заметку и связанные события календаря"""
-    # Удалить события календаря
+    """Удалить заметку принудительно, игнорируя связи и события календаря"""
     try:
-        calendar_agent.delete_note_events(sync_db, note_id, current_user.id)
+        # Удалить события календаря
+        try:
+            calendar_agent.delete_note_events(sync_db, note_id, current_user.id)
+            print(f"Удалены события календаря для заметки {note_id}")
+        except Exception as e:
+            print(f"Ошибка удаления событий календаря: {e}")
+        
+        # Принудительно удалить заметку и все связи
+        success = await crud.delete_note(db, note_id, current_user.id)
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заметка не найдена"
+            )
+        
+        print(f"Заметка {note_id} успешно удалена пользователем {current_user.id}")
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"Ошибка удаления событий календаря: {e}")
-    
-    success = await crud.delete_note(db, note_id, current_user.id)
-    if not success:
+        print(f"Ошибка при удалении заметки {note_id}: {e}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Заметка не найдена"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при удалении заметки"
         )
 
 

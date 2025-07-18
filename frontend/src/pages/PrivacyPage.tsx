@@ -266,34 +266,51 @@ const PrivacyPolicy: React.FC = () => {
     },
     {
       id: "google-user-data",
-      title: "Use of Google User Data",
+      title: "Use of Google Workspace API User Data",
       icon: <FiLock size={24} />,
       content: (
         <div className="space-y-4">
           <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
             <div className="w-3 h-3 bg-[#4285f4] rounded-full flex-shrink-0" />
             <span className="text-[#d1d5db]">
-              Our application strictly adheres to Google’s API Services User
-              Data Policy, including the Limited Use requirements.
+              Our application strictly adheres to the{" "}
+              <a
+                href="https://developers.google.com/workspace/workspace-api-user-data-developer-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#6feaff] hover:text-[#a18aff]"
+              >
+                Google Workspace API User Data Developer Policy
+              </a>
+              , including the{" "}
+              <a
+                href="https://developers.google.com/workspace/workspace-api-user-data-developer-policy#limited-use"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[#6feaff] hover:text-[#a18aff]"
+              >
+                Limited Use requirements
+              </a>{""}
+              for sensitive and restricted scopes used in Google Workspace APIs.
             </span>
           </div>
           <ul className="space-y-3 text-[#d1d5db]">
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
               <span>
-                We only use Google user data to provide core features of the
-                app.
+                We only use Google Workspace API user data to provide essential
+                functionality in our application.
               </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#a18aff] rounded-full flex-shrink-0" />
-              <span>We do not share this data with any third party.</span>
+              <span>We do not share this data with any third parties.</span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-2 h-2 bg-[#6feaff] rounded-full flex-shrink-0" />
               <span>
-                We do not use the data for advertising or for any purpose
-                outside the scope of the app’s primary functionality.
+                We do not use it for advertising or for any purposes beyond the
+                core functionality.
               </span>
             </li>
           </ul>
@@ -305,16 +322,8 @@ const PrivacyPolicy: React.FC = () => {
             }}
           >
             <p className="text-[#4ade80] font-medium text-sm">
-              For more details, please refer to Google’s{" "}
-              <a
-                href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline text-[#6feaff] hover:text-[#a18aff]"
-              >
-                API Services User Data Policy
-              </a>
-              .
+              🔒 We do not share or sell your Google Workspace API data to any
+              third parties.
             </p>
           </div>
         </div>
